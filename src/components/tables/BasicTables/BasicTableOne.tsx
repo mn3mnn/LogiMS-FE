@@ -94,7 +94,259 @@ const tableData: Order[] = [
     status: "Cancel",
   },
   {
-    id: 5,
+    id: 3455,
+    user: {
+      image: "/images/user/user-21.jpg",
+      name: "Carla George",
+      role: "Front-end Developer",
+    },
+    projectName: "Website",
+    team: {
+      images: [
+        "/images/user/user-31.jpg",
+        "/images/user/user-32.jpg",
+        "/images/user/user-33.jpg",
+      ],
+    },
+    budget: "4.5K",
+    status: "Active",
+  },
+  {
+    id: 6,
+    user: {
+      image: "/images/user/user-21.jpg",
+      name: "Carla George",
+      role: "Front-end Developer",
+    },
+    projectName: "Website",
+    team: {
+      images: [
+        "/images/user/user-31.jpg",
+        "/images/user/user-32.jpg",
+        "/images/user/user-33.jpg",
+      ],
+    },
+    budget: "4.5K",
+    status: "Active",
+  },
+  {
+    id: 7,
+    user: {
+      image: "/images/user/user-21.jpg",
+      name: "Carla George",
+      role: "Front-end Developer",
+    },
+    projectName: "Website",
+    team: {
+      images: [
+        "/images/user/user-31.jpg",
+        "/images/user/user-32.jpg",
+        "/images/user/user-33.jpg",
+      ],
+    },
+    budget: "4.5K",
+    status: "Active",
+  },
+  {
+    id: 8,
+    user: {
+      image: "/images/user/user-21.jpg",
+      name: "Carla George",
+      role: "Front-end Developer",
+    },
+    projectName: "Website",
+    team: {
+      images: [
+        "/images/user/user-31.jpg",
+        "/images/user/user-32.jpg",
+        "/images/user/user-33.jpg",
+      ],
+    },
+    budget: "4.5K",
+    status: "Active",
+  },
+  {
+    id: 9,
+    user: {
+      image: "/images/user/user-21.jpg",
+      name: "Carla George",
+      role: "Front-end Developer",
+    },
+    projectName: "Website",
+    team: {
+      images: [
+        "/images/user/user-31.jpg",
+        "/images/user/user-32.jpg",
+        "/images/user/user-33.jpg",
+      ],
+    },
+    budget: "4.5K",
+    status: "Active",
+  },
+  {
+    id: 10,
+    user: {
+      image: "/images/user/user-21.jpg",
+      name: "Carla George",
+      role: "Front-end Developer",
+    },
+    projectName: "Website",
+    team: {
+      images: [
+        "/images/user/user-31.jpg",
+        "/images/user/user-32.jpg",
+        "/images/user/user-33.jpg",
+      ],
+    },
+    budget: "4.5K",
+    status: "Active",
+  },
+  {
+    id: 11,
+    user: {
+      image: "/images/user/user-21.jpg",
+      name: "Carla George",
+      role: "Front-end Developer",
+    },
+    projectName: "Website",
+    team: {
+      images: [
+        "/images/user/user-31.jpg",
+        "/images/user/user-32.jpg",
+        "/images/user/user-33.jpg",
+      ],
+    },
+    budget: "4.5K",
+    status: "Active",
+  },
+  {
+    id: 12,
+    user: {
+      image: "/images/user/user-21.jpg",
+      name: "Carla George",
+      role: "Front-end Developer",
+    },
+    projectName: "Website",
+    team: {
+      images: [
+        "/images/user/user-31.jpg",
+        "/images/user/user-32.jpg",
+        "/images/user/user-33.jpg",
+      ],
+    },
+    budget: "4.5K",
+    status: "Active",
+  },
+  {
+    id: 13,
+    user: {
+      image: "/images/user/user-21.jpg",
+      name: "Carla George",
+      role: "Front-end Developer",
+    },
+    projectName: "Website",
+    team: {
+      images: [
+        "/images/user/user-31.jpg",
+        "/images/user/user-32.jpg",
+        "/images/user/user-33.jpg",
+      ],
+    },
+    budget: "4.5K",
+    status: "Active",
+  },
+  {
+    id: 14,
+    user: {
+      image: "/images/user/user-21.jpg",
+      name: "Carla George",
+      role: "Front-end Developer",
+    },
+    projectName: "Website",
+    team: {
+      images: [
+        "/images/user/user-31.jpg",
+        "/images/user/user-32.jpg",
+        "/images/user/user-33.jpg",
+      ],
+    },
+    budget: "4.5K",
+    status: "Active",
+  },
+  {
+    id: 15,
+    user: {
+      image: "/images/user/user-21.jpg",
+      name: "Carla George",
+      role: "Front-end Developer",
+    },
+    projectName: "Website",
+    team: {
+      images: [
+        "/images/user/user-31.jpg",
+        "/images/user/user-32.jpg",
+        "/images/user/user-33.jpg",
+      ],
+    },
+    budget: "4.5K",
+    status: "Active",
+  },
+  {
+    id: 16,
+    user: {
+      image: "/images/user/user-21.jpg",
+      name: "Carla George",
+      role: "Front-end Developer",
+    },
+    projectName: "Website",
+    team: {
+      images: [
+        "/images/user/user-31.jpg",
+        "/images/user/user-32.jpg",
+        "/images/user/user-33.jpg",
+      ],
+    },
+    budget: "4.5K",
+    status: "Active",
+  },
+  {
+    id: 17,
+    user: {
+      image: "/images/user/user-21.jpg",
+      name: "Carla George",
+      role: "Front-end Developer",
+    },
+    projectName: "Website",
+    team: {
+      images: [
+        "/images/user/user-31.jpg",
+        "/images/user/user-32.jpg",
+        "/images/user/user-33.jpg",
+      ],
+    },
+    budget: "4.5K",
+    status: "Active",
+  },
+  {
+    id: 18,
+    user: {
+      image: "/images/user/user-21.jpg",
+      name: "Carla George",
+      role: "Front-end Developer",
+    },
+    projectName: "Website",
+    team: {
+      images: [
+        "/images/user/user-31.jpg",
+        "/images/user/user-32.jpg",
+        "/images/user/user-33.jpg",
+      ],
+    },
+    budget: "4.5K",
+    status: "Active",
+  },
+  {
+    id: 555,
     user: {
       image: "/images/user/user-21.jpg",
       name: "Carla George",
@@ -115,6 +367,13 @@ const tableData: Order[] = [
 
 export default function BasicTableOne() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const usersPerPage = 10;
+
+  const indexOfLastUser = currentPage * usersPerPage;
+  const indexOfFirstUser = indexOfLastUser - usersPerPage;
+  const currentUsers = tableData.slice(indexOfFirstUser, indexOfLastUser);
+  const totalPages = Math.ceil(tableData.length / usersPerPage);
 
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
@@ -175,12 +434,18 @@ export default function BasicTableOne() {
               >
                 Budget
               </TableCell>
+              <TableCell
+                isHeader
+                className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+              >
+                Actions
+              </TableCell>
             </TableRow>
           </TableHeader>
 
           {/* Table Body */}
           <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-            {tableData.map((order) => (
+            {currentUsers.map((order) => (
               <TableRow key={order.id}>
                 <TableCell className="px-5 py-4 sm:px-6 text-start">
                   <div className="flex items-center gap-3">
@@ -240,11 +505,55 @@ export default function BasicTableOne() {
                 <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
                   {order.budget}
                 </TableCell>
+                <TableCell>
+                  <div className="flex gap-2">
+                    <button
+                      // onClick={() => handleEdit(order)}
+                      className="text-blue-600 hover:underline"
+                    >
+                      ✏️
+                    </button>
+                    <button
+                      // onClick={() => handleDelete(order.id)}
+                      className="text-red-600 hover:underline"
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </div>
+      <div className="flex justify-center items-center gap-2 p-4">
+        <button
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage((prev) => prev - 1)}
+          className="px-3 py-1  rounded disabled:opacity-30 bg-blue-600 text-white"
+        >
+          Prev
+        </button>
+        {[...Array(totalPages)].map((_, index) => (
+          <button
+            key={index + 1}
+            onClick={() => setCurrentPage(index + 1)}
+            className={`px-3 py-1 bg-blue-600 text-white opacity-30 rounded ${
+              currentPage === index + 1 ? "bg-blue-600 text-white opacity-100" : ""
+            }`}
+          >
+            {index + 1}
+          </button>
+        ))}
+        <button
+          disabled={currentPage === totalPages}
+          onClick={() => setCurrentPage((prev) => prev + 1)}
+          className="px-3 py-1  rounded disabled:opacity-30 bg-blue-600 text-white"
+        >
+          Next
+        </button>
+      </div>
+
       <UserModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
