@@ -125,6 +125,20 @@ export default function BasicTableOne() {
         >
           + Add User
         </button>
+        <button
+          onClick={() => document.getElementById("csvInput")?.click()}
+          className="ml-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            Bulk Add
+        </button>
+
+        <input
+            type="file"
+            id="csvInput"
+            accept=".csv"
+            className="hidden"
+            // onChange={handleCSVUpload}
+        />
       </div>
       <div className="max-w-full overflow-x-auto">
         <Table>
