@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import {
   Table,
   TableBody,
@@ -7,6 +9,8 @@ import {
 } from "../../ui/table";
 
 import Badge from "../../ui/badge/Badge";
+
+import UserModal from "../../modals/Usermodal";
 
 interface Order {
   id: number;
@@ -110,8 +114,18 @@ const tableData: Order[] = [
 ];
 
 export default function BasicTableOne() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+      <div className="flex justify-end items-end m-4">
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        >
+          + Add User
+        </button>
+      </div>
       <div className="max-w-full overflow-x-auto">
         <Table>
           {/* Table Header */}
@@ -217,6 +231,14 @@ export default function BasicTableOne() {
           </TableBody>
         </Table>
       </div>
+      <UserModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={(data) => {
+          console.log("User Added:", data);
+          setIsModalOpen(false);
+        }}
+      />
     </div>
   );
 }
