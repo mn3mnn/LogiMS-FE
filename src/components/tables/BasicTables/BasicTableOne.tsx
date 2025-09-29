@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import {
   Table,
@@ -370,14 +370,90 @@ export default function BasicTableOne() {
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 10;
 
+  const [filterStatus, setFilterStatus] = useState("All");
+
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const statusFilteredData = tableData.filter((order) => {
+  if (filterStatus === "All") return true;
+  return order.status === filterStatus;
+});
+
+  const filteredData = statusFilteredData.filter((order) => {
+  const matchesId = order.id.toString().includes(searchTerm);
+  const matchesName = order.user.name
+    .toLowerCase()
+    .includes(searchTerm.toLowerCase());
+  return matchesId || matchesName;
+});
+
+  useEffect(() => {
+  setCurrentPage(1);
+}, [filterStatus]);
+
+    const inputRef = useRef<HTMLInputElement>(null);
+
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentUsers = tableData.slice(indexOfFirstUser, indexOfLastUser);
-  const totalPages = Math.ceil(tableData.length / usersPerPage);
+  const currentUsers = filteredData.slice(indexOfFirstUser, indexOfLastUser);
+  const totalPages = Math.ceil(filteredData.length / usersPerPage);
 
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
-      <div className="flex justify-end items-end m-4">
+      <div className="hidden lg:block my-2 mx-4">
+            <form>
+              <div className="relative">
+                <span className="absolute -translate-y-1/2 pointer-events-none left-4 top-1/2">
+                  <svg
+                    className="fill-gray-500 dark:fill-gray-400"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      clipRule="evenodd"
+                      d="M3.04175 9.37363C3.04175 5.87693 5.87711 3.04199 9.37508 3.04199C12.8731 3.04199 15.7084 5.87693 15.7084 9.37363C15.7084 12.8703 12.8731 15.7053 9.37508 15.7053C5.87711 15.7053 3.04175 12.8703 3.04175 9.37363ZM9.37508 1.54199C5.04902 1.54199 1.54175 5.04817 1.54175 9.37363C1.54175 13.6991 5.04902 17.2053 9.37508 17.2053C11.2674 17.2053 13.003 16.5344 14.357 15.4176L17.177 18.238C17.4699 18.5309 17.9448 18.5309 18.2377 18.238C18.5306 17.9451 18.5306 17.4703 18.2377 17.1774L15.418 14.3573C16.5365 13.0033 17.2084 11.2669 17.2084 9.37363C17.2084 5.04817 13.7011 1.54199 9.37508 1.54199Z"
+                      fill=""
+                    />
+                  </svg>
+                </span>
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  placeholder="Search by ID or Name..."
+                  className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-12 pr-14 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 xl:w-[430px]"
+                />
+              </div>
+            </form>
+          </div>
+      <div className="flex justify-between items-end m-4">
+        <div className="p-2">
+        <label className="mr-2 font-medium text-gray-600 dark:text-gray-300">
+          Filter by:
+        </label>
+        <select
+          value={filterStatus}
+          onChange={(e) => {
+            setFilterStatus(e.target.value);
+            setCurrentPage(1); // Reset to first page when filter changes
+          }}
+          className="border rounded-lg px-3 py-1 text-sm dark:bg-gray-800 dark:text-white"
+        >
+          <option value="All">All</option>
+          <option value="Active">Active</option>
+          <option value="Pending">Pending</option>
+          <option value="Cancel">Cancel</option>
+        </select>
+      </div>
+        <div>
         <button
           onClick={() => setIsModalOpen(true)}
           className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
@@ -398,6 +474,7 @@ export default function BasicTableOne() {
             className="hidden"
             // onChange={handleCSVUpload}
         />
+        </div>
       </div>
       <div className="max-w-full overflow-x-auto">
         <Table>
@@ -408,31 +485,49 @@ export default function BasicTableOne() {
                 isHeader
                 className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
               >
+                Id
+              </TableCell>
+              <TableCell
+                isHeader
+                className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+              >
                 User
               </TableCell>
               <TableCell
                 isHeader
                 className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
               >
-                Project Name
+                Phone
               </TableCell>
               <TableCell
                 isHeader
                 className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
               >
-                Team
+                Company
               </TableCell>
               <TableCell
                 isHeader
                 className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
               >
-                Status
+                NID
               </TableCell>
               <TableCell
                 isHeader
                 className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
               >
-                Budget
+                License
+              </TableCell>
+              <TableCell
+                isHeader
+                className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+              >
+                Vehicle License
+              </TableCell>
+              <TableCell
+                isHeader
+                className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+              >
+                Contract
               </TableCell>
               <TableCell
                 isHeader
@@ -443,10 +538,18 @@ export default function BasicTableOne() {
             </TableRow>
           </TableHeader>
 
-          {/* Table Body */}
           <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
             {currentUsers.map((order) => (
               <TableRow key={order.id}>
+                <TableCell className="px-1 py-4 sm:px-6 text-start">
+                  <div className="flex items-center gap-3">
+                    <div>
+                      <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
+                        {order.id}
+                      </span>
+                    </div>
+                  </div>
+                </TableCell>
                 <TableCell className="px-5 py-4 sm:px-6 text-start">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 overflow-hidden rounded-full">
@@ -466,6 +569,9 @@ export default function BasicTableOne() {
                       </span>
                     </div>
                   </div>
+                </TableCell>
+                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                  {order.projectName}
                 </TableCell>
                 <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                   {order.projectName}
@@ -505,6 +611,9 @@ export default function BasicTableOne() {
                 <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
                   {order.budget}
                 </TableCell>
+                <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                  {order.budget}
+                </TableCell>
                 <TableCell>
                   <div className="flex gap-2">
                     <button
@@ -526,33 +635,49 @@ export default function BasicTableOne() {
           </TableBody>
         </Table>
       </div>
-      <div className="flex justify-center items-center gap-2 p-4">
-        <button
-          disabled={currentPage === 1}
-          onClick={() => setCurrentPage((prev) => prev - 1)}
-          className="px-3 py-1  rounded disabled:opacity-30 bg-blue-600 text-white"
-        >
-          Prev
-        </button>
-        {[...Array(totalPages)].map((_, index) => (
-          <button
-            key={index + 1}
-            onClick={() => setCurrentPage(index + 1)}
-            className={`px-3 py-1 bg-blue-600 text-white opacity-30 rounded ${
-              currentPage === index + 1 ? "bg-blue-600 text-white opacity-100" : ""
-            }`}
-          >
-            {index + 1}
-          </button>
-        ))}
-        <button
-          disabled={currentPage === totalPages}
-          onClick={() => setCurrentPage((prev) => prev + 1)}
-          className="px-3 py-1  rounded disabled:opacity-30 bg-blue-600 text-white"
-        >
-          Next
-        </button>
-      </div>
+      <div className="flex items-center justify-between p-4">
+  <div className="flex items-center justify-center gap-1 flex-1">
+    <button
+      disabled={currentPage === 1}
+      onClick={() => setCurrentPage((prev) => prev - 1)}
+      className="px-3 py-1 rounded disabled:opacity-30 bg-blue-600 text-white"
+    >
+      Prev
+    </button>
+
+    {[...Array(totalPages)].map((_, index) => (
+      <button
+        key={index + 1}
+        onClick={() => setCurrentPage(index + 1)}
+        className={`px-3 py-1 rounded ${
+          currentPage === index + 1
+            ? "bg-blue-600 text-white"
+            : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+        }`}
+      >
+        {index + 1}
+      </button>
+    ))}
+
+    <button
+      disabled={currentPage === totalPages}
+      onClick={() => setCurrentPage((prev) => prev + 1)}
+      className="px-3 py-1 rounded disabled:opacity-30 bg-blue-600 text-white"
+    >
+      Next
+    </button>
+  </div>
+
+  <div className="flex justify-end">
+    <button
+      // onClick={() => setIsModalOpen(true)}
+      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+    >
+      Export
+    </button>
+  </div>
+</div>
+
 
       <UserModal
         isOpen={isModalOpen}
