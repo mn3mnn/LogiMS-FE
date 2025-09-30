@@ -14,17 +14,25 @@ export default function BasicTableOne() {
   const [currentPage, setCurrentPage] = useState(1);
   const [companyFilter, setCompanyFilter] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
+  const [refreshKey, setRefreshKey] = useState(0);
   
-  // Move useRef and all hooks to the top, before any conditional returns
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const { data, isLoading, error } = useDrivers(companyFilter);
+  // ⬇️⬇️⬇️ نمرر ال currentPage لل hook ⬇️⬇️⬇️
+  const { data, isLoading, error, isFetching } = useDrivers(companyFilter, currentPage, refreshKey);
+  
+  // البيانات بتكون جاية من ال API
   const drivers = data?.results || [];
+  const totalCount = data?.count || 0; // ⬅️ نستخدم count من ال API
+  
+  // ال pagination بيكون على اساس ال count من ال API
+  const usersPerPage = 10;
+  const totalPages = Math.ceil(totalCount / usersPerPage);
 
-  // Show loading/error states after all hooks are called
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Failed to load drivers</p>;
 
+  // البحث بيكون client-side علشان ال API مايدعمش search
   const filteredData = drivers.filter((driver: any) => {
     const matchesId = driver?.uuid?.toString().includes(searchTerm);
     const matchesName = driver?.first_name
@@ -33,11 +41,16 @@ export default function BasicTableOne() {
     return matchesId || matchesName;
   });
 
-  const usersPerPage = 10;
-  const indexOfLastUser = currentPage * usersPerPage;
-  const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentUsers = filteredData.slice(indexOfFirstUser, indexOfLastUser);
-  const totalPages = Math.ceil(filteredData.length / usersPerPage);
+  const handleUserAdded = () => {
+    setRefreshKey(prev => prev + 1); 
+    setCurrentPage(1); 
+  };
+
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
 
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
@@ -67,7 +80,7 @@ export default function BasicTableOne() {
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
-                setCurrentPage(1);
+                // البحث بيكون client-side فمش بنغير الصفحة
               }}
               placeholder="Search by ID or Name..."
               className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-12 pr-14 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 xl:w-[430px]"
@@ -85,7 +98,7 @@ export default function BasicTableOne() {
             value={companyFilter}
             onChange={(e) => {
               setCompanyFilter(e.target.value);
-              setCurrentPage(1);
+              setCurrentPage(1); // نرجع للصفحة الأولى لما نغير الفلتر
             }}
             className="border rounded-lg px-3 py-1 text-sm dark:bg-gray-800 dark:text-white"
           >
@@ -116,6 +129,12 @@ export default function BasicTableOne() {
           />
         </div>
       </div>
+
+      {isFetching && (
+        <div className="p-4 text-center text-blue-600">
+          Loading drivers...
+        </div>
+      )}
       
       <div className="max-w-full overflow-x-auto">
         <Table>
@@ -152,65 +171,72 @@ export default function BasicTableOne() {
           </TableHeader>
 
           <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-            {currentUsers.map((driver: any) => (
-              // Use a combination of driver.id and driver.uuid for unique key
-              <TableRow key={`${driver.id}-${driver.uuid}`}>
-                <TableCell className="px-1 py-4 sm:px-6 text-start">
-                  <div className="flex items-center gap-3">
-                    <div>
-                      <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
-                        {driver.id}
-                      </span>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell className="px-5 py-4 sm:px-6 text-start">
-                  <div className="flex items-center gap-3">
-                    <div>
-                      <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
-                        {driver.first_name} {driver.last_name}
-                      </span>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                  {driver.phone_number}
-                </TableCell>
-                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                  {driver.company_name}
-                </TableCell>
-                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                  <span>
-                    {driver.national_id_doc ? "Uploaded" : "Not Uploaded"}
-                  </span>
-                </TableCell>
-                <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                  {driver.license ? "Uploaded" : "Not Uploaded"}
-                </TableCell>
-                <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                  {driver.vehicle_license ? "Uploaded" : "Not Uploaded"}
-                </TableCell>
-                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                  {driver.contracts && driver.contracts.length > 0
-                    ? "Uploaded"
-                    : "Not Uploaded"}
-                </TableCell>
-                <TableCell>
-                  <div className="flex gap-2">
-                    <button
-                      className="text-blue-600 hover:underline"
-                    >
-                      ✏️
-                    </button>
-                    <button
-                      className="text-red-600 hover:underline"
-                    >
-                      🗑️
-                    </button>
-                  </div>
+            {filteredData.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={9} className="px-5 py-4 text-center text-gray-500">
+                  {drivers.length === 0 ? "No drivers found" : "No drivers match your search"}
                 </TableCell>
               </TableRow>
-            ))}
+            ) : (
+              filteredData.map((driver: any) => (
+                <TableRow key={`${driver.id}-${driver.uuid}`}>
+                  <TableCell className="px-1 py-4 sm:px-6 text-start">
+                    <div className="flex items-center gap-3">
+                      <div>
+                        <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
+                          {driver.id}
+                        </span>
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell className="px-5 py-4 sm:px-6 text-start">
+                    <div className="flex items-center gap-3">
+                      <div>
+                        <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
+                          {driver.first_name} {driver.last_name}
+                        </span>
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                    {driver.phone_number}
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                    {driver.company_name}
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                    <span>
+                      {driver.national_id_doc ? "Uploaded" : "Not Uploaded"}
+                    </span>
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                    {driver.license ? "Uploaded" : "Not Uploaded"}
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                    {driver.vehicle_license ? "Uploaded" : "Not Uploaded"}
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                    {driver.contracts && driver.contracts.length > 0
+                      ? "Uploaded"
+                      : "Not Uploaded"}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex gap-2">
+                      <button
+                        className="text-blue-600 hover:underline"
+                      >
+                        ✏️
+                      </button>
+                      <button
+                        className="text-red-600 hover:underline"
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </div>
@@ -219,16 +245,16 @@ export default function BasicTableOne() {
         <div className="flex items-center justify-center gap-1 flex-1">
           <button
             disabled={currentPage === 1}
-            onClick={() => setCurrentPage((prev) => prev - 1)}
+            onClick={() => handlePageChange(currentPage - 1)}
             className="px-3 py-1 rounded disabled:opacity-30 bg-blue-600 text-white"
           >
             Prev
           </button>
 
-          {[...Array(totalPages)].map((_, index) => (
+          {totalPages > 0 && [...Array(totalPages)].map((_, index) => (
             <button
               key={index + 1}
-              onClick={() => setCurrentPage(index + 1)}
+              onClick={() => handlePageChange(index + 1)}
               className={`px-3 py-1 rounded ${
                 currentPage === index + 1
                   ? "bg-blue-600 text-white"
@@ -240,13 +266,14 @@ export default function BasicTableOne() {
           ))}
 
           <button
-            disabled={currentPage === totalPages}
-            onClick={() => setCurrentPage((prev) => prev + 1)}
+            disabled={currentPage === totalPages || totalPages === 0}
+            onClick={() => handlePageChange(currentPage + 1)}
             className="px-3 py-1 rounded disabled:opacity-30 bg-blue-600 text-white"
           >
             Next
           </button>
         </div>
+
 
         <div className="flex justify-end">
           <button
@@ -264,6 +291,7 @@ export default function BasicTableOne() {
           console.log("User Added:", data);
           setIsModalOpen(false);
         }}
+        onUserAdded={handleUserAdded}
       />
     </div>
   );

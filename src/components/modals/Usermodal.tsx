@@ -1,96 +1,151 @@
-import React, { useState } from "react";
+import { useState } from 'react';
+import { useAddUser, UserData } from '../../hooks/useAddUser';
 
 interface UserModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: { name: string; role: string; projectName: string }) => void;
+  onSubmit: (data: any) => void;
+  onUserAdded?: () => void;
 }
 
-export default function UserModal({ isOpen, onClose, onSubmit }: UserModalProps) {
-  const [formData, setFormData] = useState({
-    name: "",
-    role: "",
-    projectName: "",
+export default function UserModal({ isOpen, onClose, onSubmit, onUserAdded }: UserModalProps) {
+  const [formData, setFormData] = useState<UserData>({
+    first_name: '',
+    last_name: '',
+    phone_number: '',
+    company_code: 'talabat', // default value
   });
 
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const { addUser, isLoading, error, resetError } = useAddUser();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    try {
+      const result = await addUser(formData);
+      onSubmit(result); // نمرر الـ response من الـ API
+      onUserAdded?.(); // علشان ت refresh ال table
+      
+      // Reset form
+      setFormData({
+        first_name: '',
+        last_name: '',
+        phone_number: '',
+        company_code: 'talabat',
+      });
+      
+      resetError(); // نمسح أي أخطاء
+    } catch (err) {
+      // الخطأ هيظهر من ال hook
+      console.error('Failed to add user:', err);
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleClose = () => {
+    resetError(); // نمسح الأخطاء لما ن close
+    setFormData({
+      first_name: '',
+      last_name: '',
+      phone_number: '',
+      company_code: 'talabat',
+    });
+    onClose();
+  };
 
   if (!isOpen) return null;
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: "" }); // clear error while typing
-  };
-
-  const handleSubmit = () => {
-    const newErrors: { [key: string]: string } = {};
-
-    if (!formData.name.trim()) newErrors.name = "Name is required";
-    if (!formData.role.trim()) newErrors.role = "Role is required";
-    if (!formData.projectName.trim()) newErrors.projectName = "Project Name is required";
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-
-    onSubmit(formData);
-    setFormData({ name: "", role: "", projectName: "" }); // reset form
-  };
-
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/50">
-      <div className="bg-white p-6 rounded-lg w-[400px]">
-        <h2 className="text-xl font-bold mb-4">Add User</h2>
-
-        {/* Name */}
-        <input
-          type="text"
-          name="name"
-          placeholder="Name"
-          value={formData.name}
-          onChange={handleChange}
-          className="w-full border p-2 mb-1 rounded"
-        />
-        {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
-
-        {/* Role */}
-        <input
-          type="text"
-          name="role"
-          placeholder="Role"
-          value={formData.role}
-          onChange={handleChange}
-          className="w-full border p-2 mb-1 rounded mt-2"
-        />
-        {errors.role && <p className="text-red-500 text-sm">{errors.role}</p>}
-
-        {/* Project */}
-        <input
-          type="text"
-          name="projectName"
-          placeholder="Project Name"
-          value={formData.projectName}
-          onChange={handleChange}
-          className="w-full border p-2 mb-1 rounded mt-2"
-        />
-        {errors.projectName && <p className="text-red-500 text-sm">{errors.projectName}</p>}
-
-        {/* Buttons */}
-        <div className="flex justify-end gap-3 mt-4">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSubmit}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          >
-            Save
-          </button>
-        </div>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md">
+        <h2 className="text-xl font-bold mb-4">Add New Driver</h2>
+        
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            {error}
+          </div>
+        )}
+        
+        <form onSubmit={handleSubmit}>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">First Name *</label>
+              <input
+                type="text"
+                name="first_name"
+                value={formData.first_name}
+                onChange={handleChange}
+                required
+                className="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600"
+                placeholder="Enter first name"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-1">Last Name *</label>
+              <input
+                type="text"
+                name="last_name"
+                value={formData.last_name}
+                onChange={handleChange}
+                required
+                className="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600"
+                placeholder="Enter last name"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-1">Phone Number *</label>
+              <input
+                type="tel"
+                name="phone_number"
+                value={formData.phone_number}
+                onChange={handleChange}
+                required
+                className="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600"
+                placeholder="e.g., 11234567890"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-1">Company *</label>
+              <select
+                name="company_code"
+                value={formData.company_code}
+                onChange={handleChange}
+                className="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600"
+              >
+                <option value="talabat">Talabat</option>
+                <option value="uber_eats">Uber Eats</option>
+              </select>
+            </div>
+          </div>
+          
+          <div className="flex justify-end gap-3 mt-6">
+            <button
+              type="button"
+              onClick={handleClose}
+              disabled={isLoading}
+              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-700 disabled:opacity-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+            >
+              {isLoading ? 'Adding Driver...' : 'Add Driver'}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
