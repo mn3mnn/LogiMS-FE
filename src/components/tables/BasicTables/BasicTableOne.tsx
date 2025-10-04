@@ -8,6 +8,11 @@ import {
 } from "../../ui/table";
 import UserModal from "../../modals/Usermodal";
 import { useDrivers } from "../../../hooks/useDrivers";
+import { useDeleteDriver } from '../../../hooks/useDeleteDriver';
+import DeleteConfirmationModal from '../../modals/DeleteConfirmationModal';
+import EditDriverModal from '../../modals/EditDriverModal';
+
+
 
 export default function BasicTableOne() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,21 +23,27 @@ export default function BasicTableOne() {
   
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // ⬇️⬇️⬇️ نمرر ال currentPage لل hook ⬇️⬇️⬇️
   const { data, isLoading, error, isFetching } = useDrivers(companyFilter, currentPage, refreshKey);
   
-  // البيانات بتكون جاية من ال API
   const drivers = data?.results || [];
-  const totalCount = data?.count || 0; // ⬅️ نستخدم count من ال API
+  const totalCount = data?.count || 0; 
   
-  // ال pagination بيكون على اساس ال count من ال API
   const usersPerPage = 10;
   const totalPages = Math.ceil(totalCount / usersPerPage);
+
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedDriver, setSelectedDriver] = useState<{ id: number; name: string } | null>(null);
+  
+  const { deleteDriver, isLoading: isDeleting, error: deleteError } = useDeleteDriver();
+
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedDriverId, setSelectedDriverId] = useState<number | null>(null);
+
+
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Failed to load drivers</p>;
 
-  // البحث بيكون client-side علشان ال API مايدعمش search
   const filteredData = drivers.filter((driver: any) => {
     const matchesId = driver?.uuid?.toString().includes(searchTerm);
     const matchesName = driver?.first_name
@@ -50,6 +61,48 @@ export default function BasicTableOne() {
     if (newPage >= 1 && newPage <= totalPages) {
       setCurrentPage(newPage);
     }
+  };
+
+  const handleDeleteClick = (driverId: number, driverName: string) => {
+    setSelectedDriver({ id: driverId, name: driverName });
+    setDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!selectedDriver) return;
+    
+    try {
+      await deleteDriver(selectedDriver.id);
+      setRefreshKey(prev => prev + 1);
+      setDeleteModalOpen(false);
+      setSelectedDriver(null);
+    } catch (err) {
+      console.error('Failed to delete driver:', err);
+    }
+  };
+
+  const handleCloseModal = () => {
+    if (!isDeleting) { // Only allow closing if not loading
+      setDeleteModalOpen(false);
+      setSelectedDriver(null);
+    }
+  };
+
+   const handleEditClick = (driverId: number) => {
+    setSelectedDriverId(driverId);
+    setEditModalOpen(true);
+  };
+
+  // Handle successful edit
+  const handleEditSuccess = () => {
+    // Refresh the table data
+    setRefreshKey(prev => prev + 1);
+  };
+
+  // Close edit modal
+  const handleCloseEditModal = () => {
+    setEditModalOpen(false);
+    setSelectedDriverId(null);
   };
 
   return (
@@ -80,7 +133,6 @@ export default function BasicTableOne() {
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
-                // البحث بيكون client-side فمش بنغير الصفحة
               }}
               placeholder="Search by ID or Name..."
               className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-12 pr-14 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 xl:w-[430px]"
@@ -98,7 +150,7 @@ export default function BasicTableOne() {
             value={companyFilter}
             onChange={(e) => {
               setCompanyFilter(e.target.value);
-              setCurrentPage(1); // نرجع للصفحة الأولى لما نغير الفلتر
+              setCurrentPage(1); 
             }}
             className="border rounded-lg px-3 py-1 text-sm dark:bg-gray-800 dark:text-white"
           >
@@ -223,11 +275,15 @@ export default function BasicTableOne() {
                   <TableCell>
                     <div className="flex gap-2">
                       <button
+                          onClick={() => handleEditClick(driver.id)}
+
                         className="text-blue-600 hover:underline"
                       >
                         ✏️
                       </button>
                       <button
+                          onClick={() => handleDeleteClick(driver.id, `${driver.first_name} ${driver.last_name}`)}
+                          disabled={isDeleting}
                         className="text-red-600 hover:underline"
                       >
                         🗑️
@@ -292,6 +348,32 @@ export default function BasicTableOne() {
           setIsModalOpen(false);
         }}
         onUserAdded={handleUserAdded}
+      />
+
+       <DeleteConfirmationModal
+        isOpen={deleteModalOpen}
+        onClose={handleCloseModal}
+        onConfirm={handleConfirmDelete}
+        driverName={selectedDriver?.name || ''}
+        isLoading={isDeleting}
+      />
+      {deleteError && (
+        <div className="fixed top-4 right-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded shadow-lg z-50">
+          <strong>Error: </strong> {deleteError}
+          <button 
+            onClick={() => {/* reset error */}}
+            className="float-right font-bold ml-4"
+          >
+            ×
+          </button>
+        </div>
+      )}
+
+       <EditDriverModal
+        isOpen={editModalOpen}
+        onClose={handleCloseEditModal}
+        onSuccess={handleEditSuccess}
+        driverId={selectedDriverId}
       />
     </div>
   );
