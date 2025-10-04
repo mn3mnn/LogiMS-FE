@@ -18,6 +18,7 @@ import Blank from "./pages/Blank";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
+import DriverProfile from "./pages/DriverProfile";
 
 export default function App() {
   return (
@@ -39,6 +40,9 @@ export default function App() {
 
             {/* Tables */}
             <Route path="/basic-tables" element={<BasicTables />} />
+            
+            {/* Driver Profile - Add this new route */}
+            <Route path="/drivers/:id" element={<DriverProfile />} />
 
             {/* Ui Elements */}
             <Route path="/alerts" element={<Alerts />} />

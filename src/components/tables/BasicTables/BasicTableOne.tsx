@@ -11,6 +11,7 @@ import { useDrivers } from "../../../hooks/useDrivers";
 import { useDeleteDriver } from '../../../hooks/useDeleteDriver';
 import DeleteConfirmationModal from '../../modals/DeleteConfirmationModal';
 import EditDriverModal from '../../modals/EditDriverModal';
+import { Link } from "react-router";
 
 
 
@@ -242,14 +243,17 @@ export default function BasicTableOne() {
                     </div>
                   </TableCell>
                   <TableCell className="px-5 py-4 sm:px-6 text-start">
-                    <div className="flex items-center gap-3">
-                      <div>
-                        <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
-                          {driver.first_name} {driver.last_name}
-                        </span>
-                      </div>
-                    </div>
-                  </TableCell>
+  <div className="flex items-center gap-3">
+    <div>
+      <Link 
+        to={`/drivers/${driver.id}`}
+        className="block font-medium text-gray-800 text-theme-sm dark:text-white/90 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"
+      >
+        {driver.first_name} {driver.last_name}
+      </Link>
+    </div>
+  </div>
+</TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                     {driver.phone_number}
                   </TableCell>
