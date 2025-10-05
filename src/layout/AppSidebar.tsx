@@ -26,12 +26,11 @@ const navItems: NavItem[] = [
   {
     name: "Drivers",
     icon: <ListIcon />,
-    subItems: [{ name: "Form", path: "/form-elements", pro: false }],
-  },
-  {
-    name: "Drivers",
-    icon: <TableIcon />,
-    subItems: [{ name: "Basic Tables", path: "/basic-tables", pro: false }],
+    subItems: [
+      { name: "Form", path: "/form-elements", pro: false },
+      { name: "Basic Tables", path: "/basic-tables", pro: false },
+      { name: "Expired Data", path: "/expired-driver-data", pro: false },
+    ],
   },
 ];
 
