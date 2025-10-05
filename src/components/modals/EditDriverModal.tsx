@@ -56,6 +56,7 @@ export default function EditDriverModal({
   const [formData, setFormData] = useState<EditDriverData>({
     first_name: '',
     last_name: '',
+    nid: '', // Add NID field here
     uuid: '',
     phone_number: '',
     company_code: 'talabat',
@@ -84,6 +85,7 @@ export default function EditDriverModal({
       setFormData({
         first_name: driver.first_name || '',
         last_name: driver.last_name || '',
+        nid: driver.nid || '', // Add NID from API response
         uuid: driver.uuid || '',
         phone_number: driver.phone_number || '',
         company_code: driver.company_code || 'talabat',
@@ -150,6 +152,7 @@ export default function EditDriverModal({
       // Add basic fields
       submitData.append('first_name', formData.first_name);
       submitData.append('last_name', formData.last_name);
+      submitData.append('nid', formData.nid || ''); // Add NID to the request
       submitData.append('phone_number', formData.phone_number);
       submitData.append('company_code', formData.company_code);
       submitData.append('is_active', formData.is_active.toString());
@@ -297,7 +300,7 @@ export default function EditDriverModal({
 
   return (
     <div 
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[100000] p-4"
       onClick={handleClose}
     >
       <div 
@@ -346,6 +349,20 @@ export default function EditDriverModal({
                     value={formData.last_name}
                     onChange={handleChange}
                     required
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                    National ID (NID)
+                  </label>
+                  <input
+                    type="text"
+                    name="nid"
+                    value={formData.nid}
+                    onChange={handleChange}
+                    placeholder="Enter national ID number"
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
                 </div>

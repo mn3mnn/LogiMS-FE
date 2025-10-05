@@ -3,14 +3,45 @@ import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
+import { useDriverProfile } from "../../hooks/useDriverProfile";
 
-export default function UserMetaCard() {
+interface UserMetaCardProps {
+  driverId?: number;
+}
+
+export default function UserMetaCard({ driverId = 1117 }: UserMetaCardProps) {
   const { isOpen, openModal, closeModal } = useModal();
+  const { data: driverData, isLoading, error } = useDriverProfile(driverId);
+  
   const handleSave = () => {
     // Handle save logic here
     console.log("Saving changes...");
     closeModal();
   };
+
+  if (isLoading) {
+    return (
+      <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
+        <div className="flex items-center justify-center py-8">
+          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+          <span className="ml-3 text-gray-600 dark:text-gray-400">Loading driver data...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !driverData) {
+    return (
+      <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
+        <div className="text-center py-8">
+          <p className="text-red-600 dark:text-red-400">Failed to load driver data</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Type assertion to ensure driverData has the correct type
+  const driver = driverData as any;
   return (
     <>
       <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
@@ -21,16 +52,24 @@ export default function UserMetaCard() {
             </div>
             <div className="order-3 xl:order-2">
               <h4 className="mb-2 text-lg font-semibold text-center text-gray-800 dark:text-white/90 xl:text-left">
-                Musharof Chowdhury
+                {driver.first_name} {driver.last_name}
               </h4>
               <div className="flex flex-col items-center gap-1 text-center xl:flex-row xl:gap-3 xl:text-left">
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Team Manager
+                  {driver.company_name} Driver
                 </p>
                 <div className="hidden h-3.5 w-px bg-gray-300 dark:bg-gray-700 xl:block"></div>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Arizona, United States
+                  {driver.phone_number}
                 </p>
+                <div className="hidden h-3.5 w-px bg-gray-300 dark:bg-gray-700 xl:block"></div>
+                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                  driver.is_active 
+                    ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
+                    : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                }`}>
+                  {driver.is_active ? 'Active' : 'Inactive'}
+                </span>
               </div>
             </div>
             <div className="flex items-center order-2 gap-2 grow xl:order-3 xl:justify-end">

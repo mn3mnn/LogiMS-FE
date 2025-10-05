@@ -344,7 +344,7 @@ export default function BasicTableOne() {
         </div>
       </div>
 
-      <UserModal
+      <EditDriverModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubmit={(data) => {

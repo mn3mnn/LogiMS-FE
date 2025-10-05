@@ -61,6 +61,7 @@ export interface DriverData {
   id: number;
   first_name: string;
   last_name: string;
+  nid: string | null; // Add NID field here
   uuid: string;
   phone_number: string;
   is_active: boolean;
@@ -74,6 +75,7 @@ export interface DriverData {
 export interface EditDriverData {
   first_name: string;
   last_name: string;
+  nid: string; // Add NID field here
   uuid: string;
   phone_number: string;
   is_active: boolean;
