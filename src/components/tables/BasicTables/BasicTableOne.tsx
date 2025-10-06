@@ -6,7 +6,6 @@ import {
   TableHeader,
   TableRow,
 } from "../../ui/table";
-import UserModal from "../../modals/Usermodal";
 import { useDrivers } from "../../../hooks/useDrivers";
 import { useDeleteDriver } from '../../../hooks/useDeleteDriver';
 import DeleteConfirmationModal from '../../modals/DeleteConfirmationModal';
@@ -83,7 +82,7 @@ export default function BasicTableOne() {
   };
 
   const handleCloseModal = () => {
-    if (!isDeleting) { // Only allow closing if not loading
+    if (!isDeleting) { 
       setDeleteModalOpen(false);
       setSelectedDriver(null);
     }
@@ -94,13 +93,10 @@ export default function BasicTableOne() {
     setEditModalOpen(true);
   };
 
-  // Handle successful edit
   const handleEditSuccess = () => {
-    // Refresh the table data
     setRefreshKey(prev => prev + 1);
   };
 
-  // Close edit modal
   const handleCloseEditModal = () => {
     setEditModalOpen(false);
     setSelectedDriverId(null);
@@ -140,9 +136,49 @@ export default function BasicTableOne() {
             />
           </div>
         </form>
+
+        <div className="flex justify-end mr-4">
+          <span className="text-gray-700 text-sm">
+            Total Drivers: {totalCount}
+          </span>
+        </div>
       </div>
       
       <div className="flex justify-between items-end m-4">
+        <div className="p-2">
+          <label className="mr-2 font-medium text-gray-600 dark:text-gray-300">
+            Filter by:
+          </label>
+          <select
+            value={companyFilter}
+            onChange={(e) => {
+              setCompanyFilter(e.target.value);
+              setCurrentPage(1); 
+            }}
+            className="border rounded-lg px-3 py-1 text-sm dark:bg-gray-800 dark:text-white"
+          >
+            <option value="All">All</option>
+            <option value="uber_eats">Uber Eats</option>
+            <option value="talabat">Talabat</option>
+          </select>
+        </div>
+        <div className="p-2">
+          <label className="mr-2 font-medium text-gray-600 dark:text-gray-300">
+            Filter by:
+          </label>
+          <select
+            value={companyFilter}
+            onChange={(e) => {
+              setCompanyFilter(e.target.value);
+              setCurrentPage(1); 
+            }}
+            className="border rounded-lg px-3 py-1 text-sm dark:bg-gray-800 dark:text-white"
+          >
+            <option value="All">All</option>
+            <option value="uber_eats">Uber Eats</option>
+            <option value="talabat">Talabat</option>
+          </select>
+        </div>
         <div className="p-2">
           <label className="mr-2 font-medium text-gray-600 dark:text-gray-300">
             Filter by:
@@ -243,17 +279,17 @@ export default function BasicTableOne() {
                     </div>
                   </TableCell>
                   <TableCell className="px-5 py-4 sm:px-6 text-start">
-  <div className="flex items-center gap-3">
-    <div>
-      <Link 
-        to={`/drivers/${driver.id}`}
-        className="block font-medium text-gray-800 text-theme-sm dark:text-white/90 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"
-      >
-        {driver.first_name} {driver.last_name}
-      </Link>
-    </div>
-  </div>
-</TableCell>
+                    <div className="flex items-center gap-3">
+                      <div>
+                        <Link 
+                          to={`/drivers/${driver.id}`}
+                          className="block font-medium text-gray-800 text-theme-sm dark:text-white/90 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"
+                        >
+                          {driver.first_name} {driver.last_name}
+                        </Link>
+                      </div>
+                    </div>
+                  </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                     {driver.phone_number}
                   </TableCell>

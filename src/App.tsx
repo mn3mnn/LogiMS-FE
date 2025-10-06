@@ -44,7 +44,7 @@ export default function App() {
             <Route path="/expired-driver-data" element={<ExpiredDriverData />} />
             
             {/* Driver Profile - Add this new route */}
-            <Route path="/drivers/:id" element={<UserProfiles />} />
+            <Route path="/drivers/:id" element={<UserProfiles/>} />
 
             {/* Ui Elements */}
             <Route path="/alerts" element={<Alerts />} />

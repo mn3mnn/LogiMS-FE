@@ -1,14 +1,25 @@
 import PageBreadcrumb from "../components/common/PageBreadCrumb";
 import UserMetaCard from "../components/UserProfile/UserMetaCard";
 import UserInfoCard from "../components/UserProfile/UserInfoCard";
-import UserAddressCard from "../components/UserProfile/UserAddressCard";
 import DriverFilesCard from "../components/UserProfile/DriverFilesCard";
 import PageMeta from "../components/common/PageMeta";
 import { useDriverProfile } from "../hooks/useDriverProfile";
+import { useParams } from "react-router"; // Add this import
 
-export default function UserProfiles() {
-  const driverId = 1117; // You can make this dynamic or get from URL params
-  const { data: driverData } = useDriverProfile(driverId);
+export default function UserProfiles() { // Remove the id parameter
+  const { id } = useParams<{ id: string }>(); // Get id from URL params
+  
+  // Use the id from URL params, fallback to a default if needed
+  const driverId = id ? parseInt(id) : 0; // You can set a default or handle the null case
+  
+  const { data: driverData, isLoading, error } = useDriverProfile(driverId);
+
+  const driver = driverData as any;
+
+  // Handle loading and error states
+  if (isLoading) return <div>Loading driver profile...</div>;
+  if (error) return <div>Error loading driver profile</div>;
+  if (!driverData) return <div>Driver not found</div>;
 
   return (
     <>
@@ -23,10 +34,14 @@ export default function UserProfiles() {
         </h3>
         <div className="space-y-6">
           <UserMetaCard driverId={driverId} />
-          <UserInfoCard />
+          <UserInfoCard 
+            name={driver?.first_name} 
+            lastName={driver?.last_name} 
+            email={driver?.email} 
+            phone={driver?.phone_number} 
+            nid={driver?.nid} 
+          />
           {driverData && <DriverFilesCard driverData={driverData as any} />}
-          
-          {/* <UserAddressCard /> */}
         </div>
       </div>
     </>
