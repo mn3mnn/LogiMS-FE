@@ -5,7 +5,7 @@ import { useAddDriver, DriverData, LicenseData, NationalIdData, VehicleLicenseDa
 interface AddDriverModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess?: () => void;
 }
 
 // Helper functions to create empty documents
@@ -75,11 +75,26 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
   // Handle success
   useEffect(() => {
     if (isSuccess) {
-      onSuccess();
-      onClose();
-      resetForm();
+      console.log("✅ Driver added successfully, closing modal...");
+      
+      // Use setTimeout to avoid any timing issues with React's lifecycle
+      const timer = setTimeout(() => {
+        // Safe calls with optional chaining
+        onSuccess?.();
+        onClose();
+        resetForm();
+      }, 100);
+      
+      return () => clearTimeout(timer);
     }
   }, [isSuccess, onSuccess, onClose]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      reset();
+    };
+  }, []);
 
   const resetForm = () => {
     setDriverData({
@@ -100,19 +115,27 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Validate required fields
-    if (!driverData.first_name.trim() || !driverData.last_name.trim() || !driverData.phone_number.trim()) {
-      setValidationError('First name, last name, and phone number are required');
+  
+    // Clear old validation errors
+    setValidationError("");
+  
+    // ✅ Validate required fields
+    if (
+      !driverData.first_name.trim() ||
+      !driverData.last_name.trim() ||
+      !driverData.phone_number.trim()
+    ) {
+      setValidationError("First name, last name, and phone number are required");
       return;
     }
-
+  
     if (!licenseData.license_number || !licenseData.license_type) {
-      setValidationError('License number and type are required');
+      setValidationError("License number and type are required");
       return;
     }
-
+  
     try {
+      // ✅ Trigger the API call safely
       await addDriver({
         driverData,
         licenseData,
@@ -120,10 +143,13 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
         vehicleLicenseData,
         contractsData,
       });
+  
     } catch (err) {
-      console.error('Failed to add driver:', err);
+      console.error("❌ Failed to add driver:", err);
+      setValidationError("Failed to add driver. Please try again.");
     }
   };
+  
 
   // Handler for driver data changes
   const handleDriverChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
