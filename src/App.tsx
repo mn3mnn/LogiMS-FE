@@ -1,4 +1,8 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext"; // ✅ import
+import ProtectedRoute from "./components/ProtectedRoute"; // ✅ import
+
+// your existing imports here...
 import SignIn from "./pages/AuthPages/SignIn";
 import SignUp from "./pages/AuthPages/SignUp";
 import NotFound from "./pages/OtherPage/NotFound";
@@ -23,12 +27,18 @@ import ExpiredDriverData from "./pages/ExpiredDriverData";
 
 export default function App() {
   return (
-    <>
+    <AuthProvider>
       <Router>
         <ScrollToTop />
         <Routes>
-          {/* Dashboard Layout */}
-          <Route element={<AppLayout />}>
+          {/* Protected Dashboard Layout */}
+          <Route
+            element={
+              <ProtectedRoute>
+                <AppLayout />
+              </ProtectedRoute>
+            }
+          >
             <Route index path="/" element={<Home />} />
 
             {/* Others Page */}
@@ -42,9 +52,9 @@ export default function App() {
             {/* Tables */}
             <Route path="/basic-tables" element={<BasicTables />} />
             <Route path="/expired-driver-data" element={<ExpiredDriverData />} />
-            
-            {/* Driver Profile - Add this new route */}
-            <Route path="/drivers/:id" element={<UserProfiles/>} />
+
+            {/* Driver Profile */}
+            <Route path="/drivers/:id" element={<UserProfiles />} />
 
             {/* Ui Elements */}
             <Route path="/alerts" element={<Alerts />} />
@@ -59,7 +69,7 @@ export default function App() {
             <Route path="/bar-chart" element={<BarChart />} />
           </Route>
 
-          {/* Auth Layout */}
+          {/* Public Auth Routes */}
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
 
@@ -67,6 +77,6 @@ export default function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
-    </>
+    </AuthProvider>
   );
 }
