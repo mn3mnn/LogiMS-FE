@@ -1,3 +1,4 @@
+// components/BasicTableOne.tsx
 import { useRef, useState } from "react";
 import {
   Table,
@@ -8,12 +9,10 @@ import {
 } from "../../ui/table";
 import { useDrivers } from "../../../hooks/useDrivers";
 import { useDeleteDriver } from '../../../hooks/useDeleteDriver';
+import { useExportDrivers } from '../../../hooks/useExportDrivers';
 import DeleteConfirmationModal from '../../modals/DeleteConfirmationModal';
 import EditDriverModal from '../../modals/AddDriverModal';
 import { Link } from "react-router";
-
-
-
 
 export default function BasicTableOne() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -21,10 +20,12 @@ export default function BasicTableOne() {
   const [companyFilter, setCompanyFilter] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
+  const [docStatusFilter, setDocStatusFilter] = useState("all");
   
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { data, isLoading, error, isFetching } = useDrivers(companyFilter, currentPage, refreshKey);
+  const { exportDrivers } = useExportDrivers();
   
   const drivers = data?.results || [];
   const totalCount = data?.count || 0; 
@@ -40,7 +41,7 @@ export default function BasicTableOne() {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedDriverId, setSelectedDriverId] = useState<number | null>(null);
 
-
+  const [isExporting, setIsExporting] = useState(false);
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Failed to load drivers</p>;
@@ -52,6 +53,35 @@ export default function BasicTableOne() {
       .includes(searchTerm.toLowerCase());
     return matchesId || matchesName;
   });
+
+  const handleExport = async () => {
+    setIsExporting(true);
+    try {
+      const exportParams: any = {};
+      
+      if (companyFilter !== "All") {
+        exportParams.company_code = companyFilter;
+      }
+      
+      if (docStatusFilter !== "all") {
+        exportParams.doc_status = docStatusFilter;
+      }
+      
+      if (searchTerm) {
+        exportParams.search = searchTerm;
+      }
+
+      await exportDrivers(exportParams);
+      
+      console.log('Export completed successfully!');
+      
+    } catch (error) {
+      console.error('Export failed:', error);
+      alert('Export failed. Please try again.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   const handleUserAdded = () => {
     setRefreshKey(prev => prev + 1); 
@@ -89,7 +119,7 @@ export default function BasicTableOne() {
     }
   };
 
-   const handleEditClick = (driverId: number) => {
+  const handleEditClick = (driverId: number) => {
     setSelectedDriverId(driverId);
     setEditModalOpen(true);
   };
@@ -148,7 +178,7 @@ export default function BasicTableOne() {
       <div className="flex justify-between items-end m-4">
         <div className="p-2">
           <label className="mr-2 font-medium text-gray-600 dark:text-gray-300">
-            Filter by:
+            Company:
           </label>
           <select
             value={companyFilter}
@@ -163,40 +193,25 @@ export default function BasicTableOne() {
             <option value="talabat">Talabat</option>
           </select>
         </div>
+
         <div className="p-2">
           <label className="mr-2 font-medium text-gray-600 dark:text-gray-300">
-            Filter by:
+            Document Status:
           </label>
           <select
-            value={companyFilter}
+            value={docStatusFilter}
             onChange={(e) => {
-              setCompanyFilter(e.target.value);
+              setDocStatusFilter(e.target.value);
               setCurrentPage(1); 
             }}
             className="border rounded-lg px-3 py-1 text-sm dark:bg-gray-800 dark:text-white"
           >
-            <option value="All">All</option>
-            <option value="uber_eats">Uber Eats</option>
-            <option value="talabat">Talabat</option>
+            <option value="all">All Documents</option>
+            <option value="expired_docs">Expired Documents</option>
+            <option value="missing_docs">Missing Documents</option>
           </select>
         </div>
-        <div className="p-2">
-          <label className="mr-2 font-medium text-gray-600 dark:text-gray-300">
-            Filter by:
-          </label>
-          <select
-            value={companyFilter}
-            onChange={(e) => {
-              setCompanyFilter(e.target.value);
-              setCurrentPage(1); 
-            }}
-            className="border rounded-lg px-3 py-1 text-sm dark:bg-gray-800 dark:text-white"
-          >
-            <option value="All">All</option>
-            <option value="uber_eats">Uber Eats</option>
-            <option value="talabat">Talabat</option>
-          </select>
-        </div>
+
         <div>
           <button
             onClick={() => setIsModalOpen(true)}
@@ -215,7 +230,6 @@ export default function BasicTableOne() {
             id="csvInput"
             accept=".csv"
             className="hidden"
-            // onChange={handleCSVUpload}
           />
         </div>
       </div>
@@ -317,7 +331,6 @@ export default function BasicTableOne() {
                     <div className="flex gap-2">
                       <button
                           onClick={() => handleEditClick(driver.id)}
-
                         className="text-blue-600 hover:underline"
                       >
                         ✏️
@@ -371,12 +384,20 @@ export default function BasicTableOne() {
           </button>
         </div>
 
-
         <div className="flex justify-end">
           <button
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            onClick={handleExport}
+            disabled={isExporting}
+            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           >
-            Export
+            {isExporting ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                Exporting...
+              </>
+            ) : (
+              'Export'
+            )}
           </button>
         </div>
       </div>
