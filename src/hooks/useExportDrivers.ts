@@ -1,8 +1,8 @@
 // hooks/useExportDrivers.ts
 import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
 
 const API_BASE_URL = 'http://localhost:8000/api/v1';
-const AUTH_TOKEN = 'f1a83e3f53f4aa7afcecc8398e5d328512c4d387';
 
 export interface ExportParams {
   company_code?: string;
@@ -11,19 +11,25 @@ export interface ExportParams {
 }
 
 export const useExportDrivers = () => {
+  const { token } = useAuth();
+
   const exportDrivers = async (params: ExportParams = {}) => {
+    if (!token) {
+      throw new Error('No authentication token available');
+    }
+
     try {
       const response = await axios.get(`${API_BASE_URL}/drivers/export/`, {
         params: params,
         headers: {
-          'Authorization': `Token ${AUTH_TOKEN}`,
+          'Authorization': `Token ${token}`,
         },
         responseType: 'blob', // Important for file downloads
       });
 
       // Create a blob from the response
       const blob = new Blob([response.data], { 
-        type: response.headers['content-type'] || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        type: response.headers['content-type'] || 'text/csv'
       });
 
       // Create download link
@@ -33,7 +39,7 @@ export const useExportDrivers = () => {
       
       // Get filename from response headers or use default
       const contentDisposition = response.headers['content-disposition'];
-      let filename = 'drivers_export.xlsx';
+      let filename = 'drivers_export.csv';
       
       if (contentDisposition) {
         const filenameMatch = contentDisposition.match(/filename="?(.+)"?/);

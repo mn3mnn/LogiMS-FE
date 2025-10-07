@@ -1,18 +1,24 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
 
 export const useDeleteDriver = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { token } = useAuth();
 
   const deleteDriver = async (driverId: number) => {
+    if (!token) {
+      throw new Error('No authentication token available');
+    }
+
     setIsLoading(true);
     setError(null);
     
     try {
       await axios.delete(`http://localhost:8000/api/v1/drivers/${driverId}/`, {
         headers: {
-          Authorization: "Token f1a83e3f53f4aa7afcecc8398e5d328512c4d387",
+          Authorization: `Token ${token}`,
           accept: 'application/json'
         },
       });

@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import { useAuth } from "../context/AuthContext";
 
 interface Contract {
   id: number;
@@ -29,10 +30,10 @@ interface UploadContractData {
   file: File;
 }
 
-const fetchContracts = async (page: number = 1) => {
+const fetchContracts = async (page: number = 1, token: string) => {
   const { data } = await axios.get<ContractsResponse>("http://localhost:8000/api/v1/contracts/", {
     headers: {
-      Authorization: "Token f1a83e3f53f4aa7afcecc8398e5d328512c4d387",
+      Authorization: `Token ${token}`,
       accept: 'application/json'
     },
     params: {
@@ -43,7 +44,7 @@ const fetchContracts = async (page: number = 1) => {
   return data;
 };
 
-const uploadContract = async (contractData: UploadContractData) => {
+const uploadContract = async (contractData: UploadContractData, token: string) => {
   const formData = new FormData();
   formData.append("driver_id", contractData.driver_id);
   formData.append("contract_number", contractData.contract_number);
@@ -54,7 +55,7 @@ const uploadContract = async (contractData: UploadContractData) => {
 
   const { data } = await axios.post("http://localhost:8000/api/v1/contracts/", formData, {
     headers: {
-      Authorization: "Token f1a83e3f53f4aa7afcecc8398e5d328512c4d387",
+      Authorization: `Token ${token}`,
       accept: 'application/json'
     },
   });
@@ -63,9 +64,17 @@ const uploadContract = async (contractData: UploadContractData) => {
 };
 
 export const useContracts = (page: number = 1, refreshKey?: number) => {
+  const { token } = useAuth();
+
   return useQuery({
     queryKey: ["contracts", page, refreshKey],
-    queryFn: () => fetchContracts(page),
+    queryFn: () => {
+      if (!token) {
+        throw new Error('No authentication token available');
+      }
+      return fetchContracts(page, token);
+    },
+    enabled: !!token,
     keepPreviousData: true,
     refetchOnWindowFocus: false,
     staleTime: 5 * 60 * 1000,
@@ -74,9 +83,15 @@ export const useContracts = (page: number = 1, refreshKey?: number) => {
 
 export const useUploadContract = () => {
   const queryClient = useQueryClient();
+  const { token } = useAuth();
   
   return useMutation({
-    mutationFn: uploadContract,
+    mutationFn: (contractData: UploadContractData) => {
+      if (!token) {
+        throw new Error('No authentication token available');
+      }
+      return uploadContract(contractData, token);
+    },
     onSuccess: () => {
       // Invalidate and refetch contracts data
       queryClient.invalidateQueries({ queryKey: ["contracts"] });

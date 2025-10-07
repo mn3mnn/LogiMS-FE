@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { useAuth } from "../context/AuthContext";
 
 interface Contract {
   id: number;
@@ -62,10 +63,10 @@ interface DriverProfile {
   updated_at: string;
 }
 
-const fetchDriverProfile = async (driverId: number) => {
+const fetchDriverProfile = async (driverId: number, token: string) => {
   const { data } = await axios.get<DriverProfile>(`http://localhost:8000/api/v1/drivers/${driverId}/`, {
     headers: {
-      Authorization: "Token f1a83e3f53f4aa7afcecc8398e5d328512c4d387",
+      Authorization: `Token ${token}`,
       accept: 'application/json'
     },
   });
@@ -74,10 +75,17 @@ const fetchDriverProfile = async (driverId: number) => {
 };
 
 export const useDriverProfile = (driverId: number) => {
+  const { token } = useAuth();
+
   return useQuery<DriverProfile>({
     queryKey: ["driverProfile", driverId],
-    queryFn: () => fetchDriverProfile(driverId),
-    enabled: !!driverId,
+    queryFn: () => {
+      if (!token) {
+        throw new Error('No authentication token available');
+      }
+      return fetchDriverProfile(driverId, token);
+    },
+    enabled: !!driverId && !!token,
     keepPreviousData: true,
     refetchOnWindowFocus: false,
     staleTime: 5 * 60 * 1000,

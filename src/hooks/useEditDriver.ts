@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
 
 export interface DocumentBase {
   file?: string;
@@ -61,7 +62,7 @@ export interface DriverData {
   id: number;
   first_name: string;
   last_name: string;
-  nid: string | null; // Add NID field here
+  nid: string | null;
   uuid: string;
   phone_number: string;
   is_active: boolean;
@@ -75,7 +76,7 @@ export interface DriverData {
 export interface EditDriverData {
   first_name: string;
   last_name: string;
-  nid: string; // Add NID field here
+  nid: string;
   uuid: string;
   phone_number: string;
   is_active: boolean;
@@ -89,16 +90,21 @@ export interface EditDriverData {
 export const useEditDriver = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { token } = useAuth();
 
   // Get driver data for editing
   const getDriver = async (driverId: number): Promise<DriverData> => {
+    if (!token) {
+      throw new Error('No authentication token available');
+    }
+
     setIsLoading(true);
     setError(null);
     
     try {
       const response = await axios.get(`http://localhost:8000/api/v1/drivers/${driverId}/`, {
         headers: {
-          Authorization: "Token f1a83e3f53f4aa7afcecc8398e5d328512c4d387",
+          Authorization: `Token ${token}`,
           accept: 'application/json'
         },
       });
@@ -115,6 +121,10 @@ export const useEditDriver = () => {
 
   // Update driver data
   const updateDriver = async (driverId: number, driverData: EditDriverData | FormData): Promise<DriverData> => {
+    if (!token) {
+      throw new Error('No authentication token available');
+    }
+
     setIsLoading(true);
     setError(null);
     
@@ -122,7 +132,7 @@ export const useEditDriver = () => {
       console.log('Sending PUT request with data:', driverData);
       
       const headers: any = {
-        Authorization: "Token f1a83e3f53f4aa7afcecc8398e5d328512c4d387",
+        Authorization: `Token ${token}`,
         accept: 'application/json',
       };
       
