@@ -9,8 +9,9 @@ import {
 import { useDrivers } from "../../../hooks/useDrivers";
 import { useDeleteDriver } from '../../../hooks/useDeleteDriver';
 import DeleteConfirmationModal from '../../modals/DeleteConfirmationModal';
-import EditDriverModal from '../../modals/EditDriverModal';
+import EditDriverModal from '../../modals/AddDriverModal';
 import { Link } from "react-router";
+
 
 
 

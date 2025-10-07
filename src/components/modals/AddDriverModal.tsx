@@ -1,23 +1,23 @@
+// components/AddDriverModal.tsx
 import { useState, useEffect } from 'react';
-import { useEditDriver, EditDriverData, FormContract, FormLicense, FormNationalIdDoc, FormVehicleLicense } from '../../hooks/useEditDriver';
+import { useAddDriver, DriverData, LicenseData, NationalIdData, VehicleLicenseData, ContractData } from '../../hooks/useAddDriver';
 
-interface EditDriverModalProps {
+interface AddDriverModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  driverId: number | null;
 }
 
-// Helper function to create empty documents with proper defaults
-const createEmptyContract = (): FormContract => ({
+// Helper functions to create empty documents
+const createEmptyContract = (): Omit<ContractData, 'driver_id'> => ({
   file: '',
   notes: '',
-  issue_date: new Date().toISOString().split('T')[0], // Today's date as default
-  expiry_date: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 1 year from now
+  issue_date: new Date().toISOString().split('T')[0],
+  expiry_date: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
   contract_number: `CONTRACT-${Date.now()}`
 });
 
-const createEmptyLicense = (): FormLicense => ({
+const createEmptyLicense = (): Omit<LicenseData, 'driver_id'> => ({
   file: '',
   notes: '',
   issue_date: new Date().toISOString().split('T')[0],
@@ -26,14 +26,14 @@ const createEmptyLicense = (): FormLicense => ({
   license_type: 'standard'
 });
 
-const createEmptyNationalIdDoc = (): FormNationalIdDoc => ({
+const createEmptyNationalId = (): Omit<NationalIdData, 'driver_id'> => ({
   file: '',
   notes: '',
   issue_date: new Date().toISOString().split('T')[0],
   expiry_date: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
 });
 
-const createEmptyVehicleLicense = (): FormVehicleLicense => ({
+const createEmptyVehicleLicense = (): Omit<VehicleLicenseData, 'driver_id'> => ({
   file: '',
   notes: '',
   issue_date: new Date().toISOString().split('T')[0],
@@ -44,234 +44,152 @@ const createEmptyVehicleLicense = (): FormVehicleLicense => ({
   vehicle_type: 'motorcycle'
 });
 
-export default function EditDriverModal({ 
-  isOpen, 
-  onClose, 
-  onSuccess, 
-  driverId 
-}: EditDriverModalProps) {
-  const { getDriver, updateDriver, isLoading, error, resetError } = useEditDriver();
+export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriverModalProps) {
+  const { addDriver, isLoading, error, reset, isSuccess } = useAddDriver();
   const [validationError, setValidationError] = useState<string>('');
   
-  const [formData, setFormData] = useState<EditDriverData>({
+  // Form state
+  const [driverData, setDriverData] = useState<DriverData>({
     first_name: '',
     last_name: '',
-    nid: '', // Add NID field here
+    nid: '',
     uuid: '',
     phone_number: '',
-    company_code: 'talabat',
     is_active: true,
-    contracts: [createEmptyContract()],
-    license: createEmptyLicense(),
-    national_id_doc: createEmptyNationalIdDoc(),
-    vehicle_license: createEmptyVehicleLicense(),
+    company_code: 'talabat',
   });
 
-  // Fetch driver data when modal opens
-  useEffect(() => {
-    if (isOpen && driverId) {
-      resetError();
-      fetchDriverData();
-    }
-  }, [isOpen, driverId]);
+  const [licenseData, setLicenseData] = useState<Omit<LicenseData, 'driver_id'>>(createEmptyLicense());
+  const [nationalIdData, setNationalIdData] = useState<Omit<NationalIdData, 'driver_id'>>(createEmptyNationalId());
+  const [vehicleLicenseData, setVehicleLicenseData] = useState<Omit<VehicleLicenseData, 'driver_id'>>(createEmptyVehicleLicense());
+  const [contractsData, setContractsData] = useState<Omit<ContractData, 'driver_id'>[]>([createEmptyContract()]);
 
-  const fetchDriverData = async () => {
-    if (!driverId) return;
-    
-    try {
-      const driver = await getDriver(driverId);
-      
-      // Fill in missing data with defaults
-      setFormData({
-        first_name: driver.first_name || '',
-        last_name: driver.last_name || '',
-        nid: driver.nid || '', // Add NID from API response
-        uuid: driver.uuid || '',
-        phone_number: driver.phone_number || '',
-        company_code: driver.company_code || 'talabat',
-        is_active: driver.is_active !== undefined ? driver.is_active : true,
-        
-        // Use existing data or create empty defaults
-        contracts: driver.contracts && driver.contracts.length > 0 
-          ? driver.contracts.map(contract => ({
-              file: contract.file || '',
-              notes: contract.notes || '',
-              issue_date: contract.issue_date || new Date().toISOString().split('T')[0],
-              expiry_date: contract.expiry_date || new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-              contract_number: contract.contract_number || `CONTRACT-${Date.now()}`
-            }))
-          : [createEmptyContract()],
-          
-        license: driver.license ? {
-          file: driver.license.file || '',
-          notes: driver.license.notes || '',
-          issue_date: driver.license.issue_date || new Date().toISOString().split('T')[0],
-          expiry_date: driver.license.expiry_date || new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-          license_number: driver.license.license_number || `LICENSE-${Date.now()}`,
-          license_type: driver.license.license_type || 'standard'
-        } : createEmptyLicense(),
-        
-        national_id_doc: driver.national_id_doc ? {
-          file: driver.national_id_doc.file || '',
-          notes: driver.national_id_doc.notes || '',
-          issue_date: driver.national_id_doc.issue_date || new Date().toISOString().split('T')[0],
-          expiry_date: driver.national_id_doc.expiry_date || new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
-        } : createEmptyNationalIdDoc(),
-        
-        vehicle_license: driver.vehicle_license ? {
-          file: driver.vehicle_license.file || '',
-          notes: driver.vehicle_license.notes || '',
-          issue_date: driver.vehicle_license.issue_date || new Date().toISOString().split('T')[0],
-          expiry_date: driver.vehicle_license.expiry_date || new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-          license_number: driver.vehicle_license.license_number || `VEHICLE-${Date.now()}`,
-          license_plate: driver.vehicle_license.license_plate || 'ABC-123',
-          license_type: driver.vehicle_license.license_type || 'commercial',
-          vehicle_type: driver.vehicle_license.vehicle_type || 'motorcycle'
-        } : createEmptyVehicleLicense(),
-      });
-    } catch (err) {
-      console.error('Failed to fetch driver data:', err);
+  // Reset form when modal opens/closes
+  useEffect(() => {
+    if (isOpen) {
+      resetForm();
+      reset();
     }
+  }, [isOpen]);
+
+  // Handle success
+  useEffect(() => {
+    if (isSuccess) {
+      onSuccess();
+      onClose();
+      resetForm();
+    }
+  }, [isSuccess, onSuccess, onClose]);
+
+  const resetForm = () => {
+    setDriverData({
+      first_name: '',
+      last_name: '',
+      nid: '',
+      uuid: '',
+      phone_number: '',
+      is_active: true,
+      company_code: 'talabat',
+    });
+    setLicenseData(createEmptyLicense());
+    setNationalIdData(createEmptyNationalId());
+    setVehicleLicenseData(createEmptyVehicleLicense());
+    setContractsData([createEmptyContract()]);
+    setValidationError('');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!driverId) return;
-    
+    // Validate required fields
+    if (!driverData.first_name.trim() || !driverData.last_name.trim() || !driverData.phone_number.trim()) {
+      setValidationError('First name, last name, and phone number are required');
+      return;
+    }
+
+    if (!licenseData.license_number || !licenseData.license_type) {
+      setValidationError('License number and type are required');
+      return;
+    }
+
     try {
-      // Validate required fields
-      if (!formData.first_name.trim() || !formData.last_name.trim() || !formData.phone_number.trim()) {
-        setValidationError('First name, last name, and phone number are required');
-        return;
-      }
-
-      // Create FormData for file uploads
-      const submitData = new FormData();
-      
-      // Add basic fields
-      submitData.append('first_name', formData.first_name);
-      submitData.append('last_name', formData.last_name);
-      submitData.append('nid', formData.nid || ''); // Add NID to the request
-      submitData.append('phone_number', formData.phone_number);
-      submitData.append('company_code', formData.company_code);
-      submitData.append('is_active', formData.is_active.toString());
-      
-      // Add contracts
-      formData.contracts.forEach((contract, index) => {
-        submitData.append(`contracts[${index}][contract_number]`, contract.contract_number || '');
-        submitData.append(`contracts[${index}][notes]`, contract.notes || '');
-        submitData.append(`contracts[${index}][issue_date]`, contract.issue_date || '');
-        submitData.append(`contracts[${index}][expiry_date]`, contract.expiry_date || '');
-        if (contract.file instanceof File) {
-          submitData.append(`contracts[${index}][file]`, contract.file);
-        }
+      await addDriver({
+        driverData,
+        licenseData,
+        nationalIdData,
+        vehicleLicenseData,
+        contractsData,
       });
-      
-      // Add license
-      if (formData.license) {
-        submitData.append('license[license_number]', formData.license.license_number || '');
-        submitData.append('license[license_type]', formData.license.license_type || '');
-        submitData.append('license[notes]', formData.license.notes || '');
-        submitData.append('license[issue_date]', formData.license.issue_date || '');
-        submitData.append('license[expiry_date]', formData.license.expiry_date || '');
-        if (formData.license.file instanceof File) {
-          submitData.append('license[file]', formData.license.file);
-        }
-      }
-      
-      // Add national_id_doc
-      if (formData.national_id_doc) {
-        submitData.append('national_id_doc[notes]', formData.national_id_doc.notes || '');
-        submitData.append('national_id_doc[issue_date]', formData.national_id_doc.issue_date || '');
-        submitData.append('national_id_doc[expiry_date]', formData.national_id_doc.expiry_date || '');
-        if (formData.national_id_doc.file instanceof File) {
-          submitData.append('national_id_doc[file]', formData.national_id_doc.file);
-        }
-      }
-      
-      // Add vehicle_license
-      if (formData.vehicle_license) {
-        submitData.append('vehicle_license[license_number]', formData.vehicle_license.license_number || '');
-        submitData.append('vehicle_license[license_plate]', formData.vehicle_license.license_plate || '');
-        submitData.append('vehicle_license[license_type]', formData.vehicle_license.license_type || '');
-        submitData.append('vehicle_license[vehicle_type]', formData.vehicle_license.vehicle_type || '');
-        submitData.append('vehicle_license[notes]', formData.vehicle_license.notes || '');
-        submitData.append('vehicle_license[issue_date]', formData.vehicle_license.issue_date || '');
-        submitData.append('vehicle_license[expiry_date]', formData.vehicle_license.expiry_date || '');
-        if (formData.vehicle_license.file instanceof File) {
-          submitData.append('vehicle_license[file]', formData.vehicle_license.file);
-        }
-      }
-
-      console.log('Submitting FormData:', submitData);
-      // Log FormData contents for debugging
-      for (let [key, value] of submitData.entries()) {
-        console.log(`${key}:`, value);
-      }
-      
-      await updateDriver(driverId, submitData);
-      setValidationError('');
-      onSuccess();
-      onClose();
     } catch (err) {
-      console.error('Failed to update driver:', err);
+      console.error('Failed to add driver:', err);
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  // Handler for driver data changes
+  const handleDriverChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
-    
-    setFormData(prev => ({
+    setDriverData(prev => ({
       ...prev,
       [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value,
     }));
   };
 
-  // Handle nested object changes
-  const handleNestedChange = (section: 'license' | 'national_id_doc' | 'vehicle_license', field: string, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      [section]: {
-        ...prev[section],
-        [field]: value
-      }
-    }));
+  // Handler for license data changes
+  const handleLicenseChange = (field: string, value: string) => {
+    setLicenseData(prev => ({ ...prev, [field]: value }));
   };
 
-  // Handle file uploads - store File objects directly
-  const handleFileChange = (section: 'license' | 'national_id_doc' | 'vehicle_license' | 'contracts', field: string, file: File | null, contractIndex?: number) => {
-    if (section === 'contracts' && contractIndex !== undefined) {
-      setFormData(prev => ({
-        ...prev,
-        contracts: prev.contracts.map((contract, i) => 
-          i === contractIndex ? { ...contract, [field]: file } : contract
+  // Handler for national ID data changes
+  const handleNationalIdChange = (field: string, value: string) => {
+    setNationalIdData(prev => ({ ...prev, [field]: value }));
+  };
+
+  // Handler for vehicle license data changes
+  const handleVehicleLicenseChange = (field: string, value: string) => {
+    setVehicleLicenseData(prev => ({ ...prev, [field]: value }));
+  };
+
+  // Handler for contract changes
+  const handleContractChange = (index: number, field: string, value: string) => {
+    setContractsData(prev => 
+      prev.map((contract, i) => 
+        i === index ? { ...contract, [field]: value } : contract
+      )
+    );
+  };
+
+  // Handler for file uploads
+  const handleFileChange = (section: 'license' | 'nationalId' | 'vehicleLicense' | 'contracts', field: string, file: File | null, contractIndex?: number) => {
+    if (section === 'license') {
+      setLicenseData(prev => ({ ...prev, [field]: file || '' }));
+    } else if (section === 'nationalId') {
+      setNationalIdData(prev => ({ ...prev, [field]: file || '' }));
+    } else if (section === 'vehicleLicense') {
+      setVehicleLicenseData(prev => ({ ...prev, [field]: file || '' }));
+    } else if (section === 'contracts' && contractIndex !== undefined) {
+      setContractsData(prev => 
+        prev.map((contract, i) => 
+          i === contractIndex ? { ...contract, [field]: file || '' } : contract
         )
-      }));
-    } else {
-      setFormData(prev => ({
-        ...prev,
-        [section]: {
-          ...prev[section],
-          [field]: file
-        }
-      }));
+      );
     }
   };
 
-  // Handle contract changes (since it's an array)
-  const handleContractChange = (index: number, field: string, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      contracts: prev.contracts.map((contract, i) => 
-        i === index ? { ...contract, [field]: value } : contract
-      )
-    }));
+  // Add new contract
+  const addContract = () => {
+    setContractsData(prev => [...prev, createEmptyContract()]);
+  };
+
+  // Remove contract
+  const removeContract = (index: number) => {
+    if (contractsData.length > 1) {
+      setContractsData(prev => prev.filter((_, i) => i !== index));
+    }
   };
 
   const handleClose = () => {
     if (!isLoading) {
-      resetError();
+      reset();
       setValidationError('');
       onClose();
     }
@@ -309,12 +227,12 @@ export default function EditDriverModal({
       >
         <div className="p-6">
           <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-white">
-            Edit Driver
+            Add New Driver
           </h2>
           
           {(error || validationError) && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-              {error || validationError}
+              {validationError || (error as any)?.message || 'Failed to add driver'}
             </div>
           )}
           
@@ -332,8 +250,8 @@ export default function EditDriverModal({
                   <input
                     type="text"
                     name="first_name"
-                    value={formData.first_name}
-                    onChange={handleChange}
+                    value={driverData.first_name}
+                    onChange={handleDriverChange}
                     required
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
@@ -346,8 +264,8 @@ export default function EditDriverModal({
                   <input
                     type="text"
                     name="last_name"
-                    value={formData.last_name}
-                    onChange={handleChange}
+                    value={driverData.last_name}
+                    onChange={handleDriverChange}
                     required
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
@@ -360,8 +278,8 @@ export default function EditDriverModal({
                   <input
                     type="text"
                     name="nid"
-                    value={formData.nid}
-                    onChange={handleChange}
+                    value={driverData.nid}
+                    onChange={handleDriverChange}
                     placeholder="Enter national ID number"
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
@@ -374,8 +292,8 @@ export default function EditDriverModal({
                   <input
                     type="tel"
                     name="phone_number"
-                    value={formData.phone_number}
-                    onChange={handleChange}
+                    value={driverData.phone_number}
+                    onChange={handleDriverChange}
                     required
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
@@ -387,8 +305,8 @@ export default function EditDriverModal({
                   </label>
                   <select
                     name="company_code"
-                    value={formData.company_code}
-                    onChange={handleChange}
+                    value={driverData.company_code}
+                    onChange={handleDriverChange}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   >
                     <option value="talabat">Talabat</option>
@@ -402,9 +320,11 @@ export default function EditDriverModal({
                   </label>
                   <input
                     type="text"
-                    value={formData.uuid}
-                    readOnly
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white bg-gray-100 dark:bg-gray-600"
+                    name="uuid"
+                    value={driverData.uuid}
+                    onChange={handleDriverChange}
+                    placeholder="Leave empty for auto-generation"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
                 </div>
                 
@@ -412,8 +332,8 @@ export default function EditDriverModal({
                   <input
                     type="checkbox"
                     name="is_active"
-                    checked={formData.is_active}
-                    onChange={handleChange}
+                    checked={driverData.is_active}
+                    onChange={handleDriverChange}
                     className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                   />
                   <label className="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -425,56 +345,80 @@ export default function EditDriverModal({
 
             {/* Contracts Section */}
             <div className="mb-6">
-              <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300 border-b pb-2">
-                Contract Information
-              </h3>
-              {formData.contracts.map((contract, index) => (
-                <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 p-4 border rounded-lg">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 border-b pb-2">
+                  Contract Information
+                </h3>
+                <button
+                  type="button"
+                  onClick={addContract}
+                  className="px-3 py-1 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm"
+                >
+                  Add Contract
+                </button>
+              </div>
+              
+              {contractsData.map((contract, index) => (
+                <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 p-4 border rounded-lg relative">
+                  {contractsData.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeContract(index)}
+                      className="absolute top-2 right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600"
+                    >
+                      ×
+                    </button>
+                  )}
+                  
                   <div>
                     <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
                       Contract Number
                     </label>
                     <input
                       type="text"
-                      value={contract.contract_number || ''}
+                      value={contract.contract_number}
                       onChange={(e) => handleContractChange(index, 'contract_number', e.target.value)}
                       className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                     />
                   </div>
+                  
                   <div>
                     <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
                       Issue Date
                     </label>
                     <input
                       type="date"
-                      value={contract.issue_date || ''}
+                      value={contract.issue_date}
                       onChange={(e) => handleContractChange(index, 'issue_date', e.target.value)}
                       className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                     />
                   </div>
+                  
                   <div>
                     <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
                       Expiry Date
                     </label>
                     <input
                       type="date"
-                      value={contract.expiry_date || ''}
+                      value={contract.expiry_date}
                       onChange={(e) => handleContractChange(index, 'expiry_date', e.target.value)}
                       className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                     />
                   </div>
-                  <div>
+                  
+                  <div className="md:col-span-2">
                     <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
                       Notes
                     </label>
                     <textarea
-                      value={contract.notes || ''}
+                      value={contract.notes}
                       onChange={(e) => handleContractChange(index, 'notes', e.target.value)}
                       rows={3}
                       className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                       placeholder="Additional contract notes..."
                     />
                   </div>
+                  
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
                       Contract Document
@@ -499,23 +443,24 @@ export default function EditDriverModal({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    License Number
+                    License Number *
                   </label>
                   <input
                     type="text"
-                    value={formData.license?.license_number || ''}
-                    onChange={(e) => handleNestedChange('license', 'license_number', e.target.value)}
+                    value={licenseData.license_number}
+                    onChange={(e) => handleLicenseChange('license_number', e.target.value)}
                     required
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
                 </div>
+                
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    License Type
+                    License Type *
                   </label>
                   <select
-                    value={formData.license?.license_type || ''}
-                    onChange={(e) => handleNestedChange('license', 'license_type', e.target.value)}
+                    value={licenseData.license_type}
+                    onChange={(e) => handleLicenseChange('license_type', e.target.value)}
                     required
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   >
@@ -526,30 +471,31 @@ export default function EditDriverModal({
                     <option value="heavy_vehicle">Heavy Vehicle</option>
                   </select>
                 </div>
+                
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
                     Issue Date
                   </label>
                   <input
                     type="date"
-                    value={formData.license?.issue_date || ''}
-                    onChange={(e) => handleNestedChange('license', 'issue_date', e.target.value)}
-                    required
+                    value={licenseData.issue_date}
+                    onChange={(e) => handleLicenseChange('issue_date', e.target.value)}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
                 </div>
+                
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
                     Expiry Date
                   </label>
                   <input
                     type="date"
-                    value={formData.license?.expiry_date || ''}
-                    onChange={(e) => handleNestedChange('license', 'expiry_date', e.target.value)}
-                    required
+                    value={licenseData.expiry_date}
+                    onChange={(e) => handleLicenseChange('expiry_date', e.target.value)}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
                 </div>
+                
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
                     License Document
@@ -562,13 +508,14 @@ export default function EditDriverModal({
                   />
                   <p className="text-xs text-gray-500 mt-1">Upload driver license document (PDF, JPG, PNG)</p>
                 </div>
+                
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
                     License Notes
                   </label>
                   <textarea
-                    value={formData.license?.notes || ''}
-                    onChange={(e) => handleNestedChange('license', 'notes', e.target.value)}
+                    value={licenseData.notes}
+                    onChange={(e) => handleLicenseChange('notes', e.target.value)}
                     rows={3}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                     placeholder="Additional license notes..."
@@ -589,24 +536,24 @@ export default function EditDriverModal({
                   </label>
                   <input
                     type="date"
-                    value={formData.national_id_doc?.issue_date || ''}
-                    onChange={(e) => handleNestedChange('national_id_doc', 'issue_date', e.target.value)}
-                    required
+                    value={nationalIdData.issue_date}
+                    onChange={(e) => handleNationalIdChange('issue_date', e.target.value)}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
                 </div>
+                
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
                     Expiry Date
                   </label>
                   <input
                     type="date"
-                    value={formData.national_id_doc?.expiry_date || ''}
-                    onChange={(e) => handleNestedChange('national_id_doc', 'expiry_date', e.target.value)}
-                    required
+                    value={nationalIdData.expiry_date}
+                    onChange={(e) => handleNationalIdChange('expiry_date', e.target.value)}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
                 </div>
+                
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
                     National ID Document
@@ -614,18 +561,19 @@ export default function EditDriverModal({
                   <input
                     type="file"
                     accept=".pdf,.jpg,.jpeg,.png"
-                    onChange={(e) => handleFileChange('national_id_doc', 'file', e.target.files?.[0] || null)}
+                    onChange={(e) => handleFileChange('nationalId', 'file', e.target.files?.[0] || null)}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-gray-600 dark:file:text-gray-300"
                   />
                   <p className="text-xs text-gray-500 mt-1">Upload national ID document (PDF, JPG, PNG)</p>
                 </div>
+                
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
                     National ID Notes
                   </label>
                   <textarea
-                    value={formData.national_id_doc?.notes || ''}
-                    onChange={(e) => handleNestedChange('national_id_doc', 'notes', e.target.value)}
+                    value={nationalIdData.notes}
+                    onChange={(e) => handleNationalIdChange('notes', e.target.value)}
                     rows={3}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                     placeholder="Additional national ID notes..."
@@ -646,33 +594,32 @@ export default function EditDriverModal({
                   </label>
                   <input
                     type="text"
-                    value={formData.vehicle_license?.license_number || ''}
-                    onChange={(e) => handleNestedChange('vehicle_license', 'license_number', e.target.value)}
-                    required
+                    value={vehicleLicenseData.license_number}
+                    onChange={(e) => handleVehicleLicenseChange('license_number', e.target.value)}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
                 </div>
+                
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
                     License Plate
                   </label>
                   <input
                     type="text"
-                    value={formData.vehicle_license?.license_plate || ''}
-                    onChange={(e) => handleNestedChange('vehicle_license', 'license_plate', e.target.value)}
-                    required
+                    value={vehicleLicenseData.license_plate}
+                    onChange={(e) => handleVehicleLicenseChange('license_plate', e.target.value)}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                     placeholder="ABC-123"
                   />
                 </div>
+                
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
                     License Type
                   </label>
                   <select
-                    value={formData.vehicle_license?.license_type || ''}
-                    onChange={(e) => handleNestedChange('vehicle_license', 'license_type', e.target.value)}
-                    required
+                    value={vehicleLicenseData.license_type}
+                    onChange={(e) => handleVehicleLicenseChange('license_type', e.target.value)}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   >
                     <option value="">Select License Type</option>
@@ -682,14 +629,14 @@ export default function EditDriverModal({
                     <option value="heavy_vehicle">Heavy Vehicle</option>
                   </select>
                 </div>
+                
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
                     Vehicle Type
                   </label>
                   <select
-                    value={formData.vehicle_license?.vehicle_type || ''}
-                    onChange={(e) => handleNestedChange('vehicle_license', 'vehicle_type', e.target.value)}
-                    required
+                    value={vehicleLicenseData.vehicle_type}
+                    onChange={(e) => handleVehicleLicenseChange('vehicle_type', e.target.value)}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   >
                     <option value="">Select Vehicle Type</option>
@@ -700,30 +647,31 @@ export default function EditDriverModal({
                     <option value="bicycle">Bicycle</option>
                   </select>
                 </div>
+                
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
                     Issue Date
                   </label>
                   <input
                     type="date"
-                    value={formData.vehicle_license?.issue_date || ''}
-                    onChange={(e) => handleNestedChange('vehicle_license', 'issue_date', e.target.value)}
-                    required
+                    value={vehicleLicenseData.issue_date}
+                    onChange={(e) => handleVehicleLicenseChange('issue_date', e.target.value)}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
                 </div>
+                
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
                     Expiry Date
                   </label>
                   <input
                     type="date"
-                    value={formData.vehicle_license?.expiry_date || ''}
-                    onChange={(e) => handleNestedChange('vehicle_license', 'expiry_date', e.target.value)}
-                    required
+                    value={vehicleLicenseData.expiry_date}
+                    onChange={(e) => handleVehicleLicenseChange('expiry_date', e.target.value)}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
                 </div>
+                
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
                     Vehicle License Document
@@ -731,18 +679,19 @@ export default function EditDriverModal({
                   <input
                     type="file"
                     accept=".pdf,.jpg,.jpeg,.png"
-                    onChange={(e) => handleFileChange('vehicle_license', 'file', e.target.files?.[0] || null)}
+                    onChange={(e) => handleFileChange('vehicleLicense', 'file', e.target.files?.[0] || null)}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-gray-600 dark:file:text-gray-300"
                   />
                   <p className="text-xs text-gray-500 mt-1">Upload vehicle license document (PDF, JPG, PNG)</p>
                 </div>
+                
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
                     Vehicle License Notes
                   </label>
                   <textarea
-                    value={formData.vehicle_license?.notes || ''}
-                    onChange={(e) => handleNestedChange('vehicle_license', 'notes', e.target.value)}
+                    value={vehicleLicenseData.notes}
+                    onChange={(e) => handleVehicleLicenseChange('notes', e.target.value)}
                     rows={3}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                     placeholder="Additional vehicle license notes..."
@@ -750,7 +699,7 @@ export default function EditDriverModal({
                 </div>
               </div>
             </div>
-            
+
             <div className="flex justify-end gap-3 mt-6">
               <button
                 type="button"
@@ -768,10 +717,10 @@ export default function EditDriverModal({
                 {isLoading ? (
                   <>
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    Updating...
+                    Creating Driver...
                   </>
                 ) : (
-                  'Update Driver'
+                  'Add Driver'
                 )}
               </button>
             </div>

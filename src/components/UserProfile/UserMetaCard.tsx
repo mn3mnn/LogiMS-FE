@@ -4,7 +4,7 @@ import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
 import { useDriverProfile } from "../../hooks/useDriverProfile";
-import EditDriverModal from "../modals/EditDriverModal";
+import EditDriverModal from "../modals/AddDriverModal";
 
 interface UserMetaCardProps {
   driverId?: number;
