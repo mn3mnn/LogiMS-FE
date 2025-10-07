@@ -18,13 +18,22 @@ export default function BasicTableOne() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [companyFilter, setCompanyFilter] = useState("All");
+  const [driverStatusFilter, setDriverStatusFilter] = useState("all"); // New: Driver status filter
+  const [docStatusFilter, setDocStatusFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
-  const [docStatusFilter, setDocStatusFilter] = useState("all");
   
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const { data, isLoading, error, isFetching } = useDrivers(companyFilter, currentPage, refreshKey);
+  // Updated hook call with all filters
+  const { data, isLoading, error, isFetching } = useDrivers(
+    companyFilter, 
+    currentPage, 
+    refreshKey,
+    driverStatusFilter,
+    docStatusFilter
+  );
+  
   const { exportDrivers } = useExportDrivers();
   
   const drivers = data?.results || [];
@@ -46,6 +55,7 @@ export default function BasicTableOne() {
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Failed to load drivers</p>;
 
+  // Client-side search (only for displayed data)
   const filteredData = drivers.filter((driver: any) => {
     const matchesId = driver?.uuid?.toString().includes(searchTerm);
     const matchesName = driver?.first_name
@@ -54,19 +64,28 @@ export default function BasicTableOne() {
     return matchesId || matchesName;
   });
 
+  // Handle export with all filters
   const handleExport = async () => {
     setIsExporting(true);
     try {
       const exportParams: any = {};
       
+      // Add company filter if not "All"
       if (companyFilter !== "All") {
         exportParams.company_code = companyFilter;
       }
       
+      // Add driver status filter if not "all"
+      if (driverStatusFilter !== "all") {
+        exportParams.is_active = driverStatusFilter === "active";
+      }
+      
+      // Add document status filter if not "all"
       if (docStatusFilter !== "all") {
         exportParams.doc_status = docStatusFilter;
       }
       
+      // Add search term if exists
       if (searchTerm) {
         exportParams.search = searchTerm;
       }
@@ -81,6 +100,11 @@ export default function BasicTableOne() {
     } finally {
       setIsExporting(false);
     }
+  };
+
+  // Reset to page 1 when any filter changes
+  const handleFilterChange = () => {
+    setCurrentPage(1);
   };
 
   const handleUserAdded = () => {
@@ -175,7 +199,9 @@ export default function BasicTableOne() {
         </div>
       </div>
       
+      {/* Filters Section */}
       <div className="flex justify-between items-end m-4">
+        {/* Company Filter */}
         <div className="p-2">
           <label className="mr-2 font-medium text-gray-600 dark:text-gray-300">
             Company:
@@ -184,16 +210,36 @@ export default function BasicTableOne() {
             value={companyFilter}
             onChange={(e) => {
               setCompanyFilter(e.target.value);
-              setCurrentPage(1); 
+              handleFilterChange();
             }}
             className="border rounded-lg px-3 py-1 text-sm dark:bg-gray-800 dark:text-white"
           >
-            <option value="All">All</option>
+            <option value="All">All Companies</option>
             <option value="uber_eats">Uber Eats</option>
             <option value="talabat">Talabat</option>
           </select>
         </div>
 
+        {/* Driver Status Filter */}
+        <div className="p-2">
+          <label className="mr-2 font-medium text-gray-600 dark:text-gray-300">
+            Driver Status:
+          </label>
+          <select
+            value={driverStatusFilter}
+            onChange={(e) => {
+              setDriverStatusFilter(e.target.value);
+              handleFilterChange();
+            }}
+            className="border rounded-lg px-3 py-1 text-sm dark:bg-gray-800 dark:text-white"
+          >
+            <option value="all">All Drivers</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+
+        {/* Document Status Filter */}
         <div className="p-2">
           <label className="mr-2 font-medium text-gray-600 dark:text-gray-300">
             Document Status:
@@ -202,22 +248,23 @@ export default function BasicTableOne() {
             value={docStatusFilter}
             onChange={(e) => {
               setDocStatusFilter(e.target.value);
-              setCurrentPage(1); 
+              handleFilterChange();
             }}
             className="border rounded-lg px-3 py-1 text-sm dark:bg-gray-800 dark:text-white"
           >
             <option value="all">All Documents</option>
-            <option value="expired_docs">Expired Documents</option>
             <option value="missing_docs">Missing Documents</option>
+            <option value="expired_docs">Expired Documents</option>
           </select>
         </div>
 
+        {/* Action Buttons */}
         <div>
           <button
             onClick={() => setIsModalOpen(true)}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
-            + Add User
+            + Add Driver
           </button>
           <button
             onClick={() => document.getElementById("csvInput")?.click()}
@@ -234,12 +281,14 @@ export default function BasicTableOne() {
         </div>
       </div>
 
+      {/* Loading State */}
       {isFetching && (
         <div className="p-4 text-center text-blue-600">
           Loading drivers...
         </div>
       )}
       
+      {/* Drivers Table */}
       <div className="max-w-full overflow-x-auto">
         <Table>
           <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
@@ -255,6 +304,9 @@ export default function BasicTableOne() {
               </TableCell>
               <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
                 Company
+              </TableCell>
+              <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
+                Status
               </TableCell>
               <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
                 NID
@@ -277,7 +329,7 @@ export default function BasicTableOne() {
           <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
             {filteredData.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={9} className="px-5 py-4 text-center text-gray-500">
+                <TableCell colSpan={10} className="px-5 py-4 text-center text-gray-500">
                   {drivers.length === 0 ? "No drivers found" : "No drivers match your search"}
                 </TableCell>
               </TableRow>
@@ -311,21 +363,34 @@ export default function BasicTableOne() {
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                     {driver.company_name}
                   </TableCell>
+                  <TableCell className="px-4 py-3 text-start text-theme-sm">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      driver.is_active 
+                        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' 
+                        : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
+                    }`}>
+                      {driver.is_active ? 'Active' : 'Inactive'}
+                    </span>
+                  </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                    <span>
+                    <span className={driver.national_id_doc ? "text-green-600" : "text-red-600"}>
                       {driver.national_id_doc ? "Uploaded" : "Not Uploaded"}
                     </span>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                    {driver.license ? "Uploaded" : "Not Uploaded"}
+                    <span className={driver.license ? "text-green-600" : "text-red-600"}>
+                      {driver.license ? "Uploaded" : "Not Uploaded"}
+                    </span>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                    {driver.vehicle_license ? "Uploaded" : "Not Uploaded"}
+                    <span className={driver.vehicle_license ? "text-green-600" : "text-red-600"}>
+                      {driver.vehicle_license ? "Uploaded" : "Not Uploaded"}
+                    </span>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                    {driver.contracts && driver.contracts.length > 0
-                      ? "Uploaded"
-                      : "Not Uploaded"}
+                    <span className={driver.contracts && driver.contracts.length > 0 ? "text-green-600" : "text-red-600"}>
+                      {driver.contracts && driver.contracts.length > 0 ? "Uploaded" : "Not Uploaded"}
+                    </span>
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
@@ -351,6 +416,7 @@ export default function BasicTableOne() {
         </Table>
       </div>
       
+      {/* Pagination and Export Section */}
       <div className="flex items-center justify-between p-4">
         <div className="flex items-center justify-center gap-1 flex-1">
           <button
@@ -402,6 +468,7 @@ export default function BasicTableOne() {
         </div>
       </div>
 
+      {/* Modals */}
       <EditDriverModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

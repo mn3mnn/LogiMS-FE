@@ -1,4 +1,4 @@
-// src/hooks/useDrivers.ts
+// hooks/useDrivers.ts
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
@@ -30,14 +30,30 @@ interface DriversResponse {
   previous: string | null;
 }
 
-const fetchDrivers = async (companyFilter: string = "All", page: number = 1): Promise<DriversResponse> => {
+const fetchDrivers = async (
+  companyFilter: string = "All", 
+  page: number = 1, 
+  driverStatusFilter: string = "all",
+  docStatusFilter: string = "all"
+): Promise<DriversResponse> => {
   const params: any = {
     page: page,
     page_size: 10
   };
 
+  // Add company filter
   if (companyFilter !== "All") {
     params.company_code = companyFilter;
+  }
+
+  // Add driver status filter
+  if (driverStatusFilter !== "all") {
+    params.is_active = driverStatusFilter === "active";
+  }
+
+  // Add document status filter
+  if (docStatusFilter !== "all") {
+    params.doc_status = docStatusFilter;
   }
 
   const response = await axios.get(`${API_BASE_URL}/drivers/`, {
@@ -49,10 +65,16 @@ const fetchDrivers = async (companyFilter: string = "All", page: number = 1): Pr
   return response.data;
 };
 
-export const useDrivers = (companyFilter: string = "All", page: number = 1, refreshKey: number = 0) => {
+export const useDrivers = (
+  companyFilter: string = "All", 
+  page: number = 1, 
+  refreshKey: number = 0,
+  driverStatusFilter: string = "all",
+  docStatusFilter: string = "all"
+) => {
   const { data, isLoading, error, isFetching, refetch } = useQuery({
-    queryKey: ['drivers', companyFilter, page, refreshKey],
-    queryFn: () => fetchDrivers(companyFilter, page),
+    queryKey: ['drivers', companyFilter, page, refreshKey, driverStatusFilter, docStatusFilter],
+    queryFn: () => fetchDrivers(companyFilter, page, driverStatusFilter, docStatusFilter),
   });
 
   return {
