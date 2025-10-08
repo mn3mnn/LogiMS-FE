@@ -1,5 +1,6 @@
 // src/context/AuthContext.tsx
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import axios from "axios";
 
 interface AuthContextType {
   token: string | null;
@@ -22,10 +23,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setToken(token);
   };
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    setToken(null);
+  const logout = async (): Promise<void> => {
+    const currentToken = token || localStorage.getItem("token");
+    
+    try {
+      if (currentToken) {
+        await axios.post("http://localhost:8000/api/v1/auth/logout/", {}, {
+          headers: {
+            Authorization: `Token ${currentToken}`,
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Logout API call failed, but continuing with client-side logout:", error);
+    } finally {
+      localStorage.removeItem("token");
+      setToken(null);
+    }
   };
+
 
   return (
     <AuthContext.Provider value={{ token, login, logout }}>
