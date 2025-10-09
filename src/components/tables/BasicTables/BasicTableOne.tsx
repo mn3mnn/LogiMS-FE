@@ -238,25 +238,6 @@ export default function BasicTableOne() {
           )}
         </div>
 
-        {/* Driver Status Filter */}
-        <div className="p-2">
-          <label className="mr-2 font-medium text-gray-600 dark:text-gray-300">
-            Driver Status:
-          </label>
-          <select
-            value={driverStatusFilter}
-            onChange={(e) => {
-              setDriverStatusFilter(e.target.value);
-              handleFilterChange();
-            }}
-            className="border rounded-lg px-3 py-1 text-sm dark:bg-gray-800 dark:text-white"
-          >
-            <option value="all">All Drivers</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-          </select>
-        </div>
-
         {/* Document Status Filter */}
         <div className="p-2">
           <label className="mr-2 font-medium text-gray-600 dark:text-gray-300">
@@ -283,12 +264,6 @@ export default function BasicTableOne() {
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
             + Add Driver
-          </button>
-          <button
-            onClick={() => document.getElementById("csvInput")?.click()}
-            className="ml-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-          >
-            Bulk Add
           </button>
           <input
             type="file"
