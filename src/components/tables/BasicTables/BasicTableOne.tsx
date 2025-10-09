@@ -1,5 +1,5 @@
 // components/BasicTableOne.tsx
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -15,27 +15,107 @@ import EditDriverModal from '../../modals/AddDriverModal';
 import { Link } from "react-router-dom";
 import { useCompanies } from '../../../hooks/useCompanies';
 
+// Skeleton Loader Component
+const TableSkeleton = () => {
+  return (
+    <div className="animate-pulse">
+      {[...Array(5)].map((_, index) => (
+        <TableRow key={index} className="border-b border-gray-100 dark:border-white/[0.05]">
+          <TableCell className="px-5 py-4">
+            <div className="h-4 bg-gray-200 rounded dark:bg-gray-700 w-1/4"></div>
+          </TableCell>
+          <TableCell className="px-5 py-4">
+            <div className="h-4 bg-gray-200 rounded dark:bg-gray-700 w-3/4"></div>
+          </TableCell>
+          <TableCell className="px-5 py-4">
+            <div className="h-4 bg-gray-200 rounded dark:bg-gray-700 w-1/2"></div>
+          </TableCell>
+          <TableCell className="px-5 py-4">
+            <div className="h-4 bg-gray-200 rounded dark:bg-gray-700 w-1/3"></div>
+          </TableCell>
+          <TableCell className="px-5 py-4">
+            <div className="h-6 bg-gray-200 rounded-full dark:bg-gray-700 w-16"></div>
+          </TableCell>
+          <TableCell className="px-5 py-4">
+            <div className="h-4 bg-gray-200 rounded dark:bg-gray-700 w-20"></div>
+          </TableCell>
+          <TableCell className="px-5 py-4">
+            <div className="h-4 bg-gray-200 rounded dark:bg-gray-700 w-20"></div>
+          </TableCell>
+          <TableCell className="px-5 py-4">
+            <div className="h-4 bg-gray-200 rounded dark:bg-gray-700 w-20"></div>
+          </TableCell>
+          <TableCell className="px-5 py-4">
+            <div className="h-4 bg-gray-200 rounded dark:bg-gray-700 w-20"></div>
+          </TableCell>
+          <TableCell className="px-5 py-4">
+            <div className="flex gap-2">
+              <div className="h-6 w-6 bg-gray-200 rounded dark:bg-gray-700"></div>
+              <div className="h-6 w-6 bg-gray-200 rounded dark:bg-gray-700"></div>
+            </div>
+          </TableCell>
+        </TableRow>
+      ))}
+    </div>
+  );
+};
+
+// Loading spinner component
+const LoadingSpinner = ({ size = "small" }) => {
+  const sizeClasses = {
+    small: "w-4 h-4",
+    medium: "w-6 h-6",
+    large: "w-8 h-8"
+  };
+
+  return (
+    <div className={`${sizeClasses[size]} border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin`}></div>
+  );
+};
+
 export default function BasicTableOne() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [driverStatusFilter, setDriverStatusFilter] = useState("all");
   const [docStatusFilter, setDocStatusFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
   const [companyFilter, setCompanyFilter] = useState("All");
+  const [isSearching, setIsSearching] = useState(false);
 
   const { companies, isLoading: companiesLoading, error: companiesError } = useCompanies();
   
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Use debouncedSearchTerm in the API call
   const { data, isLoading: driversLoading, error: driversError, isFetching } = useDrivers(
     companyFilter, 
     currentPage, 
     refreshKey,
     driverStatusFilter,
-    docStatusFilter
+    docStatusFilter,
+    debouncedSearchTerm
   );
   
+  // Debounce effect - 2 second delay
+  useEffect(() => {
+    if (searchTerm.trim() !== debouncedSearchTerm.trim()) {
+      setIsSearching(true);
+      
+      const timer = setTimeout(() => {
+        setDebouncedSearchTerm(searchTerm);
+        setCurrentPage(1);
+        setIsSearching(false);
+      }, 2000);
+
+      return () => {
+        clearTimeout(timer);
+        setIsSearching(false);
+      };
+    }
+  }, [searchTerm, debouncedSearchTerm]);
+
   const { exportDrivers } = useExportDrivers();
   
   const drivers = data?.results || [];
@@ -54,19 +134,55 @@ export default function BasicTableOne() {
 
   const [isExporting, setIsExporting] = useState(false);
 
-  if (driversLoading) return <p>Loading...</p>;
-  if (driversError) return <p>Failed to load drivers</p>;
+  // Show loading skeleton on initial load
+  if (driversLoading && drivers.length === 0) {
+    return (
+      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+        <div className="p-4">
+          <div className="flex justify-between items-center mb-4">
+            <div className="h-8 bg-gray-200 rounded dark:bg-gray-700 w-64 animate-pulse"></div>
+            <div className="h-10 bg-gray-200 rounded dark:bg-gray-700 w-32 animate-pulse"></div>
+          </div>
+          <div className="max-w-full overflow-x-auto">
+            <Table>
+              <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
+                <TableRow>
+                  {[...Array(10)].map((_, index) => (
+                    <TableCell key={index} isHeader className="px-5 py-3">
+                      <div className="h-4 bg-gray-200 rounded dark:bg-gray-700 w-20 animate-pulse"></div>
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableSkeleton />
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-  // Client-side search (only for displayed data)
-  const filteredData = drivers.filter((driver: any) => {
-    const matchesId = driver?.uuid?.toString().includes(searchTerm);
-    const matchesName = driver?.first_name
-      ?.toLowerCase()
-      .includes(searchTerm.toLowerCase());
-    return matchesId || matchesName;
-  });
+  if (driversError) return (
+    <div className="rounded-xl border border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20 p-6 text-center">
+      <div className="text-red-600 dark:text-red-400 mb-2">
+        <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+        </svg>
+      </div>
+      <h3 className="text-lg font-medium text-red-800 dark:text-red-300 mb-2">Failed to load drivers</h3>
+      <p className="text-red-600 dark:text-red-400 text-sm">{driversError.message}</p>
+      <button 
+        onClick={() => window.location.reload()} 
+        className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+      >
+        Retry
+      </button>
+    </div>
+  );
 
-  // Handle export with all filters
+  // Handle export with all filters (including search)
   const handleExport = async () => {
     setIsExporting(true);
     try {
@@ -84,8 +200,8 @@ export default function BasicTableOne() {
         exportParams.doc_status = docStatusFilter;
       }
       
-      if (searchTerm) {
-        exportParams.search = searchTerm;
+      if (debouncedSearchTerm.trim()) {
+        exportParams.search = debouncedSearchTerm.trim();
       }
 
       await exportDrivers(exportParams);
@@ -156,9 +272,9 @@ export default function BasicTableOne() {
   };
 
   return (
-    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03] transition-all duration-300">
       <div className="hidden lg:block my-2 mx-4">
-        <form>
+        <form onSubmit={(e) => e.preventDefault()}>
           <div className="relative">
             <span className="absolute -translate-y-1/2 pointer-events-none left-4 top-1/2">
               <svg
@@ -184,15 +300,30 @@ export default function BasicTableOne() {
               onChange={(e) => {
                 setSearchTerm(e.target.value);
               }}
-              placeholder="Search by ID or Name..."
-              className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-12 pr-14 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 xl:w-[430px]"
+              placeholder="Search by name, phone, NID, or UUID..."
+              className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-12 pr-14 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 xl:w-[430px] transition-all duration-200"
             />
+            {/* Show loading indicator when searching */}
+            {(isSearching || (isFetching && debouncedSearchTerm)) && (
+              <span className="absolute -translate-y-1/2 pointer-events-none right-4 top-1/2">
+                <LoadingSpinner size="small" />
+              </span>
+            )}
           </div>
+          {/* Show search status */}
+          {debouncedSearchTerm && (
+            <div className="mt-2 text-sm text-gray-500 flex items-center gap-2">
+              <span>Searching for: "{debouncedSearchTerm}"</span>
+              {(isSearching || isFetching) && <LoadingSpinner size="small" />}
+            </div>
+          )}
         </form>
 
-        <div className="flex justify-end mr-4">
-          <span className="text-gray-700 text-sm">
+        <div className="flex justify-end mr-4 mt-2">
+          <span className="text-gray-700 text-sm flex items-center gap-2">
             Total Drivers: {totalCount}
+            {debouncedSearchTerm && ` (filtered)`}
+            {isFetching && <LoadingSpinner size="small" />}
           </span>
         </div>
       </div>
@@ -210,7 +341,7 @@ export default function BasicTableOne() {
               setCompanyFilter(e.target.value);
               handleFilterChange();
             }}
-            className="border rounded-lg px-3 py-1 text-sm dark:bg-gray-800 dark:text-white"
+            className="border rounded-lg px-3 py-1 text-sm dark:bg-gray-800 dark:text-white transition-colors duration-200"
             disabled={companiesLoading}
           >
             <option value="All">All Companies</option>
@@ -231,7 +362,10 @@ export default function BasicTableOne() {
           </select>
           
           {companiesLoading && (
-            <p className="text-xs text-gray-500 mt-1">Loading companies...</p>
+            <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
+              <LoadingSpinner size="small" />
+              Loading companies...
+            </p>
           )}
           {companiesError && (
             <p className="text-xs text-red-500 mt-1">Failed to load companies</p>
@@ -249,7 +383,7 @@ export default function BasicTableOne() {
               setDocStatusFilter(e.target.value);
               handleFilterChange();
             }}
-            className="border rounded-lg px-3 py-1 text-sm dark:bg-gray-800 dark:text-white"
+            className="border rounded-lg px-3 py-1 text-sm dark:bg-gray-800 dark:text-white transition-colors duration-200"
           >
             <option value="all">All Documents</option>
             <option value="missing_docs">Missing Documents</option>
@@ -261,7 +395,7 @@ export default function BasicTableOne() {
         <div>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 hover:scale-105 active:scale-95"
           >
             + Add Driver
           </button>
@@ -274,15 +408,16 @@ export default function BasicTableOne() {
         </div>
       </div>
 
-      {/* Loading State */}
-      {isFetching && (
-        <div className="p-4 text-center text-blue-600">
-          Loading drivers...
+      {/* Loading State for table data */}
+      {isFetching && drivers.length > 0 && (
+        <div className="p-4 text-center text-blue-600 flex items-center justify-center gap-2">
+          <LoadingSpinner size="small" />
+          Updating drivers...
         </div>
       )}
       
       {/* Drivers Table */}
-      <div className="max-w-full overflow-x-auto">
+      <div className="max-w-full overflow-x-auto transition-opacity duration-300">
         <Table>
           <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
             <TableRow>
@@ -320,15 +455,30 @@ export default function BasicTableOne() {
           </TableHeader>
 
           <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-            {filteredData.length === 0 ? (
+            {drivers.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={10} className="px-5 py-4 text-center text-gray-500">
-                  {drivers.length === 0 ? "No drivers found" : "No drivers match your search"}
+                <TableCell colSpan={10} className="px-5 py-8 text-center text-gray-500">
+                  <div className="flex flex-col items-center justify-center">
+                    <svg className="w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <h3 className="text-lg font-medium text-gray-600 dark:text-gray-400 mb-2">
+                      {debouncedSearchTerm ? "No drivers match your search" : "No drivers found"}
+                    </h3>
+                    <p className="text-gray-500 dark:text-gray-500 text-sm">
+                      {debouncedSearchTerm ? "Try adjusting your search terms" : "Get started by adding your first driver"}
+                    </p>
+                  </div>
                 </TableCell>
               </TableRow>
+            ) : isFetching && drivers.length > 0 ? (
+              <TableSkeleton />
             ) : (
-              filteredData.map((driver: any) => (
-                <TableRow key={`${driver.id}-${driver.uuid}`}>
+              drivers.map((driver: any) => (
+                <TableRow 
+                  key={`${driver.id}-${driver.uuid}`}
+                  className="transition-all duration-200 hover:bg-gray-50 dark:hover:bg-white/[0.02]"
+                >
                   <TableCell className="px-1 py-4 sm:px-6 text-start">
                     <div className="flex items-center gap-3">
                       <div>
@@ -357,7 +507,7 @@ export default function BasicTableOne() {
                     {driver.company_name}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-start text-theme-sm">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium transition-colors duration-200 ${
                       driver.is_active 
                         ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' 
                         : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
@@ -366,22 +516,22 @@ export default function BasicTableOne() {
                     </span>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                    <span className={driver.national_id_doc ? "text-green-600" : "text-red-600"}>
+                    <span className={`transition-colors duration-200 ${driver.national_id_doc ? "text-green-600" : "text-red-600"}`}>
                       {driver.national_id_doc ? "Uploaded" : "Not Uploaded"}
                     </span>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                    <span className={driver.license ? "text-green-600" : "text-red-600"}>
+                    <span className={`transition-colors duration-200 ${driver.license ? "text-green-600" : "text-red-600"}`}>
                       {driver.license ? "Uploaded" : "Not Uploaded"}
                     </span>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                    <span className={driver.vehicle_license ? "text-green-600" : "text-red-600"}>
+                    <span className={`transition-colors duration-200 ${driver.vehicle_license ? "text-green-600" : "text-red-600"}`}>
                       {driver.vehicle_license ? "Uploaded" : "Not Uploaded"}
                     </span>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                    <span className={driver.contracts && driver.contracts.length > 0 ? "text-green-600" : "text-red-600"}>
+                    <span className={`transition-colors duration-200 ${driver.contracts && driver.contracts.length > 0 ? "text-green-600" : "text-red-600"}`}>
                       {driver.contracts && driver.contracts.length > 0 ? "Uploaded" : "Not Uploaded"}
                     </span>
                   </TableCell>
@@ -389,14 +539,16 @@ export default function BasicTableOne() {
                     <div className="flex gap-2">
                       <button
                           onClick={() => handleEditClick(driver.id)}
-                        className="text-blue-600 hover:underline"
+                        className="text-blue-600 hover:text-blue-800 dark:hover:text-blue-400 transition-colors duration-200 hover:scale-110 transform"
+                        title="Edit driver"
                       >
                         ✏️
                       </button>
                       <button
                           onClick={() => handleDeleteClick(driver.id, `${driver.first_name} ${driver.last_name}`)}
                           disabled={isDeleting}
-                        className="text-red-600 hover:underline"
+                        className="text-red-600 hover:text-red-800 dark:hover:text-red-400 transition-colors duration-200 hover:scale-110 transform disabled:opacity-50 disabled:cursor-not-allowed"
+                        title="Delete driver"
                       >
                         🗑️
                       </button>
@@ -410,12 +562,12 @@ export default function BasicTableOne() {
       </div>
       
       {/* Pagination and Export Section */}
-      <div className="flex items-center justify-between p-4">
+      <div className="flex items-center justify-between p-4 border-t border-gray-100 dark:border-white/[0.05]">
         <div className="flex items-center justify-center gap-1 flex-1">
           <button
             disabled={currentPage === 1}
             onClick={() => handlePageChange(currentPage - 1)}
-            className="px-3 py-1 rounded disabled:opacity-30 bg-blue-600 text-white"
+            className="px-3 py-1 rounded disabled:opacity-30 bg-blue-600 text-white transition-all duration-200 hover:bg-blue-700 disabled:hover:bg-blue-600 hover:scale-105 active:scale-95"
           >
             Prev
           </button>
@@ -424,10 +576,10 @@ export default function BasicTableOne() {
             <button
               key={index + 1}
               onClick={() => handlePageChange(index + 1)}
-              className={`px-3 py-1 rounded ${
+              className={`px-3 py-1 rounded transition-all duration-200 hover:scale-105 active:scale-95 ${
                 currentPage === index + 1
                   ? "bg-blue-600 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
               }`}
             >
               {index + 1}
@@ -437,7 +589,7 @@ export default function BasicTableOne() {
           <button
             disabled={currentPage === totalPages || totalPages === 0}
             onClick={() => handlePageChange(currentPage + 1)}
-            className="px-3 py-1 rounded disabled:opacity-30 bg-blue-600 text-white"
+            className="px-3 py-1 rounded disabled:opacity-30 bg-blue-600 text-white transition-all duration-200 hover:bg-blue-700 disabled:hover:bg-blue-600 hover:scale-105 active:scale-95"
           >
             Next
           </button>
@@ -446,12 +598,12 @@ export default function BasicTableOne() {
         <div className="flex justify-end">
           <button
             onClick={handleExport}
-            disabled={isExporting}
-            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            disabled={isExporting || drivers.length === 0}
+            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105 active:scale-95 flex items-center gap-2"
           >
             {isExporting ? (
               <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                <LoadingSpinner size="small" />
                 Exporting...
               </>
             ) : (
@@ -476,11 +628,11 @@ export default function BasicTableOne() {
         isLoading={isDeleting}
       />
       {deleteError && (
-        <div className="fixed top-4 right-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded shadow-lg z-50">
+        <div className="fixed top-4 right-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded shadow-lg z-50 animate-in slide-in-from-right duration-300">
           <strong>Error: </strong> {deleteError.message}
           <button 
             onClick={() => {/* reset error */}}
-            className="float-right font-bold ml-4"
+            className="float-right font-bold ml-4 hover:text-red-900 transition-colors"
           >
             ×
           </button>
