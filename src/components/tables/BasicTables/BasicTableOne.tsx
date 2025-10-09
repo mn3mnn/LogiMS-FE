@@ -12,21 +12,23 @@ import { useDeleteDriver } from '../../../hooks/useDeleteDriver';
 import { useExportDrivers } from '../../../hooks/useExportDrivers';
 import DeleteConfirmationModal from '../../modals/DeleteConfirmationModal';
 import EditDriverModal from '../../modals/AddDriverModal';
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
+import { useCompanies } from '../../../hooks/useCompanies';
 
 export default function BasicTableOne() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [companyFilter, setCompanyFilter] = useState("All");
-  const [driverStatusFilter, setDriverStatusFilter] = useState("all"); // New: Driver status filter
+  const [driverStatusFilter, setDriverStatusFilter] = useState("all");
   const [docStatusFilter, setDocStatusFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
+  const [companyFilter, setCompanyFilter] = useState("All");
+
+  const { companies, isLoading: companiesLoading, error: companiesError } = useCompanies();
   
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Updated hook call with all filters
-  const { data, isLoading, error, isFetching } = useDrivers(
+  const { data, isLoading: driversLoading, error: driversError, isFetching } = useDrivers(
     companyFilter, 
     currentPage, 
     refreshKey,
@@ -52,8 +54,8 @@ export default function BasicTableOne() {
 
   const [isExporting, setIsExporting] = useState(false);
 
-  if (isLoading) return <p>Loading...</p>;
-  if (error) return <p>Failed to load drivers</p>;
+  if (driversLoading) return <p>Loading...</p>;
+  if (driversError) return <p>Failed to load drivers</p>;
 
   // Client-side search (only for displayed data)
   const filteredData = drivers.filter((driver: any) => {
@@ -70,22 +72,18 @@ export default function BasicTableOne() {
     try {
       const exportParams: any = {};
       
-      // Add company filter if not "All"
       if (companyFilter !== "All") {
         exportParams.company_code = companyFilter;
       }
       
-      // Add driver status filter if not "all"
       if (driverStatusFilter !== "all") {
         exportParams.is_active = driverStatusFilter === "active";
       }
       
-      // Add document status filter if not "all"
       if (docStatusFilter !== "all") {
         exportParams.doc_status = docStatusFilter;
       }
       
-      // Add search term if exists
       if (searchTerm) {
         exportParams.search = searchTerm;
       }
@@ -213,11 +211,31 @@ export default function BasicTableOne() {
               handleFilterChange();
             }}
             className="border rounded-lg px-3 py-1 text-sm dark:bg-gray-800 dark:text-white"
+            disabled={companiesLoading}
           >
             <option value="All">All Companies</option>
-            <option value="uber_eats">Uber Eats</option>
-            <option value="talabat">Talabat</option>
+            
+            {companiesLoading ? (
+              <option disabled>Loading companies...</option>
+            ) : companiesError ? (
+              <option disabled>Error loading companies</option>
+            ) : (
+              companies
+                .filter(company => company.is_active)
+                .map((company) => (
+                  <option key={company.code} value={company.code}>
+                    {company.name}
+                  </option>
+                ))
+            )}
           </select>
+          
+          {companiesLoading && (
+            <p className="text-xs text-gray-500 mt-1">Loading companies...</p>
+          )}
+          {companiesError && (
+            <p className="text-xs text-red-500 mt-1">Failed to load companies</p>
+          )}
         </div>
 
         {/* Driver Status Filter */}
@@ -472,11 +490,7 @@ export default function BasicTableOne() {
       <EditDriverModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSubmit={(data) => {
-          console.log("User Added:", data);
-          setIsModalOpen(false);
-        }}
-        onUserAdded={handleUserAdded}
+        onSuccess={handleUserAdded}
       />
 
        <DeleteConfirmationModal
@@ -488,7 +502,7 @@ export default function BasicTableOne() {
       />
       {deleteError && (
         <div className="fixed top-4 right-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded shadow-lg z-50">
-          <strong>Error: </strong> {deleteError}
+          <strong>Error: </strong> {deleteError.message}
           <button 
             onClick={() => {/* reset error */}}
             className="float-right font-bold ml-4"

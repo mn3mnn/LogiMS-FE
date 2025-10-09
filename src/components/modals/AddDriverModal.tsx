@@ -1,6 +1,8 @@
 // components/AddDriverModal.tsx
 import { useState, useEffect } from 'react';
 import { useAddDriver, DriverData, LicenseData, NationalIdData, VehicleLicenseData, ContractData } from '../../hooks/useAddDriver';
+import { useCompanies } from '../../hooks/useCompanies';
+
 
 interface AddDriverModalProps {
   isOpen: boolean;
@@ -47,6 +49,8 @@ const createEmptyVehicleLicense = (): Omit<VehicleLicenseData, 'driver_id'> => (
 export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriverModalProps) {
   const { addDriver, isLoading, error, reset, isSuccess } = useAddDriver();
   const [validationError, setValidationError] = useState<string>('');
+  const { companies, isLoading: companiesLoading, error: companiesError } = useCompanies();
+
   
   // Form state
   const [driverData, setDriverData] = useState<DriverData>({
@@ -326,20 +330,42 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    Company
-                  </label>
-                  <select
-                    name="company_code"
-                    value={driverData.company_code}
-                    onChange={handleDriverChange}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                  >
-                    <option value="talabat">Talabat</option>
-                    <option value="uber_eats">Uber Eats</option>
-                  </select>
-                </div>
-                
+  <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+    Company
+  </label>
+  <select
+    name="company_code"
+    value={driverData.company_code}
+    onChange={handleDriverChange}
+    className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+    disabled={isLoading}
+  >
+    {isLoading ? (
+      <option value="">Loading companies...</option>
+    ) : error ? (
+      <option value="">Error loading companies</option>
+    ) : (
+      <>
+        <option value="">Select a company</option>
+        {companies
+          .filter(company => company.is_active)
+          .map((company) => (
+            <option key={company.code} value={company.code}>
+              {company.name}
+            </option>
+          ))
+        }
+      </>
+    )}
+  </select>
+  
+  {isLoading && (
+    <p className="text-xs text-gray-500 mt-1">Loading companies...</p>
+  )}
+  {error && (
+    <p className="text-xs text-red-500 mt-1">Failed to load companies</p>
+  )}
+</div>
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
                     UUID
