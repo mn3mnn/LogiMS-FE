@@ -11,7 +11,8 @@ import { useDrivers } from "../../../hooks/useDrivers";
 import { useDeleteDriver } from '../../../hooks/useDeleteDriver';
 import { useExportDrivers } from '../../../hooks/useExportDrivers';
 import DeleteConfirmationModal from '../../modals/DeleteConfirmationModal';
-import EditDriverModal from '../../modals/AddDriverModal';
+import AddDriverModal from '../../modals/AddDriverModal';
+import EditDriverModal from '../../modals/EditDriverModal';
 import { Link } from "react-router-dom";
 import { useCompanies } from '../../../hooks/useCompanies';
 
@@ -74,7 +75,8 @@ const LoadingSpinner = ({ size = "small" }) => {
 };
 
 export default function BasicTableOne() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [driverStatusFilter, setDriverStatusFilter] = useState("all");
   const [docStatusFilter, setDocStatusFilter] = useState("all");
@@ -129,7 +131,6 @@ export default function BasicTableOne() {
   
   const { deleteDriver, isLoading: isDeleting, error: deleteError } = useDeleteDriver();
 
-  const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedDriverId, setSelectedDriverId] = useState<number | null>(null);
 
   const [isExporting, setIsExporting] = useState(false);
@@ -221,9 +222,13 @@ export default function BasicTableOne() {
     setCurrentPage(1);
   };
 
-  const handleUserAdded = () => {
+  const handleDriverAdded = () => {
     setRefreshKey(prev => prev + 1); 
     setCurrentPage(1); 
+  };
+
+  const handleDriverUpdated = () => {
+    setRefreshKey(prev => prev + 1);
   };
 
   const handlePageChange = (newPage: number) => {
@@ -250,7 +255,7 @@ export default function BasicTableOne() {
     }
   };
 
-  const handleCloseModal = () => {
+  const handleCloseDeleteModal = () => {
     if (!isDeleting) { 
       setDeleteModalOpen(false);
       setSelectedDriver(null);
@@ -259,15 +264,15 @@ export default function BasicTableOne() {
 
   const handleEditClick = (driverId: number) => {
     setSelectedDriverId(driverId);
-    setEditModalOpen(true);
+    setIsEditModalOpen(true);
   };
 
-  const handleEditSuccess = () => {
-    setRefreshKey(prev => prev + 1);
+  const handleCloseAddModal = () => {
+    setIsAddModalOpen(false);
   };
 
   const handleCloseEditModal = () => {
-    setEditModalOpen(false);
+    setIsEditModalOpen(false);
     setSelectedDriverId(null);
   };
 
@@ -394,7 +399,7 @@ export default function BasicTableOne() {
         {/* Action Buttons */}
         <div>
           <button
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => setIsAddModalOpen(true)}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 hover:scale-105 active:scale-95"
           >
             + Add Driver
@@ -489,17 +494,18 @@ export default function BasicTableOne() {
                     </div>
                   </TableCell>
                   <TableCell className="px-5 py-4 sm:px-6 text-start">
-                    <div className="flex items-center gap-3">
-                      <div>
-                        <Link 
-                          to={`/drivers/${driver.id}`}
-                          className="block font-medium text-gray-800 text-theme-sm dark:text-white/90 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"
-                        >
-                          {driver.first_name} {driver.last_name}
-                        </Link>
-                      </div>
-                    </div>
-                  </TableCell>
+  <div className="flex items-center gap-3">
+    <div>
+      <Link 
+        to={`/drivers/${driver.id}`}
+        className="block font-medium text-gray-800 text-theme-sm dark:text-white/90 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"
+        onClick={(e) => e.stopPropagation()} // Add this line
+      >
+        {driver.first_name} {driver.last_name}
+      </Link>
+    </div>
+  </div>
+</TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                     {driver.phone_number}
                   </TableCell>
@@ -614,19 +620,31 @@ export default function BasicTableOne() {
       </div>
 
       {/* Modals */}
-      <EditDriverModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSuccess={handleUserAdded}
+      {/* Add Driver Modal */}
+      <AddDriverModal
+        isOpen={isAddModalOpen}
+        onClose={handleCloseAddModal}
+        onSuccess={handleDriverAdded}
       />
 
-       <DeleteConfirmationModal
+      {/* Edit Driver Modal */}
+      <EditDriverModal
+        isOpen={isEditModalOpen}
+        onClose={handleCloseEditModal}
+        onSuccess={handleDriverUpdated}
+        driverId={selectedDriverId}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmationModal
         isOpen={deleteModalOpen}
-        onClose={handleCloseModal}
+        onClose={handleCloseDeleteModal}
         onConfirm={handleConfirmDelete}
         driverName={selectedDriver?.name || ''}
         isLoading={isDeleting}
       />
+
+      {/* Delete Error Display */}
       {deleteError && (
         <div className="fixed top-4 right-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded shadow-lg z-50 animate-in slide-in-from-right duration-300">
           <strong>Error: </strong> {deleteError.message}
@@ -638,13 +656,6 @@ export default function BasicTableOne() {
           </button>
         </div>
       )}
-
-       <EditDriverModal
-        isOpen={editModalOpen}
-        onClose={handleCloseEditModal}
-        onSuccess={handleEditSuccess}
-        driverId={selectedDriverId}
-      />
     </div>
   );
 }
