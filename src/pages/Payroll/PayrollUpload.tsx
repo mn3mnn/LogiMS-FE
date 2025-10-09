@@ -1,13 +1,8 @@
 // src/pages/Payroll/PayrollUpload.tsx
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Button from "../../components/ui/button/Button";
 import Label from "../../components/form/Label";
-
-interface Company {
-  code: string;
-  name: string;
-  is_active: boolean;
-}
+import { useCompanies } from "../../hooks/useCompanies"; // Import the same hook
 
 interface PayrollConfig {
   company_code: string;
@@ -22,10 +17,8 @@ export default function PayrollUpload() {
   const [uploadStatus, setUploadStatus] = useState<"idle" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
   
-  // Company data state
-  const [companies, setCompanies] = useState<Company[]>([]);
-  const [isLoadingCompanies, setIsLoadingCompanies] = useState(false);
-  const [companiesError, setCompaniesError] = useState<string | null>(null);
+  // Use the same companies hook that works in your table
+  const { companies, isLoading: companiesLoading, error: companiesError } = useCompanies();
   
   // Payroll configuration state
   const [payrollConfig, setPayrollConfig] = useState<PayrollConfig>({
@@ -34,36 +27,6 @@ export default function PayrollUpload() {
     company_share_percentage: 0,
     insurance_eur: 0
   });
-
-  // Fetch companies from API
-  useEffect(() => {
-    const fetchCompanies = async () => {
-      setIsLoadingCompanies(true);
-      setCompaniesError(null);
-      
-      try {
-        const response = await fetch("/api/v1/companies", {
-          headers: {
-            "Authorization": `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        
-        if (response.ok) {
-          const data = await response.json();
-          setCompanies(data);
-        } else {
-          throw new Error("Failed to load companies");
-        }
-      } catch (error) {
-        console.error("Error fetching companies:", error);
-        setCompaniesError("Failed to load companies");
-      } finally {
-        setIsLoadingCompanies(false);
-      }
-    };
-
-    fetchCompanies();
-  }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
@@ -119,7 +82,6 @@ export default function PayrollUpload() {
       formData.append("company_share_percentage", payrollConfig.company_share_percentage.toString());
       formData.append("insurance_eur", payrollConfig.insurance_eur.toString());
 
-      // Replace with your actual API endpoint
       const response = await fetch("/api/v1/payroll/upload", {
         method: "POST",
         body: formData,
@@ -162,7 +124,6 @@ export default function PayrollUpload() {
     setMessage("");
 
     try {
-      // Generate report API call
       const response = await fetch("/api/v1/payroll/generate-report", {
         method: "POST",
         headers: {
@@ -179,14 +140,11 @@ export default function PayrollUpload() {
 
       if (response.ok) {
         const blob = await response.blob();
-        
-        // Create download link
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.style.display = 'none';
         a.href = url;
         
-        // Get filename from response headers or use default
         const contentDisposition = response.headers.get('content-disposition');
         let filename = 'payroll-report.pdf';
         if (contentDisposition) {
@@ -223,62 +181,6 @@ export default function PayrollUpload() {
         </h2>
       </div>
 
-      {/* File Upload Section */}
-
-
-      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
-        <div className="max-w-2xl">
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90 mb-4">
-            Upload Payroll File
-          </h3>
-          
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
-            Upload an Excel (.xlsx, .xls) or CSV file containing payroll data. The system will process the file and update payroll records accordingly.
-          </p>
-
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="payroll-file">Select Payroll File</Label>
-              <input
-                id="payroll-file"
-                type="file"
-                accept=".xlsx,.xls,.csv"
-                onChange={handleFileChange}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-gray-600 dark:file:text-gray-300"
-              />
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                Supported formats: Excel (.xlsx, .xls) or CSV files
-              </p>
-            </div>
-
-            {selectedFile && (
-              <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
-                <p className="text-sm text-gray-700 dark:text-gray-300">
-                  <strong>Selected file:</strong> {selectedFile.name}
-                </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  Size: {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
-                </p>
-              </div>
-            )}
-
-            {message && (
-              <div
-                className={`p-3 rounded-lg text-sm ${
-                  uploadStatus === "success"
-                    ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
-                    : "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300"
-                }`}
-              >
-                {message}
-              </div>
-            )}
-
-            
-          </div>
-        </div>
-      </div>
-
       {/* Configuration Section */}
       <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
         <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90 mb-4">
@@ -286,7 +188,7 @@ export default function PayrollUpload() {
         </h3>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Company Dropdown */}
+          {/* Company Dropdown - Using the same pattern as your table */}
           <div>
             <Label htmlFor="company_code">Company *</Label>
             <select
@@ -294,9 +196,9 @@ export default function PayrollUpload() {
               value={payrollConfig.company_code}
               onChange={(e) => handleConfigChange("company_code", e.target.value)}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-              disabled={isLoadingCompanies}
+              disabled={companiesLoading}
             >
-              {isLoadingCompanies ? (
+              {companiesLoading ? (
                 <option value="">Loading companies...</option>
               ) : companiesError ? (
                 <option value="">Error loading companies</option>
@@ -315,11 +217,11 @@ export default function PayrollUpload() {
               )}
             </select>
             
-            {isLoadingCompanies && (
+            {companiesLoading && (
               <p className="text-xs text-gray-500 mt-1">Loading companies...</p>
             )}
             {companiesError && (
-              <p className="text-xs text-red-500 mt-1">{companiesError}</p>
+              <p className="text-xs text-red-500 mt-1">Failed to load companies</p>
             )}
           </div>
 
@@ -372,7 +274,56 @@ export default function PayrollUpload() {
         </div>
       </div>
 
-      <div className="flex gap-3">
+      {/* File Upload Section */}
+      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
+        <div className="max-w-2xl">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90 mb-4">
+            Upload Payroll File
+          </h3>
+          
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+            Upload an Excel (.xlsx, .xls) or CSV file containing payroll data. The system will process the file and update payroll records accordingly.
+          </p>
+
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="payroll-file">Select Payroll File</Label>
+              <input
+                id="payroll-file"
+                type="file"
+                accept=".xlsx,.xls,.csv"
+                onChange={handleFileChange}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-gray-600 dark:file:text-gray-300"
+              />
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                Supported formats: Excel (.xlsx, .xls) or CSV files
+              </p>
+            </div>
+
+            {selectedFile && (
+              <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+                <p className="text-sm text-gray-700 dark:text-gray-300">
+                  <strong>Selected file:</strong> {selectedFile.name}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  Size: {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                </p>
+              </div>
+            )}
+
+            {message && (
+              <div
+                className={`p-3 rounded-lg text-sm ${
+                  uploadStatus === "success"
+                    ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
+                    : "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300"
+                }`}
+              >
+                {message}
+              </div>
+            )}
+
+            <div className="flex gap-3">
               <Button
                 onClick={handleUpload}
                 disabled={!selectedFile || !payrollConfig.company_code || isUploading}
@@ -419,8 +370,9 @@ export default function PayrollUpload() {
                 </Button>
               )}
             </div>
-
-      
+          </div>
+        </div>
+      </div>
 
       {/* Additional Information Section */}
       <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
