@@ -32,6 +32,13 @@ const navItems: NavItem[] = [
       { name: "Expired Data", path: "/expired-driver-data", pro: false },
     ],
   },
+  {
+    name: "Payroll",
+    icon: <TableIcon />, // You can use TableIcon or create a specific payroll icon
+    subItems: [
+      { name: "Upload Payroll", path: "/payroll", pro: false, new: true },
+    ],
+  },
 ];
 
 const AppSidebar: React.FC = () => {

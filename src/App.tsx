@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "./context/AuthContext"; // ✅ import
-import ProtectedRoute from "./components/ProtectedRoute"; // ✅ import
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 // your existing imports here...
 import SignIn from "./pages/AuthPages/SignIn";
@@ -24,6 +24,7 @@ import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
 import DriverProfile from "./pages/DriverProfile";
 import ExpiredDriverData from "./pages/ExpiredDriverData";
+import PayrollUpload from "./pages/Payroll/PayrollUpload"; // ✅ Add this import
 
 export default function App() {
   return (
@@ -52,6 +53,9 @@ export default function App() {
             {/* Tables */}
             <Route path="/basic-tables" element={<BasicTables />} />
             <Route path="/expired-driver-data" element={<ExpiredDriverData />} />
+
+            {/* Payroll */}
+            <Route path="/payroll" element={<PayrollUpload />} /> {/* ✅ Add this route */}
 
             {/* Driver Profile */}
             <Route path="/drivers/:id" element={<UserProfiles />} />
