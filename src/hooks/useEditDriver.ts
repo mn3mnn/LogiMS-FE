@@ -66,7 +66,7 @@ export interface DriverData {
   uuid: string;
   phone_number: string;
   is_active: boolean;
-  company_code: 'uber_eats' | 'talabat';
+  company_code: string;
   contracts: Contract[];
   license: License | null;
   national_id_doc: NationalIdDoc | null;
@@ -80,7 +80,7 @@ export interface EditDriverData {
   uuid: string;
   phone_number: string;
   is_active: boolean;
-  company_code: 'uber_eats' | 'talabat';
+  company_code: string;
   contracts: FormContract[];
   license: FormLicense | null;
   national_id_doc: FormNationalIdDoc | null;

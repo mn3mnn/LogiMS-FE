@@ -36,7 +36,7 @@ const fetchDrivers = async (
   page: number = 1, 
   driverStatusFilter: string = "all",
   docStatusFilter: string = "all",
-  searchTerm: string = "" // Add search parameter
+  searchTerm: string = ""
 ): Promise<DriversResponse> => {
   const params: any = {
     page: page,
@@ -78,9 +78,9 @@ export const useDrivers = (
   refreshKey: number = 0,
   driverStatusFilter: string = "all",
   docStatusFilter: string = "all",
-  searchTerm: string = "" // Add search parameter
+  searchTerm: string = ""
 ) => {
-  const { token } = useAuth();
+  const { token, isLoading: authLoading } = useAuth();
 
   const { data, isLoading, error, isFetching, refetch } = useQuery({
     queryKey: ['drivers', companyFilter, page, refreshKey, driverStatusFilter, docStatusFilter, searchTerm],
@@ -90,12 +90,12 @@ export const useDrivers = (
       }
       return fetchDrivers(token, companyFilter, page, driverStatusFilter, docStatusFilter, searchTerm);
     },
-    enabled: !!token,
+    enabled: !!token && !authLoading, // Wait for auth to finish loading
   });
 
   return {
     data,
-    isLoading,
+    isLoading: isLoading || authLoading, // Combine loading states
     error,
     isFetching,
     refetch,
