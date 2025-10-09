@@ -4,7 +4,7 @@ import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
 
-export default function UserInfoCard({name, lastName, email, phone, nid}: {name: string, lastName: string, email: string, phone: string, nid: string}) {
+export default function UserInfoCard({name, lastName, email, phone, nid, uuid}: {name: string, lastName: string, email: string, phone: string, nid: string, uuid: string}) {
   const { isOpen, openModal, closeModal } = useModal();
   const handleSave = () => {
     // Handle save logic here
@@ -61,6 +61,14 @@ export default function UserInfoCard({name, lastName, email, phone, nid}: {name:
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                 {nid}
+              </p>
+            </div>
+            <div>
+              <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                UUID
+              </p>
+              <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                {uuid}
               </p>
             </div>
           </div>
