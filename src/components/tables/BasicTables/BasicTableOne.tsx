@@ -284,11 +284,19 @@ export default function BasicTableOne() {
 
   // Helper function to display insurance status
   const getInsuranceStatus = (insurance: any) => {
-    if (!insurance) return 'No Insurance';
+    if (!insurance || insurance === null || insurance === undefined) return 'No Insurance';
+    
+    // If insurance is a number (percentage), show the amount
+    if (typeof insurance === 'number') {
+      return `${insurance}`;
+    }
+    
+    // If insurance is an object with a file property
     if (insurance.file) return 'Uploaded';
+    
+    // If insurance is an object but no file
     return 'No Document';
   };
-
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03] transition-all duration-300">
       <div className="hidden lg:block my-2 mx-4">
@@ -537,13 +545,14 @@ export default function BasicTableOne() {
                     </span>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                    <span className={`transition-colors duration-200 ${
-                      driver.insurance && driver.insurance.file ? "text-green-600" : 
-                      driver.insurance ? "text-yellow-600" : "text-red-600"
-                    }`}>
-                      {getInsuranceStatus(driver.insurance)}
-                    </span>
-                  </TableCell>
+  <span className={`transition-colors duration-200 ${
+    typeof driver.insurance === 'number' ? "text-green-600" : 
+    driver.insurance && driver.insurance.file ? "text-green-600" : 
+    driver.insurance ? "text-yellow-600" : "text-red-600"
+  }`}>
+    {getInsuranceStatus(driver.insurance)}
+  </span>
+</TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                     <span className={`transition-colors duration-200 ${driver.national_id_doc ? "text-green-600" : "text-red-600"}`}>
                       {driver.national_id_doc ? "Uploaded" : "Not Uploaded"}
