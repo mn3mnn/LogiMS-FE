@@ -78,7 +78,6 @@ export default function BasicTableOne() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [driverStatusFilter, setDriverStatusFilter] = useState("all");
   const [docStatusFilter, setDocStatusFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
@@ -95,7 +94,6 @@ export default function BasicTableOne() {
     companyFilter, 
     currentPage, 
     refreshKey,
-    driverStatusFilter,
     docStatusFilter,
     debouncedSearchTerm
   );
@@ -148,7 +146,7 @@ export default function BasicTableOne() {
             <Table>
               <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
                 <TableRow>
-                  {[...Array(10)].map((_, index) => (
+                  {[...Array(9)].map((_, index) => (
                     <TableCell key={index} isHeader className="px-5 py-3">
                       <div className="h-4 bg-gray-200 rounded dark:bg-gray-700 w-20 animate-pulse"></div>
                     </TableCell>
@@ -191,10 +189,6 @@ export default function BasicTableOne() {
       
       if (companyFilter !== "All") {
         exportParams.company_code = companyFilter;
-      }
-      
-      if (driverStatusFilter !== "all") {
-        exportParams.is_active = driverStatusFilter === "active";
       }
       
       if (docStatusFilter !== "all") {
@@ -439,9 +433,6 @@ export default function BasicTableOne() {
                 Company
               </TableCell>
               <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                Status
-              </TableCell>
-              <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
                 NID
               </TableCell>
               <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
@@ -462,7 +453,7 @@ export default function BasicTableOne() {
           <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
             {drivers.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={10} className="px-5 py-8 text-center text-gray-500">
+                <TableCell colSpan={9} className="px-5 py-8 text-center text-gray-500">
                   <div className="flex flex-col items-center justify-center">
                     <svg className="w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -494,32 +485,23 @@ export default function BasicTableOne() {
                     </div>
                   </TableCell>
                   <TableCell className="px-5 py-4 sm:px-6 text-start">
-  <div className="flex items-center gap-3">
-    <div>
-      <Link 
-        to={`/drivers/${driver.id}`}
-        className="block font-medium text-gray-800 text-theme-sm dark:text-white/90 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"
-        onClick={(e) => e.stopPropagation()} // Add this line
-      >
-        {driver.first_name} {driver.last_name}
-      </Link>
-    </div>
-  </div>
-</TableCell>
+                    <div className="flex items-center gap-3">
+                      <div>
+                        <Link 
+                          to={`/drivers/${driver.id}`}
+                          className="block font-medium text-gray-800 text-theme-sm dark:text-white/90 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {driver.first_name} {driver.last_name}
+                        </Link>
+                      </div>
+                    </div>
+                  </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                     {driver.phone_number}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                     {driver.company_name}
-                  </TableCell>
-                  <TableCell className="px-4 py-3 text-start text-theme-sm">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium transition-colors duration-200 ${
-                      driver.is_active 
-                        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' 
-                        : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
-                    }`}>
-                      {driver.is_active ? 'Active' : 'Inactive'}
-                    </span>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                     <span className={`transition-colors duration-200 ${driver.national_id_doc ? "text-green-600" : "text-red-600"}`}>
@@ -544,15 +526,15 @@ export default function BasicTableOne() {
                   <TableCell>
                     <div className="flex gap-2">
                       <button
-                          onClick={() => handleEditClick(driver.id)}
+                        onClick={() => handleEditClick(driver.id)}
                         className="text-blue-600 hover:text-blue-800 dark:hover:text-blue-400 transition-colors duration-200 hover:scale-110 transform"
                         title="Edit driver"
                       >
                         ✏️
                       </button>
                       <button
-                          onClick={() => handleDeleteClick(driver.id, `${driver.first_name} ${driver.last_name}`)}
-                          disabled={isDeleting}
+                        onClick={() => handleDeleteClick(driver.id, `${driver.first_name} ${driver.last_name}`)}
+                        disabled={isDeleting}
                         className="text-red-600 hover:text-red-800 dark:hover:text-red-400 transition-colors duration-200 hover:scale-110 transform disabled:opacity-50 disabled:cursor-not-allowed"
                         title="Delete driver"
                       >

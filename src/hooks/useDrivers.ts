@@ -34,7 +34,6 @@ const fetchDrivers = async (
   token: string,
   companyFilter: string = "All", 
   page: number = 1, 
-  driverStatusFilter: string = "all",
   docStatusFilter: string = "all",
   searchTerm: string = ""
 ): Promise<DriversResponse> => {
@@ -46,11 +45,6 @@ const fetchDrivers = async (
   // Add company filter
   if (companyFilter !== "All") {
     params.company_code = companyFilter;
-  }
-
-  // Add driver status filter
-  if (driverStatusFilter !== "all") {
-    params.is_active = driverStatusFilter === "active";
   }
 
   // Add document status filter
@@ -76,19 +70,18 @@ export const useDrivers = (
   companyFilter: string = "All", 
   page: number = 1, 
   refreshKey: number = 0,
-  driverStatusFilter: string = "all",
   docStatusFilter: string = "all",
   searchTerm: string = ""
 ) => {
   const { token, isLoading: authLoading } = useAuth();
 
   const { data, isLoading, error, isFetching, refetch } = useQuery({
-    queryKey: ['drivers', companyFilter, page, refreshKey, driverStatusFilter, docStatusFilter, searchTerm],
+    queryKey: ['drivers', companyFilter, page, refreshKey, docStatusFilter, searchTerm],
     queryFn: () => {
       if (!token) {
         throw new Error('No authentication token available');
       }
-      return fetchDrivers(token, companyFilter, page, driverStatusFilter, docStatusFilter, searchTerm);
+      return fetchDrivers(token, companyFilter, page, docStatusFilter, searchTerm);
     },
     enabled: !!token && !authLoading, // Wait for auth to finish loading
   });
