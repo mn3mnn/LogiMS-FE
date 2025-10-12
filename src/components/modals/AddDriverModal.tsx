@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { useAddDriver, DriverData, LicenseData, NationalIdData, VehicleLicenseData, ContractData } from '../../hooks/useAddDriver';
 import { useCompanies } from '../../hooks/useCompanies';
 
-
 interface AddDriverModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -61,6 +60,8 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
     phone_number: '',
     is_active: true,
     company_code: 'talabat',
+    agency_share: null,
+    insurance: null,
   });
 
   const [licenseData, setLicenseData] = useState<Omit<LicenseData, 'driver_id'>>(createEmptyLicense());
@@ -109,6 +110,8 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
       phone_number: '',
       is_active: true,
       company_code: 'talabat',
+      agency_share: null,
+      insurance: null,
     });
     setLicenseData(createEmptyLicense());
     setNationalIdData(createEmptyNationalId());
@@ -158,10 +161,20 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
   // Handler for driver data changes
   const handleDriverChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
-    setDriverData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value,
-    }));
+    
+    if (name === 'agency_share' || name === 'insurance') {
+      // Handle numeric fields - convert to number or null
+      const numValue = value === '' ? null : Number(value);
+      setDriverData(prev => ({
+        ...prev,
+        [name]: numValue,
+      }));
+    } else {
+      setDriverData(prev => ({
+        ...prev,
+        [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value,
+      }));
+    }
   };
 
   // Handler for license data changes
@@ -330,42 +343,78 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                 </div>
                 
                 <div>
-  <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-    Company
-  </label>
-  <select
-    name="company_code"
-    value={driverData.company_code}
-    onChange={handleDriverChange}
-    className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-    disabled={isLoading}
-  >
-    {isLoading ? (
-      <option value="">Loading companies...</option>
-    ) : error ? (
-      <option value="">Error loading companies</option>
-    ) : (
-      <>
-        <option value="">Select a company</option>
-        {companies
-          .filter(company => company.is_active)
-          .map((company) => (
-            <option key={company.code} value={company.code}>
-              {company.name}
-            </option>
-          ))
-        }
-      </>
-    )}
-  </select>
-  
-  {isLoading && (
-    <p className="text-xs text-gray-500 mt-1">Loading companies...</p>
-  )}
-  {error && (
-    <p className="text-xs text-red-500 mt-1">Failed to load companies</p>
-  )}
-</div>
+                  <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                    Company
+                  </label>
+                  <select
+                    name="company_code"
+                    value={driverData.company_code}
+                    onChange={handleDriverChange}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <option value="">Loading companies...</option>
+                    ) : error ? (
+                      <option value="">Error loading companies</option>
+                    ) : (
+                      <>
+                        <option value="">Select a company</option>
+                        {companies
+                          .filter(company => company.is_active)
+                          .map((company) => (
+                            <option key={company.code} value={company.code}>
+                              {company.name}
+                            </option>
+                          ))
+                        }
+                      </>
+                    )}
+                  </select>
+                  
+                  {isLoading && (
+                    <p className="text-xs text-gray-500 mt-1">Loading companies...</p>
+                  )}
+                  {error && (
+                    <p className="text-xs text-red-500 mt-1">Failed to load companies</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                    Agency Share (%)
+                  </label>
+                  <input
+                    type="number"
+                    name="agency_share"
+                    value={driverData.agency_share === null ? '' : driverData.agency_share}
+                    onChange={handleDriverChange}
+                    min="0"
+                    max="100"
+                    step="0.1"
+                    placeholder="Enter percentage (0-100)"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Leave empty if no agency share</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                    Insurance Amount
+                  </label>
+                  <input
+                    type="number"
+                    name="insurance"
+                    value={driverData.insurance === null ? '' : driverData.insurance}
+                    onChange={handleDriverChange}
+                    min="0"
+                    step="0.01"
+                    placeholder="Enter insurance amount"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Leave empty if no insurance</p>
+                </div>
+                
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
                     UUID

@@ -61,6 +61,8 @@ interface DriverProfile {
   vehicle_license: VehicleLicense | null;
   created_at: string;
   updated_at: string;
+  insurance: number;
+  agency_share: number;
 }
 
 const fetchDriverProfile = async (driverId: number, token: string) => {

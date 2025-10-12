@@ -50,6 +50,12 @@ const TableSkeleton = () => {
             <div className="h-4 bg-gray-200 rounded dark:bg-gray-700 w-20"></div>
           </TableCell>
           <TableCell className="px-5 py-4">
+            <div className="h-4 bg-gray-200 rounded dark:bg-gray-700 w-20"></div>
+          </TableCell>
+          <TableCell className="px-5 py-4">
+            <div className="h-4 bg-gray-200 rounded dark:bg-gray-700 w-20"></div>
+          </TableCell>
+          <TableCell className="px-5 py-4">
             <div className="flex gap-2">
               <div className="h-6 w-6 bg-gray-200 rounded dark:bg-gray-700"></div>
               <div className="h-6 w-6 bg-gray-200 rounded dark:bg-gray-700"></div>
@@ -146,7 +152,7 @@ export default function BasicTableOne() {
             <Table>
               <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
                 <TableRow>
-                  {[...Array(9)].map((_, index) => (
+                  {[...Array(11)].map((_, index) => (
                     <TableCell key={index} isHeader className="px-5 py-3">
                       <div className="h-4 bg-gray-200 rounded dark:bg-gray-700 w-20 animate-pulse"></div>
                     </TableCell>
@@ -270,6 +276,19 @@ export default function BasicTableOne() {
     setSelectedDriverId(null);
   };
 
+  // Helper function to format agency share
+  const formatAgencyShare = (share: number | null) => {
+    if (share === null || share === undefined) return 'N/A';
+    return `${share}%`;
+  };
+
+  // Helper function to display insurance status
+  const getInsuranceStatus = (insurance: any) => {
+    if (!insurance) return 'No Insurance';
+    if (insurance.file) return 'Uploaded';
+    return 'No Document';
+  };
+
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03] transition-all duration-300">
       <div className="hidden lg:block my-2 mx-4">
@@ -385,8 +404,9 @@ export default function BasicTableOne() {
             className="border rounded-lg px-3 py-1 text-sm dark:bg-gray-800 dark:text-white transition-colors duration-200"
           >
             <option value="all">All Documents</option>
-            <option value="missing_docs">Missing Documents</option>
-            <option value="expired_docs">Expired Documents</option>
+            <option value="missing">Missing Documents</option>
+            <option value="expired">Expired Documents</option>
+            <option value="valid">Valid Documents</option>
           </select>
         </div>
 
@@ -433,6 +453,12 @@ export default function BasicTableOne() {
                 Company
               </TableCell>
               <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
+                Agency Share
+              </TableCell>
+              <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
+                Insurance
+              </TableCell>
+              <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
                 NID
               </TableCell>
               <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
@@ -453,7 +479,7 @@ export default function BasicTableOne() {
           <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
             {drivers.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={9} className="px-5 py-8 text-center text-gray-500">
+                <TableCell colSpan={11} className="px-5 py-8 text-center text-gray-500">
                   <div className="flex flex-col items-center justify-center">
                     <svg className="w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -502,6 +528,21 @@ export default function BasicTableOne() {
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                     {driver.company_name}
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                    <span className={`transition-colors duration-200 ${
+                      driver.agency_share !== null ? "text-green-600" : "text-gray-400"
+                    }`}>
+                      {formatAgencyShare(driver.agency_share)}
+                    </span>
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                    <span className={`transition-colors duration-200 ${
+                      driver.insurance && driver.insurance.file ? "text-green-600" : 
+                      driver.insurance ? "text-yellow-600" : "text-red-600"
+                    }`}>
+                      {getInsuranceStatus(driver.insurance)}
+                    </span>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                     <span className={`transition-colors duration-200 ${driver.national_id_doc ? "text-green-600" : "text-red-600"}`}>

@@ -41,6 +41,8 @@ export default function UserProfiles() { // Remove the id parameter
             phone={driver?.phone_number} 
             nid={driver?.nid} 
             uuid={driver?.uuid} 
+            insurance={driver?.insurance}
+            agency_share={driver?.agency_share}
           />
           {driverData && <DriverFilesCard driverData={driverData as any} />}
         </div>

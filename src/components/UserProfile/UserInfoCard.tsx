@@ -9,6 +9,8 @@ interface UserInfoCardProps {
   phone: string;
   nid: string;
   uuid: string;
+  agency_share?: number | null;
+  insurance?: number | null;
 }
 
 export default function UserInfoCard({ 
@@ -17,7 +19,9 @@ export default function UserInfoCard({
   email, 
   phone, 
   nid, 
-  uuid
+  uuid,
+  agency_share,
+  insurance
 }: UserInfoCardProps) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   
@@ -48,10 +52,25 @@ export default function UserInfoCard({
     // window.location.reload();
   };
 
+  // Format currency for insurance amount
+  const formatCurrency = (amount: number | null | undefined) => {
+    if (amount === null || amount === undefined) return "Not set";
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD'
+    }).format(amount);
+  };
+
+  // Format percentage for agency share
+  const formatPercentage = (percentage: number | null | undefined) => {
+    if (percentage === null || percentage === undefined) return "Not set";
+    return `${percentage}%`;
+  };
+
   return (
     <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-        <div>
+        <div className="flex-1">
           <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-6">
             Personal Information
           </h4>
@@ -92,6 +111,7 @@ export default function UserInfoCard({
                 {phone}
               </p>
             </div>
+
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
                 National ID
@@ -100,6 +120,7 @@ export default function UserInfoCard({
                 {nid}
               </p>
             </div>
+
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
                 UUID
@@ -108,10 +129,31 @@ export default function UserInfoCard({
                 {uuid}
               </p>
             </div>
+
+            {/* Added: Agency Share Field */}
+            <div>
+              <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                Agency Share
+              </p>
+              <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                {formatPercentage(agency_share)}
+              </p>
+            </div>
+
+            {/* Added: Insurance Field */}
+            <div>
+              <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                Insurance Amount
+              </p>
+              <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                {formatCurrency(insurance)}
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* <button
+        {/* Edit Button - Now uncommented and functional */}
+        <button
           onClick={openEditModal}
           className="flex w-full items-center justify-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200 lg:inline-flex lg:w-auto"
         >
@@ -131,7 +173,7 @@ export default function UserInfoCard({
             />
           </svg>
           Edit
-        </button> */}
+        </button>
       </div>
 
       {/* EditDriverModal - Only render if driverId exists */}

@@ -63,6 +63,8 @@ interface EditDriverModalProps {
       phone_number: '',
       is_active: true,
       company_code: '',
+      agency_share: null,
+      insurance: null,
     });
   
     const [licenseData, setLicenseData] = useState<Omit<LicenseData, 'driver_id'>>(createEmptyLicense());
@@ -138,6 +140,8 @@ interface EditDriverModalProps {
             phone_number: driver.phone_number || '',
             is_active: driver.is_active !== undefined ? driver.is_active : true,
             company_code: driver.company_code || '',
+            agency_share: driver.agency_share !== undefined ? driver.agency_share : null,
+            insurance: driver.insurance !== undefined ? driver.insurance : null,
           };
           
           setDriverData(newDriverData);
@@ -246,6 +250,8 @@ interface EditDriverModalProps {
         phone_number: '',
         is_active: true,
         company_code: '',
+        agency_share: null,
+        insurance: null,
       });
       setLicenseData(createEmptyLicense());
       setNationalIdData(createEmptyNationalId());
@@ -310,6 +316,14 @@ interface EditDriverModalProps {
         formData.append('uuid', driverData.uuid || '');
         formData.append('is_active', driverData.is_active.toString());
 
+        // Append agency_share and insurance if they exist
+        if (driverData.agency_share !== null) {
+          formData.append('agency_share', driverData.agency_share.toString());
+        }
+        if (driverData.insurance !== null) {
+          formData.append('insurance', driverData.insurance.toString());
+        }
+
         // ✅ Trigger the API call safely
         await updateDriver(driverId, formData);
         
@@ -334,10 +348,20 @@ interface EditDriverModalProps {
     // Handler for driver data changes
     const handleDriverChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
       const { name, value, type } = e.target;
-      setDriverData(prev => ({
-        ...prev,
-        [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value,
-      }));
+      
+      if (name === 'agency_share' || name === 'insurance') {
+        // Handle numeric fields - convert to number or null
+        const numValue = value === '' ? null : Number(value);
+        setDriverData(prev => ({
+          ...prev,
+          [name]: numValue,
+        }));
+      } else {
+        setDriverData(prev => ({
+          ...prev,
+          [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value,
+        }));
+      }
     };
   
     // Handler for license data changes
@@ -614,6 +638,45 @@ interface EditDriverModalProps {
                   {companiesError && (
                     <p className="text-xs text-red-500 mt-1">Failed to load companies</p>
                   )}
+                </div>
+
+                {/* ADDED: Agency Share Field */}
+                <div>
+                  <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                    Agency Share (%)
+                  </label>
+                  <input
+                    type="number"
+                    name="agency_share"
+                    value={driverData.agency_share === null ? '' : driverData.agency_share}
+                    onChange={handleDriverChange}
+                    min="0"
+                    max="100"
+                    step="0.1"
+                    placeholder="Enter percentage (0-100)"
+                    disabled={isFetchingDriver}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white disabled:opacity-50"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Leave empty if no agency share</p>
+                </div>
+
+                {/* ADDED: Insurance Amount Field */}
+                <div>
+                  <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                    Insurance Amount
+                  </label>
+                  <input
+                    type="number"
+                    name="insurance"
+                    value={driverData.insurance === null ? '' : driverData.insurance}
+                    onChange={handleDriverChange}
+                    min="0"
+                    step="0.01"
+                    placeholder="Enter insurance amount"
+                    disabled={isFetchingDriver}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white disabled:opacity-50"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Leave empty if no insurance</p>
                 </div>
                 
                 <div>
