@@ -2,8 +2,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
+import config from '../config/env';
 
-const API_BASE_URL = "http://localhost:8000/api/v1";
 
 // -------------------- Interfaces --------------------
 export interface DriverData {
@@ -107,7 +107,7 @@ export const useAddDriver = () => {
 
       // Step 1: Create driver
       const driverResponse = await axios.post(
-        `${API_BASE_URL}/drivers/`,
+        `${config.API_BASE_URL}/drivers/`,
         driverData,
         { headers: getHeaders() }
       );
@@ -126,7 +126,7 @@ export const useAddDriver = () => {
         if (!data || !data.file) return; // Skip if no file
         const formData = createFormData({ ...data, driver_id: driverId }, ["file"]);
         documentPromises.push(
-          axios.post(`${API_BASE_URL}/${endpoint}/`, formData, {
+          axios.post(`${config.API_BASE_URL}/${endpoint}/`, formData, {
             headers: getMultipartHeaders(),
           })
         );
@@ -141,7 +141,7 @@ export const useAddDriver = () => {
           if (!contract.file) return;
           const formData = createFormData({ ...contract, driver_id: driverId }, ["file"]);
           documentPromises.push(
-            axios.post(`${API_BASE_URL}/contracts/`, formData, {
+            axios.post(`${config.API_BASE_URL}/contracts/`, formData, {
               headers: getMultipartHeaders(),
             })
           );

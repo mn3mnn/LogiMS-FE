@@ -2,6 +2,8 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import config from '../config/env';
+
 
 export interface Company {
   id: number;
@@ -21,7 +23,7 @@ interface CompaniesResponse {
 }
 
 const fetchCompanies = async (token: string): Promise<Company[]> => {
-  const { data } = await axios.get<CompaniesResponse>('http://localhost:8000/api/v1/companies/', {
+  const { data } = await axios.get<CompaniesResponse>(`${config.API_BASE_URL}/companies/`, {
     headers: {
       Authorization: `Token ${token}`,
       accept: 'application/json'

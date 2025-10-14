@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
+import config from '../config/env';
+
 
 interface Contract {
   id: number;
@@ -66,7 +68,7 @@ interface DriverProfile {
 }
 
 const fetchDriverProfile = async (driverId: number, token: string) => {
-  const { data } = await axios.get<DriverProfile>(`http://localhost:8000/api/v1/drivers/${driverId}/`, {
+  const { data } = await axios.get<DriverProfile>(`${config.API_BASE_URL}/drivers/${driverId}/`, {
     headers: {
       Authorization: `Token ${token}`,
       accept: 'application/json'

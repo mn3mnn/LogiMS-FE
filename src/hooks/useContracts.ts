@@ -1,6 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
+import config from '../config/env';
+
 
 interface Contract {
   id: number;
@@ -31,7 +33,7 @@ interface UploadContractData {
 }
 
 const fetchContracts = async (page: number = 1, token: string) => {
-  const { data } = await axios.get<ContractsResponse>("http://localhost:8000/api/v1/contracts/", {
+  const { data } = await axios.get<ContractsResponse>(`${config.API_BASE_URL}/contracts/`, {
     headers: {
       Authorization: `Token ${token}`,
       accept: 'application/json'

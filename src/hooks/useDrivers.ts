@@ -2,8 +2,8 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import config from '../config/env';
 
-const API_BASE_URL = 'http://localhost:8000/api/v1';
 
 export interface Driver {
   id: number;
@@ -37,33 +37,53 @@ const fetchDrivers = async (
   docStatusFilter: string = "all",
   searchTerm: string = ""
 ): Promise<DriversResponse> => {
-  const params: any = {
-    page: page,
-    page_size: 10
-  };
+  try {
+    const params: any = {
+      page: page,
+      page_size: 10
+    };
 
-  // Add company filter
-  if (companyFilter !== "All") {
-    params.company_code = companyFilter;
+    // Add company filter
+    if (companyFilter !== "All") {
+      params.company_code = companyFilter;
+    }
+
+    // Add document status filter
+    if (docStatusFilter !== "all") {
+      params.doc_status = docStatusFilter;
+    }
+
+    // Add search term if provided
+    if (searchTerm.trim()) {
+      params.search = searchTerm.trim();
+    }
+
+    console.log('Making API request to:', `${config.API_BASE_URL}/drivers/`);
+    console.log('With params:', params);
+    console.log('With token:', token ? 'Token present' : 'No token');
+
+    const response = await axios.get(`${config.API_BASE_URL}/drivers/`, {
+      headers: {
+        'Authorization': `Token ${token}`,
+        'Content-Type': 'application/json',
+      },
+      params: params,
+      timeout: 10000,
+    });
+
+    console.log('API Response:', response.data);
+    return response.data;
+  } catch (error: any) {
+    console.error('API Error:', error);
+    console.error('Error details:', {
+      message: error.message,
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      data: error.response?.data
+    });
+    
+    throw new Error(error.response?.data?.message || error.message || 'Failed to fetch drivers');
   }
-
-  // Add document status filter
-  if (docStatusFilter !== "all") {
-    params.doc_status = docStatusFilter;
-  }
-
-  // Add search term if provided
-  if (searchTerm.trim()) {
-    params.search = searchTerm.trim();
-  }
-
-  const response = await axios.get(`${API_BASE_URL}/drivers/`, {
-    headers: {
-      'Authorization': `Token ${token}`,
-    },
-    params: params
-  });
-  return response.data;
 };
 
 export const useDrivers = (

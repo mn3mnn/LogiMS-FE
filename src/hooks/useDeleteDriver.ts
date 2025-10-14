@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import config from '../config/env';
+
 
 export const useDeleteDriver = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -16,7 +18,7 @@ export const useDeleteDriver = () => {
     setError(null);
     
     try {
-      await axios.delete(`http://localhost:8000/api/v1/drivers/${driverId}/`, {
+      await axios.delete(`${config.API_BASE_URL}/drivers/${driverId}/`, {
         headers: {
           Authorization: `Token ${token}`,
           accept: 'application/json'

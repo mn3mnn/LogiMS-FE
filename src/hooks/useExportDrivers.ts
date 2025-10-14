@@ -1,8 +1,9 @@
 // hooks/useExportDrivers.ts
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import config from '../config/env';
 
-const API_BASE_URL = 'http://localhost:8000/api/v1';
+
 
 export interface ExportParams {
   company_code?: string;
@@ -19,7 +20,7 @@ export const useExportDrivers = () => {
     }
 
     try {
-      const response = await axios.get(`${API_BASE_URL}/drivers/export/`, {
+      const response = await axios.get(`${config.API_BASE_URL}/drivers/export/`, {
         params: params,
         headers: {
           'Authorization': `Token ${token}`,

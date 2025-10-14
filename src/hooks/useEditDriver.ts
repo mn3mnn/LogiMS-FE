@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import config from '../config/env';
+
 
 export interface DocumentBase {
   file?: string;
@@ -102,7 +104,7 @@ export const useEditDriver = () => {
     setError(null);
     
     try {
-      const response = await axios.get(`http://localhost:8000/api/v1/drivers/${driverId}/`, {
+      const response = await axios.get(`${config.API_BASE_URL}/drivers/${driverId}/`, {
         headers: {
           Authorization: `Token ${token}`,
           accept: 'application/json'
@@ -141,7 +143,7 @@ export const useEditDriver = () => {
         headers['Content-Type'] = 'application/json';
       }
       
-      const response = await axios.put(`http://localhost:8000/api/v1/drivers/${driverId}/`, driverData, {
+      const response = await axios.put(`${config.API_BASE_URL}/drivers/${driverId}/`, driverData, {
         headers,
       });
       
