@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from "react-router"; // Use react-router, not react-router-dom
 import axios from 'axios';
+import config from '../config/env';
+
 
 interface Driver {
   id: number;
@@ -32,7 +34,7 @@ const DriverProfile = () => {
         setIsLoading(true);
         setError(null);
         
-        const response = await axios.get(`http://localhost:8000/api/v1/drivers/${id}/`, {
+        const response = await axios.get(`${config.API_BASE_URL}/drivers/${id}/`, {
           headers: {
             Authorization: "Token f1a83e3f53f4aa7afcecc8398e5d328512c4d387",
             accept: 'application/json'

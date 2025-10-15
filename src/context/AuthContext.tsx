@@ -1,6 +1,8 @@
 // src/context/AuthContext.tsx
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import axios from "axios";
+import config from '../config/env.ts';
+
 
 interface AuthContextType {
   token: string | null;
@@ -39,7 +41,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     
     try {
       if (currentToken) {
-        await axios.post("http://localhost:8000/api/v1/auth/logout/", {}, {
+        await axios.post(`${config.API_BASE_URL}/auth/logout/`, {}, {
           headers: {
             Authorization: `Token ${currentToken}`,
           },

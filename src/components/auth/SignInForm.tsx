@@ -9,6 +9,9 @@ import Button from "../ui/button/Button";
 
 import { useAuth } from "../../context/AuthContext";
 
+import config from '../../config/env.ts';
+
+
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -35,7 +38,7 @@ export default function SignInForm() {
     setLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:8000/api/auth-token/", {
+      const response = await axios.post(`${config.API_BASE_URL}/auth-token/`, {
         username,
         password,
       });

@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
+import config from '../config/env';
+
 
 export default function SignIn() {
   const { login } = useAuth();
@@ -11,7 +13,7 @@ export default function SignIn() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:8000/api/v1/auth-token/", {
+      const res = await axios.post(`${config.API_BASE_URL}/auth-token/`, {
         email,
         password,
       });

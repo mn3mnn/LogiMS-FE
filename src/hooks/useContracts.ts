@@ -55,7 +55,7 @@ const uploadContract = async (contractData: UploadContractData, token: string) =
   formData.append("notes", contractData.notes);
   formData.append("file", contractData.file);
 
-  const { data } = await axios.post("http://localhost:8000/api/v1/contracts/", formData, {
+  const { data } = await axios.post(`${config.API_BASE_URL}/contracts/`, formData, {
     headers: {
       Authorization: `Token ${token}`,
       accept: 'application/json'
