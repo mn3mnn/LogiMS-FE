@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     
     try {
       if (currentToken) {
-        await axios.post(`${config.API_BASE_URL}/auth/logout/`, {}, {
+        await axios.post(`${config.API_BASE_URL}/v1/auth/logout/`, {}, {
           headers: {
             Authorization: `Token ${currentToken}`,
           },

@@ -18,7 +18,7 @@ export const useDeleteDriver = () => {
     setError(null);
     
     try {
-      await axios.delete(`${config.API_BASE_URL}/drivers/${driverId}/`, {
+      await axios.delete(`${config.API_BASE_URL}/v1/drivers/${driverId}/`, {
         headers: {
           Authorization: `Token ${token}`,
           accept: 'application/json'

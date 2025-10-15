@@ -68,7 +68,7 @@ interface DriverProfile {
 }
 
 const fetchDriverProfile = async (driverId: number, token: string) => {
-  const { data } = await axios.get<DriverProfile>(`${config.API_BASE_URL}/drivers/${driverId}/`, {
+  const { data } = await axios.get<DriverProfile>(`${config.API_BASE_URL}/v1/drivers/${driverId}/`, {
     headers: {
       Authorization: `Token ${token}`,
       accept: 'application/json'

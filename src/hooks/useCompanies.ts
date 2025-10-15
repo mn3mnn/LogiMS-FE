@@ -23,7 +23,7 @@ interface CompaniesResponse {
 }
 
 const fetchCompanies = async (token: string): Promise<Company[]> => {
-  const { data } = await axios.get<CompaniesResponse>(`${config.API_BASE_URL}/companies/`, {
+  const { data } = await axios.get<CompaniesResponse>(`${config.API_BASE_URL}/v1/companies/`, {
     headers: {
       Authorization: `Token ${token}`,
       accept: 'application/json'

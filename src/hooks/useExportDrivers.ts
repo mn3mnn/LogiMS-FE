@@ -20,7 +20,7 @@ export const useExportDrivers = () => {
     }
 
     try {
-      const response = await axios.get(`${config.API_BASE_URL}/drivers/export/`, {
+      const response = await axios.get(`${config.API_BASE_URL}/v1/drivers/export/`, {
         params: params,
         headers: {
           'Authorization': `Token ${token}`,

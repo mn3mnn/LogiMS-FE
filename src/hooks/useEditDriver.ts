@@ -104,7 +104,7 @@ export const useEditDriver = () => {
     setError(null);
     
     try {
-      const response = await axios.get(`${config.API_BASE_URL}/drivers/${driverId}/`, {
+      const response = await axios.get(`${config.API_BASE_URL}/v1/drivers/${driverId}/`, {
         headers: {
           Authorization: `Token ${token}`,
           accept: 'application/json'
@@ -143,7 +143,7 @@ export const useEditDriver = () => {
         headers['Content-Type'] = 'application/json';
       }
       
-      const response = await axios.put(`${config.API_BASE_URL}/drivers/${driverId}/`, driverData, {
+      const response = await axios.put(`${config.API_BASE_URL}/v1/drivers/${driverId}/`, driverData, {
         headers,
       });
       

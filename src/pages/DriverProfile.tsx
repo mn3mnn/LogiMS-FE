@@ -34,7 +34,7 @@ const DriverProfile = () => {
         setIsLoading(true);
         setError(null);
         
-        const response = await axios.get(`${config.API_BASE_URL}/drivers/${id}/`, {
+        const response = await axios.get(`${config.API_BASE_URL}/v1/drivers/${id}/`, {
           headers: {
             Authorization: "Token f1a83e3f53f4aa7afcecc8398e5d328512c4d387",
             accept: 'application/json'

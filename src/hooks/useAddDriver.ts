@@ -107,7 +107,7 @@ export const useAddDriver = () => {
 
       // Step 1: Create driver
       const driverResponse = await axios.post(
-        `${config.API_BASE_URL}/drivers/`,
+        `${config.API_BASE_URL}/v1/drivers/`,
         driverData,
         { headers: getHeaders() }
       );
@@ -126,7 +126,7 @@ export const useAddDriver = () => {
         if (!data || !data.file) return; // Skip if no file
         const formData = createFormData({ ...data, driver_id: driverId }, ["file"]);
         documentPromises.push(
-          axios.post(`${config.API_BASE_URL}/${endpoint}/`, formData, {
+          axios.post(`${config.API_BASE_URL}/v1/${endpoint}/`, formData, {
             headers: getMultipartHeaders(),
           })
         );
@@ -141,7 +141,7 @@ export const useAddDriver = () => {
           if (!contract.file) return;
           const formData = createFormData({ ...contract, driver_id: driverId }, ["file"]);
           documentPromises.push(
-            axios.post(`${config.API_BASE_URL}/contracts/`, formData, {
+            axios.post(`${config.API_BASE_URL}/v1/contracts/`, formData, {
               headers: getMultipartHeaders(),
             })
           );

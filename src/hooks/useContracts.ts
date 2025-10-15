@@ -33,7 +33,7 @@ interface UploadContractData {
 }
 
 const fetchContracts = async (page: number = 1, token: string) => {
-  const { data } = await axios.get<ContractsResponse>(`${config.API_BASE_URL}/contracts/`, {
+  const { data } = await axios.get<ContractsResponse>(`${config.API_BASE_URL}/v1/contracts/`, {
     headers: {
       Authorization: `Token ${token}`,
       accept: 'application/json'
@@ -55,7 +55,7 @@ const uploadContract = async (contractData: UploadContractData, token: string) =
   formData.append("notes", contractData.notes);
   formData.append("file", contractData.file);
 
-  const { data } = await axios.post(`${config.API_BASE_URL}/contracts/`, formData, {
+  const { data } = await axios.post(`${config.API_BASE_URL}/v1/contracts/`, formData, {
     headers: {
       Authorization: `Token ${token}`,
       accept: 'application/json'

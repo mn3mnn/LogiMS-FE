@@ -58,11 +58,11 @@ const fetchDrivers = async (
       params.search = searchTerm.trim();
     }
 
-    console.log('Making API request to:', `${config.API_BASE_URL}/drivers/`);
+    console.log('Making API request to:', `${config.API_BASE_URL}/v1/drivers/`);
     console.log('With params:', params);
     console.log('With token:', token ? 'Token present' : 'No token');
 
-    const response = await axios.get(`${config.API_BASE_URL}/drivers/`, {
+    const response = await axios.get(`${config.API_BASE_URL}/v1/drivers/`, {
       headers: {
         'Authorization': `Token ${token}`,
         'Content-Type': 'application/json',
