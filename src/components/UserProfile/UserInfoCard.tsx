@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import EditDriverModal from "../modals/EditDriverModal"; // Adjust the import path
+import EditDriverModal from "../modals/EditDriverModal";
+import { useTranslation } from "react-i18next";
 
 interface UserInfoCardProps {
   name: string;
@@ -23,6 +24,7 @@ export default function UserInfoCard({
   agency_share,
   insurance
 }: UserInfoCardProps) {
+  const { t } = useTranslation();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   
   // Get driverId from URL parameters
@@ -33,7 +35,7 @@ export default function UserInfoCard({
   const openEditModal = () => {
     if (!driverId) {
       console.error("No driver ID found in URL");
-      alert("Cannot edit driver: No driver ID found");
+      alert(t('userInfoCard.errors.noDriverId'));
       return;
     }
     setIsEditModalOpen(true);
@@ -54,7 +56,7 @@ export default function UserInfoCard({
 
   // Format currency for insurance amount
   const formatCurrency = (amount: number | null | undefined) => {
-    if (amount === null || amount === undefined) return "Not set";
+    if (amount === null || amount === undefined) return t('userInfoCard.notSet');
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD'
@@ -63,7 +65,7 @@ export default function UserInfoCard({
 
   // Format percentage for agency share
   const formatPercentage = (percentage: number | null | undefined) => {
-    if (percentage === null || percentage === undefined) return "Not set";
+    if (percentage === null || percentage === undefined) return t('userInfoCard.notSet');
     return `${percentage}%`;
   };
 
@@ -72,13 +74,13 @@ export default function UserInfoCard({
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
         <div className="flex-1">
           <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-6">
-            Personal Information
+            {t('userInfoCard.sections.personalInfo')}
           </h4>
 
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                First Name
+                {t('userInfoCard.fields.firstName')}
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                 {name}
@@ -87,7 +89,7 @@ export default function UserInfoCard({
 
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Last Name
+                {t('userInfoCard.fields.lastName')}
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                 {lastName}
@@ -96,7 +98,7 @@ export default function UserInfoCard({
 
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Email address
+                {t('userInfoCard.fields.email')}
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                 {email}
@@ -105,7 +107,7 @@ export default function UserInfoCard({
 
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Phone
+                {t('userInfoCard.fields.phone')}
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                 {phone}
@@ -114,7 +116,7 @@ export default function UserInfoCard({
 
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                National ID
+                {t('userInfoCard.fields.nationalId')}
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                 {nid}
@@ -123,7 +125,7 @@ export default function UserInfoCard({
 
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                UUID
+                {t('userInfoCard.fields.uuid')}
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                 {uuid}
@@ -133,7 +135,7 @@ export default function UserInfoCard({
             {/* Added: Agency Share Field */}
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Agency Share
+                {t('userInfoCard.fields.agencyShare')}
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                 {formatPercentage(agency_share)}
@@ -143,7 +145,7 @@ export default function UserInfoCard({
             {/* Added: Insurance Field */}
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Insurance Amount
+                {t('userInfoCard.fields.insuranceAmount')}
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                 {formatCurrency(insurance)}
@@ -172,7 +174,7 @@ export default function UserInfoCard({
               fill=""
             />
           </svg>
-          Edit
+          {t('userInfoCard.buttons.edit')}
         </button>
       </div>
 

@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface DeleteConfirmationModalProps {
   isOpen: boolean;
@@ -15,6 +16,7 @@ export default function DeleteConfirmationModal({
   driverName, 
   isLoading = false 
 }: DeleteConfirmationModalProps) {
+  const { t } = useTranslation();
   
   // Handle ESC key to close modal
   useEffect(() => {
@@ -53,12 +55,11 @@ export default function DeleteConfirmationModal({
           
           {/* Content */}
           <h2 className="text-xl font-bold text-center mb-2 text-gray-800 dark:text-white">
-            Delete Driver
+            {t('deleteDriver.title')}
           </h2>
           
           <p className="text-gray-600 dark:text-gray-300 text-center mb-6">
-            Are you sure you want to delete <strong>{driverName}</strong>? 
-            This action cannot be undone.
+            {t('deleteDriver.confirmationMessagePart1')} <strong>{driverName}</strong> {t('deleteDriver.confirmationMessagePart2')}
           </p>
 
           {/* Buttons */}
@@ -68,7 +69,7 @@ export default function DeleteConfirmationModal({
               disabled={isLoading}
               className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700 disabled:opacity-50 transition-colors"
             >
-              Cancel
+              {t('deleteDriver.buttons.cancel')}
             </button>
             <button
               onClick={onConfirm}
@@ -78,10 +79,10 @@ export default function DeleteConfirmationModal({
               {isLoading ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Deleting...
+                  {t('deleteDriver.buttons.deleting')}
                 </>
               ) : (
-                'Delete'
+                t('deleteDriver.buttons.delete')
               )}
             </button>
           </div>

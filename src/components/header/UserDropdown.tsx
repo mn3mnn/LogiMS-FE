@@ -3,15 +3,16 @@ import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { Link } from "react-router";
 import { useAuth } from "../../context/AuthContext";
+import { useTranslation } from "react-i18next";
 
 export default function UserDropdown() {
+  const { t, i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
-
+  const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
   const { logout } = useAuth();
 
   const handleSignOut = () => {
-    logout(); // This will remove the token from localStorage and state
-    // You can also add any additional cleanup here if needed
+    logout();
   };
 
   function toggleDropdown() {
@@ -20,7 +21,27 @@ export default function UserDropdown() {
 
   function closeDropdown() {
     setIsOpen(false);
+    setIsLanguageDropdownOpen(false);
   }
+
+  function toggleLanguageDropdown() {
+    setIsLanguageDropdownOpen(!isLanguageDropdownOpen);
+  }
+
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
+    // The direction will be handled automatically by the useEffect in your root component
+    setIsLanguageDropdownOpen(false);
+  };
+
+  const languages = [
+    { code: "en", name: "English", flag: "🇺🇸" },
+    { code: "ar", name: "العربية", flag: "🇸🇦" },
+    { code: "de", name: "Deutsch", flag: "🇩🇪" },
+  ];
+
+  const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
+
   return (
     <div className="relative z-999999999999">
       <button
@@ -28,10 +49,10 @@ export default function UserDropdown() {
         className="flex items-center text-gray-700 dropdown-toggle dark:text-gray-400"
       >
         <span className="mr-3 overflow-hidden rounded-full h-11 w-11">
-          <img src="/images/user/owner.jpg" alt="User" />
+          <img src="/images/user/owner.jpg" alt={t('userDropdown.userImageAlt')} />
         </span>
 
-        <span className="block mr-1 font-medium text-theme-sm">Musharof</span>
+        <span className="block mr-1 font-medium text-theme-sm">{t('userDropdown.userName')}</span>
         <svg
           className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${
             isOpen ? "rotate-180" : ""
@@ -59,10 +80,10 @@ export default function UserDropdown() {
       >
         <div>
           <span className="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
-            Musharof Chowdhury
+            {t('userDropdown.userFullName')}
           </span>
           <span className="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
-            randomuser@pimjo.com
+            {t('userDropdown.userEmail')}
           </span>
         </div>
 
@@ -89,7 +110,7 @@ export default function UserDropdown() {
                   fill=""
                 />
               </svg>
-              Edit profile
+              {t('userDropdown.menu.editProfile')}
             </DropdownItem>
           </li>
           <li>
@@ -114,35 +135,96 @@ export default function UserDropdown() {
                   fill=""
                 />
               </svg>
-              Account settings
+              {t('userDropdown.menu.accountSettings')}
             </DropdownItem>
           </li>
-          <li>
-            <DropdownItem
-              onItemClick={closeDropdown}
-              tag="a"
-              to="/profile"
-              className="flex items-center gap-3 px-3 py-2 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+          
+          {/* Language Switcher */}
+          <li className="relative">
+            <button
+              onClick={toggleLanguageDropdown}
+              className="flex items-center justify-between w-full gap-3 px-4 py-2 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
             >
-              <svg
-                className="fill-gray-500 group-hover:fill-gray-700 dark:fill-gray-400 dark:group-hover:fill-gray-300"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fillRule="evenodd"
-                  clipRule="evenodd"
-                  d="M3.5 12C3.5 7.30558 7.30558 3.5 12 3.5C16.6944 3.5 20.5 7.30558 20.5 12C20.5 16.6944 16.6944 20.5 12 20.5C7.30558 20.5 3.5 16.6944 3.5 12ZM12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2ZM11.0991 7.52507C11.0991 8.02213 11.5021 8.42507 11.9991 8.42507H12.0001C12.4972 8.42507 12.9001 8.02213 12.9001 7.52507C12.9001 7.02802 12.4972 6.62507 12.0001 6.62507H11.9991C11.5021 6.62507 11.0991 7.02802 11.0991 7.52507ZM12.0001 17.3714C11.5859 17.3714 11.2501 17.0356 11.2501 16.6214V10.9449C11.2501 10.5307 11.5859 10.1949 12.0001 10.1949C12.4143 10.1949 12.7501 10.5307 12.7501 10.9449V16.6214C12.7501 17.0356 12.4143 17.3714 12.0001 17.3714Z"
-                  fill=""
-                />
-              </svg>
-              Support
-            </DropdownItem>
+              <div className="flex items-center gap-3">
+                <svg
+                  className="fill-gray-500 group-hover:fill-gray-700 dark:fill-gray-400 dark:group-hover:fill-gray-300"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fillRule="evenodd"
+                    clipRule="evenodd"
+                    d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zM4 12c0-1.846.634-3.542 1.688-4.897l2.423 2.423A4.98 4.98 0 007 12h2a3 3 0 013 3v1.931A8.002 8.002 0 014 12zm14.312 4.897l-2.423-2.423A4.98 4.98 0 0117 12h-2a3 3 0 00-3-3V7.069A8.002 8.002 0 0120 12c0 1.846-.634 3.542-1.688 4.897zM12 20a7.96 7.96 0 01-4.931-1.707L9.536 15.75A1 1 0 0110.5 15h3a1 1 0 011 1v2.536A7.96 7.96 0 0112 20z"
+                    fill="currentColor"
+                  />
+                </svg>
+                {t('userDropdown.menu.language')}
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm">{currentLanguage.flag}</span>
+                <svg
+                  className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${
+                    isLanguageDropdownOpen ? "rotate-180" : ""
+                  }`}
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M4 6L8 10L12 6"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+            </button>
+
+            {/* Language Dropdown */}
+            {isLanguageDropdownOpen && (
+              <div className="absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700 z-10">
+                <div className="py-1">
+                  {languages.map((language) => (
+                    <button
+                      key={language.code}
+                      onClick={() => changeLanguage(language.code)}
+                      className={`flex items-center gap-3 w-full px-4 py-2 text-sm text-left hover:bg-gray-100 dark:hover:bg-white/5 ${
+                        currentLanguage.code === language.code
+                          ? "bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400"
+                          : "text-gray-700 dark:text-gray-300"
+                      }`}
+                    >
+                      <span className="text-base">{language.flag}</span>
+                      <span>{language.name}</span>
+                      {currentLanguage.code === language.code && (
+                        <svg
+                          className="w-4 h-4 ml-auto fill-current text-blue-600 dark:text-blue-400"
+                          viewBox="0 0 20 20"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            clipRule="evenodd"
+                            d="M16.7071 5.29289C17.0976 5.68342 17.0976 6.31658 16.7071 6.70711L8.70711 14.7071C8.31658 15.0976 7.68342 15.0976 7.29289 14.7071L3.29289 10.7071C2.90237 10.3166 2.90237 9.68342 3.29289 9.29289C3.68342 8.90237 4.31658 8.90237 4.70711 9.29289L8 12.5858L15.2929 5.29289C15.6834 4.90237 16.3166 4.90237 16.7071 5.29289Z"
+                            fill="currentColor"
+                          />
+                        </svg>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </li>
         </ul>
+        
         <Link
           onClick={handleSignOut}
           to="/signin"
@@ -163,7 +245,7 @@ export default function UserDropdown() {
               fill=""
             />
           </svg>
-          Sign out
+          {t('userDropdown.menu.signOut')}
         </Link>
       </Dropdown>
     </div>

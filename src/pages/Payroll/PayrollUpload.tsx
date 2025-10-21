@@ -2,7 +2,8 @@
 import { useState } from "react";
 import Button from "../../components/ui/button/Button";
 import Label from "../../components/form/Label";
-import { useCompanies } from "../../hooks/useCompanies"; // Import the same hook
+import { useCompanies } from "../../hooks/useCompanies";
+import { useTranslation } from "react-i18next";
 
 interface PayrollConfig {
   company_code: string;
@@ -12,6 +13,7 @@ interface PayrollConfig {
 }
 
 export default function PayrollUpload() {
+  const { t } = useTranslation();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<"idle" | "success" | "error">("idle");
@@ -46,13 +48,13 @@ export default function PayrollUpload() {
 
   const handleUpload = async () => {
     if (!selectedFile) {
-      setMessage("Please select a file first");
+      setMessage(t('payrollUpload.validation.selectFile'));
       setUploadStatus("error");
       return;
     }
 
     if (!payrollConfig.company_code) {
-      setMessage("Please select a company");
+      setMessage(t('payrollUpload.validation.selectCompany'));
       setUploadStatus("error");
       return;
     }
@@ -66,7 +68,7 @@ export default function PayrollUpload() {
     ];
     
     if (!validTypes.includes(selectedFile.type) && !selectedFile.name.match(/\.(xlsx|xls|csv)$/)) {
-      setMessage("Please upload an Excel (.xlsx, .xls) or CSV file");
+      setMessage(t('payrollUpload.validation.fileType'));
       setUploadStatus("error");
       return;
     }
@@ -92,7 +94,7 @@ export default function PayrollUpload() {
 
       if (response.ok) {
         const result = await response.json();
-        setMessage("Payroll file uploaded and processed successfully!");
+        setMessage(t('payrollUpload.messages.uploadSuccess'));
         setUploadStatus("success");
         setSelectedFile(null);
         
@@ -101,12 +103,12 @@ export default function PayrollUpload() {
         if (fileInput) fileInput.value = "";
       } else {
         const error = await response.json();
-        setMessage(error.message || "Failed to upload payroll file");
+        setMessage(error.message || t('payrollUpload.messages.uploadFailed'));
         setUploadStatus("error");
       }
     } catch (error) {
       console.error("Upload error:", error);
-      setMessage("Network error. Please try again.");
+      setMessage(t('payrollUpload.messages.networkError'));
       setUploadStatus("error");
     } finally {
       setIsUploading(false);
@@ -115,7 +117,7 @@ export default function PayrollUpload() {
 
   const handleGenerateReport = async () => {
     if (!payrollConfig.company_code) {
-      setMessage("Please select a company first");
+      setMessage(t('payrollUpload.validation.selectCompanyFirst'));
       setUploadStatus("error");
       return;
     }
@@ -157,16 +159,16 @@ export default function PayrollUpload() {
         a.click();
         window.URL.revokeObjectURL(url);
         
-        setMessage("Report generated and downloaded successfully!");
+        setMessage(t('payrollUpload.messages.reportSuccess'));
         setUploadStatus("success");
       } else {
         const error = await response.json();
-        setMessage(error.message || "Failed to generate report");
+        setMessage(error.message || t('payrollUpload.messages.reportFailed'));
         setUploadStatus("error");
       }
     } catch (error) {
       console.error("Report generation error:", error);
-      setMessage("Network error. Please try again.");
+      setMessage(t('payrollUpload.messages.networkError'));
       setUploadStatus("error");
     } finally {
       setIsUploading(false);
@@ -177,20 +179,20 @@ export default function PayrollUpload() {
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold text-gray-800 dark:text-white/90">
-          Payroll Upload & Configuration
+          {t('payrollUpload.title')}
         </h2>
       </div>
 
       {/* Configuration Section */}
       <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
         <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90 mb-4">
-          Payroll Configuration
+          {t('payrollUpload.sections.configuration')}
         </h3>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Company Dropdown - Using the same pattern as your table */}
           <div>
-            <Label htmlFor="company_code">Company *</Label>
+            <Label htmlFor="company_code">{t('payrollUpload.fields.company')} *</Label>
             <select
               id="company_code"
               value={payrollConfig.company_code}
@@ -199,12 +201,12 @@ export default function PayrollUpload() {
               disabled={companiesLoading}
             >
               {companiesLoading ? (
-                <option value="">Loading companies...</option>
+                <option value="">{t('payrollUpload.loadingCompanies')}</option>
               ) : companiesError ? (
-                <option value="">Error loading companies</option>
+                <option value="">{t('payrollUpload.companiesError')}</option>
               ) : (
                 <>
-                  <option value="">Select a company</option>
+                  <option value="">{t('payrollUpload.selectCompany')}</option>
                   {companies
                     .filter(company => company.is_active)
                     .map((company) => (
@@ -218,16 +220,16 @@ export default function PayrollUpload() {
             </select>
             
             {companiesLoading && (
-              <p className="text-xs text-gray-500 mt-1">Loading companies...</p>
+              <p className="text-xs text-gray-500 mt-1">{t('payrollUpload.loadingCompanies')}</p>
             )}
             {companiesError && (
-              <p className="text-xs text-red-500 mt-1">Failed to load companies</p>
+              <p className="text-xs text-red-500 mt-1">{t('payrollUpload.companiesError')}</p>
             )}
           </div>
 
           {/* Tax Percentage */}
           <div>
-            <Label htmlFor="tax_percentage">Tax (%)</Label>
+            <Label htmlFor="tax_percentage">{t('payrollUpload.fields.taxPercentage')}</Label>
             <input
               id="tax_percentage"
               type="number"
@@ -243,7 +245,7 @@ export default function PayrollUpload() {
 
           {/* Company Share Percentage */}
           <div>
-            <Label htmlFor="company_share_percentage">Company Share (%)</Label>
+            <Label htmlFor="company_share_percentage">{t('payrollUpload.fields.companyShare')}</Label>
             <input
               id="company_share_percentage"
               type="number"
@@ -259,7 +261,7 @@ export default function PayrollUpload() {
 
           {/* Insurance (EUR) */}
           <div>
-            <Label htmlFor="insurance_eur">Insurance (EUR)</Label>
+            <Label htmlFor="insurance_eur">{t('payrollUpload.fields.insurance')}</Label>
             <input
               id="insurance_eur"
               type="number"
@@ -278,16 +280,16 @@ export default function PayrollUpload() {
       <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
         <div className="max-w-2xl">
           <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90 mb-4">
-            Upload Payroll File
+            {t('payrollUpload.sections.fileUpload')}
           </h3>
           
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
-            Upload an Excel (.xlsx, .xls) or CSV file containing payroll data. The system will process the file and update payroll records accordingly.
+            {t('payrollUpload.descriptions.fileUpload')}
           </p>
 
           <div className="space-y-4">
             <div>
-              <Label htmlFor="payroll-file">Select Payroll File</Label>
+              <Label htmlFor="payroll-file">{t('payrollUpload.fields.selectFile')}</Label>
               <input
                 id="payroll-file"
                 type="file"
@@ -296,17 +298,17 @@ export default function PayrollUpload() {
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-gray-600 dark:file:text-gray-300"
               />
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                Supported formats: Excel (.xlsx, .xls) or CSV files
+                {t('payrollUpload.hints.supportedFormats')}
               </p>
             </div>
 
             {selectedFile && (
               <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
                 <p className="text-sm text-gray-700 dark:text-gray-300">
-                  <strong>Selected file:</strong> {selectedFile.name}
+                  <strong>{t('payrollUpload.fileLabels.selectedFile')}:</strong> {selectedFile.name}
                 </p>
                 <p className="text-xs text-gray-500 dark:text-gray-400">
-                  Size: {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                  {t('payrollUpload.fileLabels.size')}: {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
                 </p>
               </div>
             )}
@@ -332,10 +334,10 @@ export default function PayrollUpload() {
                 {isUploading ? (
                   <>
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    Uploading...
+                    {t('payrollUpload.buttons.uploading')}
                   </>
                 ) : (
-                  'Upload Payroll'
+                  t('payrollUpload.buttons.uploadPayroll')
                 )}
               </Button>
               
@@ -348,10 +350,10 @@ export default function PayrollUpload() {
                 {isUploading ? (
                   <>
                     <div className="w-4 h-4 border-2 border-gray-600 border-t-transparent rounded-full animate-spin"></div>
-                    Generating...
+                    {t('payrollUpload.buttons.generating')}
                   </>
                 ) : (
-                  'Generate Report'
+                  t('payrollUpload.buttons.generateReport')
                 )}
               </Button>
               
@@ -366,7 +368,7 @@ export default function PayrollUpload() {
                     if (fileInput) fileInput.value = "";
                   }}
                 >
-                  Clear File
+                  {t('payrollUpload.buttons.clearFile')}
                 </Button>
               )}
             </div>
@@ -377,33 +379,33 @@ export default function PayrollUpload() {
       {/* Additional Information Section */}
       <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
         <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90 mb-4">
-          File Requirements
+          {t('payrollUpload.sections.fileRequirements')}
         </h3>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <h4 className="font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Required Columns (Excel/CSV)
+              {t('payrollUpload.requirements.requiredColumns')}
             </h4>
             <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
-              <li>• Driver ID / Employee ID</li>
-              <li>• Driver Name</li>
-              <li>• Hours Worked</li>
-              <li>• Rate per Hour</li>
-              <li>• Total Amount</li>
-              <li>• Payment Date</li>
+              <li>• {t('payrollUpload.requirements.driverId')}</li>
+              <li>• {t('payrollUpload.requirements.driverName')}</li>
+              <li>• {t('payrollUpload.requirements.hoursWorked')}</li>
+              <li>• {t('payrollUpload.requirements.ratePerHour')}</li>
+              <li>• {t('payrollUpload.requirements.totalAmount')}</li>
+              <li>• {t('payrollUpload.requirements.paymentDate')}</li>
             </ul>
           </div>
           
           <div>
             <h4 className="font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Format Guidelines
+              {t('payrollUpload.requirements.formatGuidelines')}
             </h4>
             <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
-              <li>• File size limit: 10MB</li>
-              <li>• Dates should be in YYYY-MM-DD format</li>
-              <li>• Currency values should be numeric</li>
-              <li>• First row should contain headers</li>
+              <li>• {t('payrollUpload.requirements.fileSize')}</li>
+              <li>• {t('payrollUpload.requirements.dateFormat')}</li>
+              <li>• {t('payrollUpload.requirements.currencyValues')}</li>
+              <li>• {t('payrollUpload.requirements.firstRowHeaders')}</li>
             </ul>
           </div>
         </div>

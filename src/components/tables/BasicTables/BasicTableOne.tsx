@@ -15,6 +15,7 @@ import AddDriverModal from '../../modals/AddDriverModal';
 import EditDriverModal from '../../modals/EditDriverModal';
 import { Link } from "react-router-dom";
 import { useCompanies } from '../../../hooks/useCompanies';
+import { useTranslation } from 'react-i18next';
 
 // Skeleton Loader Component
 const TableSkeleton = () => {
@@ -81,6 +82,7 @@ const LoadingSpinner = ({ size = "small" }) => {
 };
 
 export default function BasicTableOne() {
+  const { t } = useTranslation();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -176,13 +178,13 @@ export default function BasicTableOne() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
         </svg>
       </div>
-      <h3 className="text-lg font-medium text-red-800 dark:text-red-300 mb-2">Failed to load drivers</h3>
+      <h3 className="text-lg font-medium text-red-800 dark:text-red-300 mb-2">{t('drivers.loadingError')}</h3>
       <p className="text-red-600 dark:text-red-400 text-sm">{driversError.message}</p>
       <button 
         onClick={() => window.location.reload()} 
         className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
       >
-        Retry
+        {t('common.retry')}
       </button>
     </div>
   );
@@ -211,7 +213,7 @@ export default function BasicTableOne() {
       
     } catch (error) {
       console.error('Export failed:', error);
-      alert('Export failed. Please try again.');
+      alert(t('drivers.exportFailed'));
     } finally {
       setIsExporting(false);
     }
@@ -278,13 +280,13 @@ export default function BasicTableOne() {
 
   // Helper function to format agency share
   const formatAgencyShare = (share: number | null) => {
-    if (share === null || share === undefined) return 'N/A';
+    if (share === null || share === undefined) return t('common.notAvailable');
     return `${share}%`;
   };
 
   // Helper function to display insurance status
   const getInsuranceStatus = (insurance: any) => {
-    if (!insurance || insurance === null || insurance === undefined) return 'No Insurance';
+    if (!insurance || insurance === null || insurance === undefined) return t('drivers.noInsurance');
     
     // If insurance is a number (percentage), show the amount
     if (typeof insurance === 'number') {
@@ -292,11 +294,12 @@ export default function BasicTableOne() {
     }
     
     // If insurance is an object with a file property
-    if (insurance.file) return 'Uploaded';
+    if (insurance.file) return t('drivers.uploaded');
     
     // If insurance is an object but no file
-    return 'No Document';
+    return t('drivers.noDocument');
   };
+
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03] transition-all duration-300">
       <div className="hidden lg:block my-2 mx-4">
@@ -326,7 +329,7 @@ export default function BasicTableOne() {
               onChange={(e) => {
                 setSearchTerm(e.target.value);
               }}
-              placeholder="Search by name, phone, NID, or UUID..."
+              placeholder={t('drivers.searchPlaceholder')}
               className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-12 pr-14 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 xl:w-[430px] transition-all duration-200"
             />
             {/* Show loading indicator when searching */}
@@ -339,7 +342,7 @@ export default function BasicTableOne() {
           {/* Show search status */}
           {debouncedSearchTerm && (
             <div className="mt-2 text-sm text-gray-500 flex items-center gap-2">
-              <span>Searching for: "{debouncedSearchTerm}"</span>
+              <span>{t('drivers.searchingFor', { term: debouncedSearchTerm })}</span>
               {(isSearching || isFetching) && <LoadingSpinner size="small" />}
             </div>
           )}
@@ -347,8 +350,8 @@ export default function BasicTableOne() {
 
         <div className="flex justify-end mr-4 mt-2">
           <span className="text-gray-700 text-sm flex items-center gap-2">
-            Total Drivers: {totalCount}
-            {debouncedSearchTerm && ` (filtered)`}
+            {t('drivers.totalDrivers', { count: totalCount })}
+            {debouncedSearchTerm && ` (${t('drivers.filtered')})`}
             {isFetching && <LoadingSpinner size="small" />}
           </span>
         </div>
@@ -359,7 +362,7 @@ export default function BasicTableOne() {
         {/* Company Filter */}
         <div className="p-2">
           <label className="mr-2 font-medium text-gray-600 dark:text-gray-300">
-            Company:
+            {t('drivers.company')}:
           </label>
           <select
             value={companyFilter}
@@ -370,12 +373,12 @@ export default function BasicTableOne() {
             className="border rounded-lg px-3 py-1 text-sm dark:bg-gray-800 dark:text-white transition-colors duration-200"
             disabled={companiesLoading}
           >
-            <option value="All">All Companies</option>
+            <option value="All">{t('drivers.allCompanies')}</option>
             
             {companiesLoading ? (
-              <option disabled>Loading companies...</option>
+              <option disabled>{t('drivers.loadingCompanies')}</option>
             ) : companiesError ? (
-              <option disabled>Error loading companies</option>
+              <option disabled>{t('drivers.companiesError')}</option>
             ) : (
               companies
                 .filter(company => company.is_active)
@@ -390,18 +393,18 @@ export default function BasicTableOne() {
           {companiesLoading && (
             <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
               <LoadingSpinner size="small" />
-              Loading companies...
+              {t('drivers.loadingCompanies')}
             </p>
           )}
           {companiesError && (
-            <p className="text-xs text-red-500 mt-1">Failed to load companies</p>
+            <p className="text-xs text-red-500 mt-1">{t('drivers.companiesError')}</p>
           )}
         </div>
 
         {/* Document Status Filter */}
         <div className="p-2">
           <label className="mr-2 font-medium text-gray-600 dark:text-gray-300">
-            Document Status:
+            {t('drivers.documentStatus')}:
           </label>
           <select
             value={docStatusFilter}
@@ -411,10 +414,10 @@ export default function BasicTableOne() {
             }}
             className="border rounded-lg px-3 py-1 text-sm dark:bg-gray-800 dark:text-white transition-colors duration-200"
           >
-            <option value="all">All Documents</option>
-            <option value="missing">Missing Documents</option>
-            <option value="expired">Expired Documents</option>
-            <option value="valid">Valid Documents</option>
+            <option value="all">{t('drivers.allDocuments')}</option>
+            <option value="missing">{t('drivers.missingDocuments')}</option>
+            <option value="expired">{t('drivers.expiredDocuments')}</option>
+            <option value="valid">{t('drivers.validDocuments')}</option>
           </select>
         </div>
 
@@ -424,7 +427,7 @@ export default function BasicTableOne() {
             onClick={() => setIsAddModalOpen(true)}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 hover:scale-105 active:scale-95"
           >
-            + Add Driver
+            + {t('drivers.addDriver')}
           </button>
           <input
             type="file"
@@ -439,7 +442,7 @@ export default function BasicTableOne() {
       {isFetching && drivers.length > 0 && (
         <div className="p-4 text-center text-blue-600 flex items-center justify-center gap-2">
           <LoadingSpinner size="small" />
-          Updating drivers...
+          {t('drivers.updatingDrivers')}
         </div>
       )}
       
@@ -449,37 +452,37 @@ export default function BasicTableOne() {
           <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
             <TableRow>
               <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                Id
+                {t('drivers.id')}
               </TableCell>
               <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                User
+                {t('drivers.user')}
               </TableCell>
               <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                Phone
+                {t('drivers.phone')}
               </TableCell>
               <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                Company
+                {t('drivers.company')}
               </TableCell>
               <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                Agency Share
+                {t('drivers.agencyShare')}
               </TableCell>
               <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                Insurance
+                {t('drivers.insurance')}
               </TableCell>
               <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                NID
+                {t('drivers.nid')}
               </TableCell>
               <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                License
+                {t('drivers.license')}
               </TableCell>
               <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                Vehicle License
+                {t('drivers.vehicleLicense')}
               </TableCell>
               <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                Contract
+                {t('drivers.contract')}
               </TableCell>
               <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                Actions
+                {t('drivers.actions')}
               </TableCell>
             </TableRow>
           </TableHeader>
@@ -493,10 +496,10 @@ export default function BasicTableOne() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     <h3 className="text-lg font-medium text-gray-600 dark:text-gray-400 mb-2">
-                      {debouncedSearchTerm ? "No drivers match your search" : "No drivers found"}
+                      {debouncedSearchTerm ? t('drivers.noMatchingDrivers') : t('drivers.noDriversFound')}
                     </h3>
                     <p className="text-gray-500 dark:text-gray-500 text-sm">
-                      {debouncedSearchTerm ? "Try adjusting your search terms" : "Get started by adding your first driver"}
+                      {debouncedSearchTerm ? t('drivers.adjustSearchTerms') : t('drivers.addFirstDriver')}
                     </p>
                   </div>
                 </TableCell>
@@ -545,32 +548,32 @@ export default function BasicTableOne() {
                     </span>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-  <span className={`transition-colors duration-200 ${
-    typeof driver.insurance === 'number' ? "text-green-600" : 
-    driver.insurance && driver.insurance.file ? "text-green-600" : 
-    driver.insurance ? "text-yellow-600" : "text-red-600"
-  }`}>
-    {getInsuranceStatus(driver.insurance)}
-  </span>
-</TableCell>
+                    <span className={`transition-colors duration-200 ${
+                      typeof driver.insurance === 'number' ? "text-green-600" : 
+                      driver.insurance && driver.insurance.file ? "text-green-600" : 
+                      driver.insurance ? "text-yellow-600" : "text-red-600"
+                    }`}>
+                      {getInsuranceStatus(driver.insurance)}
+                    </span>
+                  </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                     <span className={`transition-colors duration-200 ${driver.national_id_doc ? "text-green-600" : "text-red-600"}`}>
-                      {driver.national_id_doc ? "Uploaded" : "Not Uploaded"}
+                      {driver.national_id_doc ? t('drivers.uploaded') : t('drivers.notUploaded')}
                     </span>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
                     <span className={`transition-colors duration-200 ${driver.license ? "text-green-600" : "text-red-600"}`}>
-                      {driver.license ? "Uploaded" : "Not Uploaded"}
+                      {driver.license ? t('drivers.uploaded') : t('drivers.notUploaded')}
                     </span>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
                     <span className={`transition-colors duration-200 ${driver.vehicle_license ? "text-green-600" : "text-red-600"}`}>
-                      {driver.vehicle_license ? "Uploaded" : "Not Uploaded"}
+                      {driver.vehicle_license ? t('drivers.uploaded') : t('drivers.notUploaded')}
                     </span>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                     <span className={`transition-colors duration-200 ${driver.contracts && driver.contracts.length > 0 ? "text-green-600" : "text-red-600"}`}>
-                      {driver.contracts && driver.contracts.length > 0 ? "Uploaded" : "Not Uploaded"}
+                      {driver.contracts && driver.contracts.length > 0 ? t('drivers.uploaded') : t('drivers.notUploaded')}
                     </span>
                   </TableCell>
                   <TableCell>
@@ -578,7 +581,7 @@ export default function BasicTableOne() {
                       <button
                         onClick={() => handleEditClick(driver.id)}
                         className="text-blue-600 hover:text-blue-800 dark:hover:text-blue-400 transition-colors duration-200 hover:scale-110 transform"
-                        title="Edit driver"
+                        title={t('drivers.editDriver')}
                       >
                         ✏️
                       </button>
@@ -586,7 +589,7 @@ export default function BasicTableOne() {
                         onClick={() => handleDeleteClick(driver.id, `${driver.first_name} ${driver.last_name}`)}
                         disabled={isDeleting}
                         className="text-red-600 hover:text-red-800 dark:hover:text-red-400 transition-colors duration-200 hover:scale-110 transform disabled:opacity-50 disabled:cursor-not-allowed"
-                        title="Delete driver"
+                        title={t('drivers.deleteDriver')}
                       >
                         🗑️
                       </button>
@@ -607,7 +610,7 @@ export default function BasicTableOne() {
             onClick={() => handlePageChange(currentPage - 1)}
             className="px-3 py-1 rounded disabled:opacity-30 bg-blue-600 text-white transition-all duration-200 hover:bg-blue-700 disabled:hover:bg-blue-600 hover:scale-105 active:scale-95"
           >
-            Prev
+            {t('common.previous')}
           </button>
 
           {totalPages > 0 && [...Array(totalPages)].map((_, index) => (
@@ -629,7 +632,7 @@ export default function BasicTableOne() {
             onClick={() => handlePageChange(currentPage + 1)}
             className="px-3 py-1 rounded disabled:opacity-30 bg-blue-600 text-white transition-all duration-200 hover:bg-blue-700 disabled:hover:bg-blue-600 hover:scale-105 active:scale-95"
           >
-            Next
+            {t('common.next')}
           </button>
         </div>
 
@@ -642,24 +645,22 @@ export default function BasicTableOne() {
             {isExporting ? (
               <>
                 <LoadingSpinner size="small" />
-                Exporting...
+                {t('drivers.exporting')}
               </>
             ) : (
-              'Export'
+              t('drivers.export')
             )}
           </button>
         </div>
       </div>
 
       {/* Modals */}
-      {/* Add Driver Modal */}
       <AddDriverModal
         isOpen={isAddModalOpen}
         onClose={handleCloseAddModal}
         onSuccess={handleDriverAdded}
       />
 
-      {/* Edit Driver Modal */}
       <EditDriverModal
         isOpen={isEditModalOpen}
         onClose={handleCloseEditModal}
@@ -667,7 +668,6 @@ export default function BasicTableOne() {
         driverId={selectedDriverId}
       />
 
-      {/* Delete Confirmation Modal */}
       <DeleteConfirmationModal
         isOpen={deleteModalOpen}
         onClose={handleCloseDeleteModal}
@@ -676,10 +676,9 @@ export default function BasicTableOne() {
         isLoading={isDeleting}
       />
 
-      {/* Delete Error Display */}
       {deleteError && (
         <div className="fixed top-4 right-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded shadow-lg z-50 animate-in slide-in-from-right duration-300">
-          <strong>Error: </strong> {deleteError.message}
+          <strong>{t('common.error')}: </strong> {deleteError.message}
           <button 
             onClick={() => {/* reset error */}}
             className="float-right font-bold ml-4 hover:text-red-900 transition-colors"

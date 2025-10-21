@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import { DriverData, LicenseData, NationalIdData, VehicleLicenseData, ContractData } from '../../hooks/useAddDriver';
 import { useCompanies } from '../../hooks/useCompanies';
 import { useEditDriver } from '../../hooks/useEditDriver';
+import { useTranslation } from 'react-i18next';
 
 interface EditDriverModalProps {
     isOpen: boolean;
@@ -48,6 +49,7 @@ interface EditDriverModalProps {
   });
   
   export default function EditDriverModal({ isOpen, onClose, onSuccess, driverId }: EditDriverModalProps) {
+    const { t } = useTranslation();
     const { updateDriver, getDriver, isLoading, error, resetError } = useEditDriver();
     const [validationError, setValidationError] = useState<string>('');
     const { companies, isLoading: companiesLoading, error: companiesError } = useCompanies();
@@ -223,7 +225,7 @@ interface EditDriverModalProps {
           // Only update state if component is still mounted and showing the same driver
           if (isMountedRef.current && currentDriverIdRef.current === driverId) {
             console.error('Failed to fetch driver data:', err);
-            setValidationError('Failed to load driver data');
+            setValidationError(t('editDriver.errors.loadFailed'));
           }
         } finally {
           // Only update state if component is still mounted and showing the same driver
@@ -281,19 +283,19 @@ interface EditDriverModalProps {
         !driverData.nid.trim() ||
         !driverData.company_code.trim()
       ) {
-        setValidationError("First name, last name, phone number, NID, and company are required");
+        setValidationError(t('editDriver.validation.requiredFields'));
         return;
       }
 
       // Additional NID validation - must not be empty and should be unique
       if (driverData.nid.trim() === '') {
-        setValidationError("NID is required and cannot be empty");
+        setValidationError(t('editDriver.validation.nidRequired'));
         return;
       }
     
       // License validation (if you want to keep license as required)
       if (!licenseData.license_number || !licenseData.license_type) {
-        setValidationError("License number and type are required");
+        setValidationError(t('editDriver.validation.licenseRequired'));
         return;
       }
     
@@ -338,9 +340,9 @@ interface EditDriverModalProps {
         
         // Handle specific NID duplicate error
         if (err.message?.includes('duplicate') || err.message?.includes('nid') || err.message?.includes('unique')) {
-          setValidationError("This NID is already registered to another driver. Please use a different NID.");
+          setValidationError(t('editDriver.validation.nidDuplicate'));
         } else {
-          setValidationError("Failed to update driver. Please try again.");
+          setValidationError(t('editDriver.validation.submitError'));
         }
       }
     };
@@ -492,7 +494,7 @@ interface EditDriverModalProps {
     // Helper function to get filename from file path or File object
     const getFileName = (file: string | File): string => {
       if (typeof file === 'string') {
-        return file.split('/').pop() || 'Uploaded file';
+        return file.split('/').pop() || t('editDriver.fileLabels.uploadedFile');
       }
       return file.name;
     };
@@ -516,13 +518,13 @@ interface EditDriverModalProps {
       >
         <div className="p-6">
           <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-white">
-            Edit Driver {driverId && `#${driverId}`}
-            {isFetchingDriver && ' (Loading...)'}
+            {t('editDriver.title')} {driverId && `#${driverId}`}
+            {isFetchingDriver && t('editDriver.loading')}
           </h2>
           
           {(error || validationError) && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-              {validationError || (error as any)?.message || 'Failed to update driver'}
+              {validationError || (error as any)?.message || t('editDriver.errors.updateFailed')}
             </div>
           )}
 
@@ -531,7 +533,7 @@ interface EditDriverModalProps {
             <div className="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded mb-4">
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                Loading driver data...
+                {t('editDriver.loadingDriverData')}
               </div>
             </div>
           )}
@@ -540,12 +542,12 @@ interface EditDriverModalProps {
             {/* Basic Information Section */}
             <div className="mb-6">
               <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300 border-b pb-2">
-                Basic Information <span className="text-red-500 text-sm">* Required fields</span>
+                {t('editDriver.sections.basicInfo')} <span className="text-red-500 text-sm">{t('editDriver.requiredFields')}</span>
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    First Name *
+                    {t('editDriver.fields.firstName')} *
                   </label>
                   <input
                     type="text"
@@ -560,7 +562,7 @@ interface EditDriverModalProps {
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    Last Name *
+                    {t('editDriver.fields.lastName')} *
                   </label>
                   <input
                     type="text"
@@ -575,14 +577,14 @@ interface EditDriverModalProps {
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    National ID (NID) *
+                    {t('editDriver.fields.nid')} *
                   </label>
                   <input
                     type="text"
                     name="nid"
                     value={driverData.nid}
                     onChange={handleDriverChange}
-                    placeholder="Enter national ID number"
+                    placeholder={t('editDriver.placeholders.nid')}
                     required
                     disabled={isFetchingDriver}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white disabled:opacity-50"
@@ -591,7 +593,7 @@ interface EditDriverModalProps {
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    Phone Number *
+                    {t('editDriver.fields.phoneNumber')} *
                   </label>
                   <input
                     type="tel"
@@ -606,7 +608,7 @@ interface EditDriverModalProps {
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    Company *
+                    {t('editDriver.fields.company')} *
                   </label>
                   <select
                     name="company_code"
@@ -616,11 +618,11 @@ interface EditDriverModalProps {
                     disabled={isFetchingDriver || companiesLoading}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white disabled:opacity-50"
                   >
-                    <option value="">Select a company *</option>
+                    <option value="">{t('editDriver.selectCompany')}</option>
                     {companiesLoading ? (
-                      <option disabled>Loading companies...</option>
+                      <option disabled>{t('editDriver.loadingCompanies')}</option>
                     ) : companiesError ? (
-                      <option disabled>Error loading companies</option>
+                      <option disabled>{t('editDriver.companiesError')}</option>
                     ) : (
                       companies
                         .filter(company => company.is_active)
@@ -633,17 +635,17 @@ interface EditDriverModalProps {
                   </select>
                   
                   {companiesLoading && (
-                    <p className="text-xs text-gray-500 mt-1">Loading companies...</p>
+                    <p className="text-xs text-gray-500 mt-1">{t('editDriver.loadingCompanies')}</p>
                   )}
                   {companiesError && (
-                    <p className="text-xs text-red-500 mt-1">Failed to load companies</p>
+                    <p className="text-xs text-red-500 mt-1">{t('editDriver.companiesError')}</p>
                   )}
                 </div>
 
                 {/* ADDED: Agency Share Field */}
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    Agency Share (%)
+                    {t('editDriver.fields.agencyShare')}
                   </label>
                   <input
                     type="number"
@@ -653,17 +655,17 @@ interface EditDriverModalProps {
                     min="0"
                     max="100"
                     step="0.1"
-                    placeholder="Enter percentage (0-100)"
+                    placeholder={t('editDriver.placeholders.agencyShare')}
                     disabled={isFetchingDriver}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white disabled:opacity-50"
                   />
-                  <p className="text-xs text-gray-500 mt-1">Leave empty if no agency share</p>
+                  <p className="text-xs text-gray-500 mt-1">{t('editDriver.hints.agencyShare')}</p>
                 </div>
 
                 {/* ADDED: Insurance Amount Field */}
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    Insurance Amount
+                    {t('editDriver.fields.insuranceAmount')}
                   </label>
                   <input
                     type="number"
@@ -672,23 +674,23 @@ interface EditDriverModalProps {
                     onChange={handleDriverChange}
                     min="0"
                     step="0.01"
-                    placeholder="Enter insurance amount"
+                    placeholder={t('editDriver.placeholders.insurance')}
                     disabled={isFetchingDriver}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white disabled:opacity-50"
                   />
-                  <p className="text-xs text-gray-500 mt-1">Leave empty if no insurance</p>
+                  <p className="text-xs text-gray-500 mt-1">{t('editDriver.hints.insurance')}</p>
                 </div>
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    UUID
+                    {t('editDriver.fields.uuid')}
                   </label>
                   <input
                     type="text"
                     name="uuid"
                     value={driverData.uuid}
                     onChange={handleDriverChange}
-                    placeholder="Leave empty for auto-generation"
+                    placeholder={t('editDriver.placeholders.uuid')}
                     disabled={isFetchingDriver}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white disabled:opacity-50"
                   />
@@ -704,7 +706,7 @@ interface EditDriverModalProps {
                     className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 disabled:opacity-50"
                   />
                   <label className="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Active Driver
+                    {t('editDriver.fields.activeDriver')}
                   </label>
                 </div>
               </div>
@@ -714,7 +716,7 @@ interface EditDriverModalProps {
             <div className="mb-6">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 border-b pb-2">
-                  Contract Information
+                  {t('editDriver.sections.contractInfo')}
                 </h3>
                 <button
                   type="button"
@@ -722,7 +724,7 @@ interface EditDriverModalProps {
                   disabled={isFetchingDriver}
                   className="px-3 py-1 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm disabled:opacity-50"
                 >
-                  Add Contract
+                  {t('editDriver.buttons.addContract')}
                 </button>
               </div>
               
@@ -741,7 +743,7 @@ interface EditDriverModalProps {
                   
                   <div>
                     <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                      Contract Number
+                      {t('editDriver.fields.contractNumber')}
                     </label>
                     <input
                       type="text"
@@ -754,7 +756,7 @@ interface EditDriverModalProps {
                   
                   <div>
                     <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                      Issue Date
+                      {t('editDriver.fields.issueDate')}
                     </label>
                     <input
                       type="date"
@@ -767,7 +769,7 @@ interface EditDriverModalProps {
                   
                   <div>
                     <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                      Expiry Date
+                      {t('editDriver.fields.expiryDate')}
                     </label>
                     <input
                       type="date"
@@ -780,7 +782,7 @@ interface EditDriverModalProps {
                   
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                      Notes
+                      {t('editDriver.fields.notes')}
                     </label>
                     <textarea
                       value={contract.notes}
@@ -788,13 +790,13 @@ interface EditDriverModalProps {
                       rows={3}
                       disabled={isFetchingDriver}
                       className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white disabled:opacity-50"
-                      placeholder="Additional contract notes..."
+                      placeholder={t('editDriver.placeholders.contractNotes')}
                     />
                   </div>
                   
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                      Contract Document
+                      {t('editDriver.fields.contractDocument')}
                     </label>
                     <div className="flex items-center gap-2">
                       <input
@@ -810,18 +812,18 @@ interface EditDriverModalProps {
                           onClick={() => handleDeleteDocument('contracts', index)}
                           disabled={isFetchingDriver}
                           className="px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:opacity-50 transition-colors text-sm whitespace-nowrap"
-                          title="Delete document"
+                          title={t('editDriver.buttons.deleteDocument')}
                         >
-                          🗑️ Delete
+                          🗑️ {t('editDriver.buttons.delete')}
                         </button>
                       )}
                     </div>
                     {hasFile(contract.file) && (
                       <p className="text-xs text-green-600 mt-1">
-                        Current file: {getFileName(contract.file)}
+                        {t('editDriver.fileLabels.currentFile')}: {getFileName(contract.file)}
                       </p>
                     )}
-                    <p className="text-xs text-gray-500 mt-1">Upload contract document (PDF, JPG, PNG)</p>
+                    <p className="text-xs text-gray-500 mt-1">{t('editDriver.hints.contractDocument')}</p>
                   </div>
                 </div>
               ))}
@@ -830,12 +832,12 @@ interface EditDriverModalProps {
             {/* License Section */}
             <div className="mb-6">
               <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300 border-b pb-2">
-                Driver License Information <span className="text-red-500 text-sm">* Required fields</span>
+                {t('editDriver.sections.licenseInfo')} <span className="text-red-500 text-sm">{t('editDriver.requiredFields')}</span>
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    License Number *
+                    {t('editDriver.fields.licenseNumber')} *
                   </label>
                   <input
                     type="text"
@@ -849,7 +851,7 @@ interface EditDriverModalProps {
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    License Type *
+                    {t('editDriver.fields.licenseType')} *
                   </label>
                   <select
                     value={licenseData.license_type}
@@ -858,17 +860,17 @@ interface EditDriverModalProps {
                     disabled={isFetchingDriver}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white disabled:opacity-50"
                   >
-                    <option value="">Select License Type *</option>
-                    <option value="standard">Standard</option>
-                    <option value="commercial">Commercial</option>
-                    <option value="motorcycle">Motorcycle</option>
-                    <option value="heavy_vehicle">Heavy Vehicle</option>
+                    <option value="">{t('editDriver.selectLicenseType')}</option>
+                    <option value="standard">{t('editDriver.licenseTypes.standard')}</option>
+                    <option value="commercial">{t('editDriver.licenseTypes.commercial')}</option>
+                    <option value="motorcycle">{t('editDriver.licenseTypes.motorcycle')}</option>
+                    <option value="heavy_vehicle">{t('editDriver.licenseTypes.heavyVehicle')}</option>
                   </select>
                 </div>
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    Issue Date
+                    {t('editDriver.fields.issueDate')}
                   </label>
                   <input
                     type="date"
@@ -881,7 +883,7 @@ interface EditDriverModalProps {
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    Expiry Date
+                    {t('editDriver.fields.expiryDate')}
                   </label>
                   <input
                     type="date"
@@ -894,7 +896,7 @@ interface EditDriverModalProps {
                 
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    License Document
+                    {t('editDriver.fields.licenseDocument')}
                   </label>
                   <div className="flex items-center gap-2">
                     <input
@@ -910,23 +912,23 @@ interface EditDriverModalProps {
                         onClick={() => handleDeleteDocument('license')}
                         disabled={isFetchingDriver}
                         className="px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:opacity-50 transition-colors text-sm whitespace-nowrap"
-                        title="Delete document"
+                        title={t('editDriver.buttons.deleteDocument')}
                       >
-                        🗑️ Delete
+                        🗑️ {t('editDriver.buttons.delete')}
                       </button>
                     )}
                   </div>
                   {hasFile(licenseData.file) && (
                     <p className="text-xs text-green-600 mt-1">
-                      Current file: {getFileName(licenseData.file)}
+                      {t('editDriver.fileLabels.currentFile')}: {getFileName(licenseData.file)}
                     </p>
                   )}
-                  <p className="text-xs text-gray-500 mt-1">Upload driver license document (PDF, JPG, PNG)</p>
+                  <p className="text-xs text-gray-500 mt-1">{t('editDriver.hints.licenseDocument')}</p>
                 </div>
                 
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    License Notes
+                    {t('editDriver.fields.notes')}
                   </label>
                   <textarea
                     value={licenseData.notes}
@@ -934,7 +936,7 @@ interface EditDriverModalProps {
                     rows={3}
                     disabled={isFetchingDriver}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white disabled:opacity-50"
-                    placeholder="Additional license notes..."
+                    placeholder={t('editDriver.placeholders.licenseNotes')}
                   />
                 </div>
               </div>
@@ -943,12 +945,12 @@ interface EditDriverModalProps {
             {/* National ID Document Section */}
             <div className="mb-6">
               <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300 border-b pb-2">
-                National ID Document
+                {t('editDriver.sections.nationalId')}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    Issue Date
+                    {t('editDriver.fields.issueDate')}
                   </label>
                   <input
                     type="date"
@@ -961,7 +963,7 @@ interface EditDriverModalProps {
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    Expiry Date
+                    {t('editDriver.fields.expiryDate')}
                   </label>
                   <input
                     type="date"
@@ -974,7 +976,7 @@ interface EditDriverModalProps {
                 
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    National ID Document
+                    {t('editDriver.fields.nationalIdDocument')}
                   </label>
                   <div className="flex items-center gap-2">
                     <input
@@ -990,23 +992,23 @@ interface EditDriverModalProps {
                         onClick={() => handleDeleteDocument('nationalId')}
                         disabled={isFetchingDriver}
                         className="px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:opacity-50 transition-colors text-sm whitespace-nowrap"
-                        title="Delete document"
+                        title={t('editDriver.buttons.deleteDocument')}
                       >
-                        🗑️ Delete
+                        🗑️ {t('editDriver.buttons.delete')}
                       </button>
                     )}
                   </div>
                   {hasFile(nationalIdData.file) && (
                     <p className="text-xs text-green-600 mt-1">
-                      Current file: {getFileName(nationalIdData.file)}
+                      {t('editDriver.fileLabels.currentFile')}: {getFileName(nationalIdData.file)}
                     </p>
                   )}
-                  <p className="text-xs text-gray-500 mt-1">Upload national ID document (PDF, JPG, PNG)</p>
+                  <p className="text-xs text-gray-500 mt-1">{t('editDriver.hints.nationalIdDocument')}</p>
                 </div>
                 
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    National ID Notes
+                    {t('editDriver.fields.notes')}
                   </label>
                   <textarea
                     value={nationalIdData.notes}
@@ -1014,7 +1016,7 @@ interface EditDriverModalProps {
                     rows={3}
                     disabled={isFetchingDriver}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white disabled:opacity-50"
-                    placeholder="Additional national ID notes..."
+                    placeholder={t('editDriver.placeholders.nationalIdNotes')}
                   />
                 </div>
               </div>
@@ -1023,12 +1025,12 @@ interface EditDriverModalProps {
             {/* Vehicle License Section */}
             <div className="mb-6">
               <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300 border-b pb-2">
-                Vehicle License Information
+                {t('editDriver.sections.vehicleLicense')}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    License Number
+                    {t('editDriver.fields.licenseNumber')}
                   </label>
                   <input
                     type="text"
@@ -1041,7 +1043,7 @@ interface EditDriverModalProps {
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    License Plate
+                    {t('editDriver.fields.licensePlate')}
                   </label>
                   <input
                     type="text"
@@ -1055,7 +1057,7 @@ interface EditDriverModalProps {
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    License Type
+                    {t('editDriver.fields.licenseType')}
                   </label>
                   <select
                     value={vehicleLicenseData.license_type}
@@ -1063,17 +1065,17 @@ interface EditDriverModalProps {
                     disabled={isFetchingDriver}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white disabled:opacity-50"
                   >
-                    <option value="">Select License Type</option>
-                    <option value="commercial">Commercial</option>
-                    <option value="private">Private</option>
-                    <option value="motorcycle">Motorcycle</option>
-                    <option value="heavy_vehicle">Heavy Vehicle</option>
+                    <option value="">{t('editDriver.selectLicenseType')}</option>
+                    <option value="commercial">{t('editDriver.licenseTypes.commercial')}</option>
+                    <option value="private">{t('editDriver.licenseTypes.private')}</option>
+                    <option value="motorcycle">{t('editDriver.licenseTypes.motorcycle')}</option>
+                    <option value="heavy_vehicle">{t('editDriver.licenseTypes.heavyVehicle')}</option>
                   </select>
                 </div>
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    Vehicle Type
+                    {t('editDriver.fields.vehicleType')}
                   </label>
                   <select
                     value={vehicleLicenseData.vehicle_type}
@@ -1081,18 +1083,18 @@ interface EditDriverModalProps {
                     disabled={isFetchingDriver}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white disabled:opacity-50"
                   >
-                    <option value="">Select Vehicle Type</option>
-                    <option value="motorcycle">Motorcycle</option>
-                    <option value="car">Car</option>
-                    <option value="van">Van</option>
-                    <option value="truck">Truck</option>
-                    <option value="bicycle">Bicycle</option>
+                    <option value="">{t('editDriver.selectVehicleType')}</option>
+                    <option value="motorcycle">{t('editDriver.vehicleTypes.motorcycle')}</option>
+                    <option value="car">{t('editDriver.vehicleTypes.car')}</option>
+                    <option value="van">{t('editDriver.vehicleTypes.van')}</option>
+                    <option value="truck">{t('editDriver.vehicleTypes.truck')}</option>
+                    <option value="bicycle">{t('editDriver.vehicleTypes.bicycle')}</option>
                   </select>
                 </div>
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    Issue Date
+                    {t('editDriver.fields.issueDate')}
                   </label>
                   <input
                     type="date"
@@ -1105,7 +1107,7 @@ interface EditDriverModalProps {
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    Expiry Date
+                    {t('editDriver.fields.expiryDate')}
                   </label>
                   <input
                     type="date"
@@ -1118,7 +1120,7 @@ interface EditDriverModalProps {
                 
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    Vehicle License Document
+                    {t('editDriver.fields.vehicleLicenseDocument')}
                   </label>
                   <div className="flex items-center gap-2">
                     <input
@@ -1134,23 +1136,23 @@ interface EditDriverModalProps {
                         onClick={() => handleDeleteDocument('vehicleLicense')}
                         disabled={isFetchingDriver}
                         className="px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:opacity-50 transition-colors text-sm whitespace-nowrap"
-                        title="Delete document"
+                        title={t('editDriver.buttons.deleteDocument')}
                       >
-                        🗑️ Delete
+                        🗑️ {t('editDriver.buttons.delete')}
                       </button>
                     )}
                   </div>
                   {hasFile(vehicleLicenseData.file) && (
                     <p className="text-xs text-green-600 mt-1">
-                      Current file: {getFileName(vehicleLicenseData.file)}
+                      {t('editDriver.fileLabels.currentFile')}: {getFileName(vehicleLicenseData.file)}
                     </p>
                   )}
-                  <p className="text-xs text-gray-500 mt-1">Upload vehicle license document (PDF, JPG, PNG)</p>
+                  <p className="text-xs text-gray-500 mt-1">{t('editDriver.hints.vehicleLicenseDocument')}</p>
                 </div>
                 
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    Vehicle License Notes
+                    {t('editDriver.fields.notes')}
                   </label>
                   <textarea
                     value={vehicleLicenseData.notes}
@@ -1158,7 +1160,7 @@ interface EditDriverModalProps {
                     rows={3}
                     disabled={isFetchingDriver}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white disabled:opacity-50"
-                    placeholder="Additional vehicle license notes..."
+                    placeholder={t('editDriver.placeholders.vehicleLicenseNotes')}
                   />
                 </div>
               </div>
@@ -1171,7 +1173,7 @@ interface EditDriverModalProps {
                 disabled={isLoading || isFetchingDriver}
                 className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700 disabled:opacity-50 transition-colors"
               >
-                Cancel
+                {t('editDriver.buttons.cancel')}
               </button>
               <button
                 type="submit"
@@ -1181,10 +1183,10 @@ interface EditDriverModalProps {
                 {isLoading ? (
                   <>
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    Updating Driver...
+                    {t('editDriver.buttons.updatingDriver')}
                   </>
                 ) : (
-                  'Update Driver'
+                  t('editDriver.buttons.updateDriver')
                 )}
               </button>
             </div>

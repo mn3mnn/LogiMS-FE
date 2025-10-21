@@ -1,0 +1,383 @@
+{
+    "title": "Sign In",
+    "email": "Email",
+    "password": "Password",
+    "login": "Login",
+    "error": "Invalid email or password",
+    "keepLoggedIn": "Keep me logged in",
+    "forgotPassword": "Forgot password?",
+    "common": {
+      "retry": "Retry",
+      "error": "Error",
+      "previous": "Previous",
+      "next": "Next",
+      "notAvailable": "N/A"
+    },
+    "drivers": {
+      "loadingError": "Failed to load drivers",
+      "exportFailed": "Export failed. Please try again.",
+      "searchPlaceholder": "Search by name, phone, NID, or UUID...",
+      "searchingFor": "Searching for: \"{{term}}\"",
+      "totalDrivers": "Total Drivers: {{count}}",
+      "filtered": "filtered",
+      "company": "Company",
+      "allCompanies": "All Companies",
+      "loadingCompanies": "Loading companies...",
+      "companiesError": "Error loading companies",
+      "documentStatus": "Document Status",
+      "allDocuments": "All Documents",
+      "missingDocuments": "Missing Documents",
+      "expiredDocuments": "Expired Documents",
+      "validDocuments": "Valid Documents",
+      "addDriver": "Add Driver",
+      "updatingDrivers": "Updating drivers...",
+      "id": "Id",
+      "user": "User",
+      "phone": "Phone",
+      "agencyShare": "Agency Share",
+      "insurance": "Insurance",
+      "nid": "NID",
+      "license": "License",
+      "vehicleLicense": "Vehicle License",
+      "contract": "Contract",
+      "actions": "Actions",
+      "noMatchingDrivers": "No drivers match your search",
+      "noDriversFound": "No drivers found",
+      "adjustSearchTerms": "Try adjusting your search terms",
+      "addFirstDriver": "Get started by adding your first driver",
+      "noInsurance": "No Insurance",
+      "uploaded": "Uploaded",
+      "noDocument": "No Document",
+      "notUploaded": "Not Uploaded",
+      "editDriver": "Edit driver",
+      "deleteDriver": "Delete driver",
+      "exporting": "Exporting...",
+      "export": "Export"
+    },
+    "addDriver": {
+    "title": "Add New Driver",
+    "sections": {
+      "basicInfo": "Basic Information",
+      "contractInfo": "Contract Information",
+      "licenseInfo": "Driver License Information",
+      "nationalId": "National ID Document",
+      "vehicleLicense": "Vehicle License Information"
+    },
+    "fields": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "nid": "National ID (NID)",
+      "phoneNumber": "Phone Number",
+      "company": "Company",
+      "agencyShare": "Agency Share (%)",
+      "insuranceAmount": "Insurance Amount",
+      "uuid": "UUID",
+      "activeDriver": "Active Driver",
+      "contractNumber": "Contract Number",
+      "issueDate": "Issue Date",
+      "expiryDate": "Expiry Date",
+      "notes": "Notes",
+      "contractDocument": "Contract Document",
+      "licenseNumber": "License Number",
+      "licenseType": "License Type",
+      "licenseDocument": "License Document",
+      "nationalIdDocument": "National ID Document",
+      "licensePlate": "License Plate",
+      "vehicleType": "Vehicle Type",
+      "vehicleLicenseDocument": "Vehicle License Document"
+    },
+    "placeholders": {
+      "nid": "Enter national ID number",
+      "agencyShare": "Enter percentage (0-100)",
+      "insurance": "Enter insurance amount",
+      "uuid": "Leave empty for auto-generation",
+      "contractNotes": "Additional contract notes...",
+      "licenseNotes": "Additional license notes...",
+      "nationalIdNotes": "Additional national ID notes...",
+      "vehicleLicenseNotes": "Additional vehicle license notes..."
+    },
+    "hints": {
+      "agencyShare": "Leave empty if no agency share",
+      "insurance": "Leave empty if no insurance",
+      "contractDocument": "Upload contract document (PDF, JPG, PNG)",
+      "licenseDocument": "Upload driver license document (PDF, JPG, PNG)",
+      "nationalIdDocument": "Upload national ID document (PDF, JPG, PNG)",
+      "vehicleLicenseDocument": "Upload vehicle license document (PDF, JPG, PNG)"
+    },
+    "buttons": {
+      "addContract": "Add Contract",
+      "cancel": "Cancel",
+      "addDriver": "Add Driver",
+      "creatingDriver": "Creating Driver..."
+    },
+    "selectCompany": "Select a company",
+    "selectLicenseType": "Select License Type",
+    "selectVehicleType": "Select Vehicle Type",
+    "loadingCompanies": "Loading companies...",
+    "companiesError": "Error loading companies",
+    "licenseTypes": {
+      "standard": "Standard",
+      "commercial": "Commercial",
+      "motorcycle": "Motorcycle",
+      "heavyVehicle": "Heavy Vehicle",
+      "private": "Private"
+    },
+    "vehicleTypes": {
+      "motorcycle": "Motorcycle",
+      "car": "Car",
+      "van": "Van",
+      "truck": "Truck",
+      "bicycle": "Bicycle"
+    },
+    "validation": {
+      "requiredFields": "First name, last name, and phone number are required",
+      "licenseRequired": "License number and type are required",
+      "submitError": "Failed to add driver. Please try again.",
+      "defaultError": "Failed to add driver"
+    }
+  },
+  "editDriver": {
+    "title": "Edit Driver",
+    "loading": " (Loading...)",
+    "requiredFields": "* Required fields",
+    "sections": {
+      "basicInfo": "Basic Information",
+      "contractInfo": "Contract Information",
+      "licenseInfo": "Driver License Information",
+      "nationalId": "National ID Document",
+      "vehicleLicense": "Vehicle License Information"
+    },
+    "fields": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "nid": "National ID (NID)",
+      "phoneNumber": "Phone Number",
+      "company": "Company",
+      "agencyShare": "Agency Share (%)",
+      "insuranceAmount": "Insurance Amount",
+      "uuid": "UUID",
+      "activeDriver": "Active Driver",
+      "contractNumber": "Contract Number",
+      "issueDate": "Issue Date",
+      "expiryDate": "Expiry Date",
+      "notes": "Notes",
+      "contractDocument": "Contract Document",
+      "licenseNumber": "License Number",
+      "licenseType": "License Type",
+      "licenseDocument": "License Document",
+      "nationalIdDocument": "National ID Document",
+      "licensePlate": "License Plate",
+      "vehicleType": "Vehicle Type",
+      "vehicleLicenseDocument": "Vehicle License Document"
+    },
+    "placeholders": {
+      "nid": "Enter national ID number",
+      "agencyShare": "Enter percentage (0-100)",
+      "insurance": "Enter insurance amount",
+      "uuid": "Leave empty for auto-generation",
+      "contractNotes": "Additional contract notes...",
+      "licenseNotes": "Additional license notes...",
+      "nationalIdNotes": "Additional national ID notes...",
+      "vehicleLicenseNotes": "Additional vehicle license notes..."
+    },
+    "hints": {
+      "agencyShare": "Leave empty if no agency share",
+      "insurance": "Leave empty if no insurance",
+      "contractDocument": "Upload contract document (PDF, JPG, PNG)",
+      "licenseDocument": "Upload driver license document (PDF, JPG, PNG)",
+      "nationalIdDocument": "Upload national ID document (PDF, JPG, PNG)",
+      "vehicleLicenseDocument": "Upload vehicle license document (PDF, JPG, PNG)"
+    },
+    "buttons": {
+      "addContract": "Add Contract",
+      "cancel": "Cancel",
+      "updateDriver": "Update Driver",
+      "updatingDriver": "Updating Driver...",
+      "delete": "Delete",
+      "deleteDocument": "Delete document"
+    },
+    "selectCompany": "Select a company *",
+    "selectLicenseType": "Select License Type *",
+    "selectVehicleType": "Select Vehicle Type",
+    "loadingCompanies": "Loading companies...",
+    "companiesError": "Error loading companies",
+    "loadingDriverData": "Loading driver data...",
+    "licenseTypes": {
+      "standard": "Standard",
+      "commercial": "Commercial",
+      "motorcycle": "Motorcycle",
+      "heavyVehicle": "Heavy Vehicle",
+      "private": "Private"
+    },
+    "vehicleTypes": {
+      "motorcycle": "Motorcycle",
+      "car": "Car",
+      "van": "Van",
+      "truck": "Truck",
+      "bicycle": "Bicycle"
+    },
+    "validation": {
+      "requiredFields": "First name, last name, phone number, NID, and company are required",
+      "nidRequired": "NID is required and cannot be empty",
+      "licenseRequired": "License number and type are required",
+      "nidDuplicate": "This NID is already registered to another driver. Please use a different NID.",
+      "submitError": "Failed to update driver. Please try again."
+    },
+    "errors": {
+      "loadFailed": "Failed to load driver data",
+      "updateFailed": "Failed to update driver"
+    },
+    "fileLabels": {
+      "currentFile": "Current file",
+      "uploadedFile": "Uploaded file"
+    }
+  },
+  "deleteDriver": {
+    "title": "Delete Driver",
+    "confirmationMessagePart1": "Are you sure you want to delete",
+    "confirmationMessagePart2": "? This action cannot be undone.",
+    "buttons": {
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "deleting": "Deleting..."
+    }
+  },
+  "payrollUpload": {
+    "title": "Payroll Upload & Configuration",
+    "sections": {
+      "configuration": "Payroll Configuration",
+      "fileUpload": "Upload Payroll File",
+      "fileRequirements": "File Requirements"
+    },
+    "fields": {
+      "company": "Company",
+      "taxPercentage": "Tax (%)",
+      "companyShare": "Company Share (%)",
+      "insurance": "Insurance (EUR)",
+      "selectFile": "Select Payroll File"
+    },
+    "descriptions": {
+      "fileUpload": "Upload an Excel (.xlsx, .xls) or CSV file containing payroll data. The system will process the file and update payroll records accordingly."
+    },
+    "hints": {
+      "supportedFormats": "Supported formats: Excel (.xlsx, .xls) or CSV files"
+    },
+    "buttons": {
+      "uploadPayroll": "Upload Payroll",
+      "uploading": "Uploading...",
+      "generateReport": "Generate Report",
+      "generating": "Generating...",
+      "clearFile": "Clear File"
+    },
+    "validation": {
+      "selectFile": "Please select a file first",
+      "selectCompany": "Please select a company",
+      "selectCompanyFirst": "Please select a company first",
+      "fileType": "Please upload an Excel (.xlsx, .xls) or CSV file"
+    },
+    "messages": {
+      "uploadSuccess": "Payroll file uploaded and processed successfully!",
+      "uploadFailed": "Failed to upload payroll file",
+      "reportSuccess": "Report generated and downloaded successfully!",
+      "reportFailed": "Failed to generate report",
+      "networkError": "Network error. Please try again."
+    },
+    "requirements": {
+      "requiredColumns": "Required Columns (Excel/CSV)",
+      "driverId": "Driver ID / Employee ID",
+      "driverName": "Driver Name",
+      "hoursWorked": "Hours Worked",
+      "ratePerHour": "Rate per Hour",
+      "totalAmount": "Total Amount",
+      "paymentDate": "Payment Date",
+      "formatGuidelines": "Format Guidelines",
+      "fileSize": "File size limit: 10MB",
+      "dateFormat": "Dates should be in YYYY-MM-DD format",
+      "currencyValues": "Currency values should be numeric",
+      "firstRowHeaders": "First row should contain headers"
+    },
+    "fileLabels": {
+      "selectedFile": "Selected file",
+      "size": "Size"
+    },
+    "loadingCompanies": "Loading companies...",
+    "companiesError": "Error loading companies",
+    "selectCompany": "Select a company"
+  },
+  "userMetaCard": {
+    "loading": "Loading driver data...",
+    "driver": "Driver",
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "errors": {
+      "loadFailed": "Failed to load driver data"
+    }
+  },
+  "userInfoCard": {
+    "sections": {
+      "personalInfo": "Personal Information"
+    },
+    "fields": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email address",
+      "phone": "Phone",
+      "nationalId": "National ID",
+      "uuid": "UUID",
+      "agencyShare": "Agency Share",
+      "insuranceAmount": "Insurance Amount"
+    },
+    "buttons": {
+      "edit": "Edit"
+    },
+    "errors": {
+      "noDriverId": "Cannot edit driver: No driver ID found"
+    },
+    "notSet": "Not set"
+  },
+  "driverFilesCard": {
+    "title": "Driver Documents & Files",
+    "sections": {
+      "contracts": "Contracts ({{count}})",
+      "driverLicense": "Driver License",
+      "nationalId": "National ID Document",
+      "vehicleLicense": "Vehicle License"
+    },
+    "fields": {
+      "issueDate": "Issue Date",
+      "expiryDate": "Expiry Date",
+      "notes": "Notes",
+      "type": "Type",
+      "licenseNumber": "License Number",
+      "licenseType": "License Type"
+    },
+    "status": {
+      "active": "Active",
+      "expired": "Expired",
+      "expiringSoon": "Expiring Soon"
+    },
+    "buttons": {
+      "viewContract": "View Contract Document",
+      "viewLicense": "View License Document",
+      "viewNationalId": "View National ID Document",
+      "viewVehicleLicense": "View Vehicle License Document"
+    },
+    "noNotes": "No notes"
+  },
+  "userDropdown": {
+    "userImageAlt": "User profile picture",
+    "userName": "Musharof",
+    "userFullName": "Musharof Chowdhury",
+    "userEmail": "randomuser@pimjo.com",
+    "menu": {
+      "editProfile": "Edit profile",
+      "accountSettings": "Account settings",
+      "language": "Language",
+      "signOut": "Sign out"
+    }
+  }
+  
+
+  }

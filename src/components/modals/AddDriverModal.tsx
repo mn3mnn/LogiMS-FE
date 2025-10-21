@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useAddDriver, DriverData, LicenseData, NationalIdData, VehicleLicenseData, ContractData } from '../../hooks/useAddDriver';
 import { useCompanies } from '../../hooks/useCompanies';
+import { useTranslation } from 'react-i18next';
 
 interface AddDriverModalProps {
   isOpen: boolean;
@@ -46,6 +47,7 @@ const createEmptyVehicleLicense = (): Omit<VehicleLicenseData, 'driver_id'> => (
 });
 
 export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriverModalProps) {
+  const { t } = useTranslation();
   const { addDriver, isLoading, error, reset, isSuccess } = useAddDriver();
   const [validationError, setValidationError] = useState<string>('');
   const { companies, isLoading: companiesLoading, error: companiesError } = useCompanies();
@@ -132,12 +134,12 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
       !driverData.last_name.trim() ||
       !driverData.phone_number.trim()
     ) {
-      setValidationError("First name, last name, and phone number are required");
+      setValidationError(t('addDriver.validation.requiredFields'));
       return;
     }
   
     if (!licenseData.license_number || !licenseData.license_type) {
-      setValidationError("License number and type are required");
+      setValidationError(t('addDriver.validation.licenseRequired'));
       return;
     }
   
@@ -153,7 +155,7 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
   
     } catch (err) {
       console.error("❌ Failed to add driver:", err);
-      setValidationError("Failed to add driver. Please try again.");
+      setValidationError(t('addDriver.validation.submitError'));
     }
   };
   
@@ -270,12 +272,12 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
       >
         <div className="p-6">
           <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-white">
-            Add New Driver
+            {t('addDriver.title')}
           </h2>
           
           {(error || validationError) && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-              {validationError || (error as any)?.message || 'Failed to add driver'}
+              {validationError || (error as any)?.message || t('addDriver.validation.defaultError')}
             </div>
           )}
           
@@ -283,12 +285,12 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
             {/* Basic Information Section */}
             <div className="mb-6">
               <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300 border-b pb-2">
-                Basic Information
+                {t('addDriver.sections.basicInfo')}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    First Name *
+                    {t('addDriver.fields.firstName')} *
                   </label>
                   <input
                     type="text"
@@ -302,7 +304,7 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    Last Name *
+                    {t('addDriver.fields.lastName')} *
                   </label>
                   <input
                     type="text"
@@ -316,21 +318,21 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    National ID (NID)
+                    {t('addDriver.fields.nid')}
                   </label>
                   <input
                     type="text"
                     name="nid"
                     value={driverData.nid}
                     onChange={handleDriverChange}
-                    placeholder="Enter national ID number"
+                    placeholder={t('addDriver.placeholders.nid')}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
                 </div>
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    Phone Number *
+                    {t('addDriver.fields.phoneNumber')} *
                   </label>
                   <input
                     type="tel"
@@ -344,7 +346,7 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    Company
+                    {t('addDriver.fields.company')}
                   </label>
                   <select
                     name="company_code"
@@ -353,13 +355,13 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                     disabled={isLoading}
                   >
-                    {isLoading ? (
-                      <option value="">Loading companies...</option>
-                    ) : error ? (
-                      <option value="">Error loading companies</option>
+                    {companiesLoading ? (
+                      <option value="">{t('addDriver.loadingCompanies')}</option>
+                    ) : companiesError ? (
+                      <option value="">{t('addDriver.companiesError')}</option>
                     ) : (
                       <>
-                        <option value="">Select a company</option>
+                        <option value="">{t('addDriver.selectCompany')}</option>
                         {companies
                           .filter(company => company.is_active)
                           .map((company) => (
@@ -372,17 +374,17 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                     )}
                   </select>
                   
-                  {isLoading && (
-                    <p className="text-xs text-gray-500 mt-1">Loading companies...</p>
+                  {companiesLoading && (
+                    <p className="text-xs text-gray-500 mt-1">{t('addDriver.loadingCompanies')}</p>
                   )}
-                  {error && (
-                    <p className="text-xs text-red-500 mt-1">Failed to load companies</p>
+                  {companiesError && (
+                    <p className="text-xs text-red-500 mt-1">{t('addDriver.companiesError')}</p>
                   )}
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    Agency Share (%)
+                    {t('addDriver.fields.agencyShare')}
                   </label>
                   <input
                     type="number"
@@ -392,15 +394,15 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                     min="0"
                     max="100"
                     step="0.1"
-                    placeholder="Enter percentage (0-100)"
+                    placeholder={t('addDriver.placeholders.agencyShare')}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
-                  <p className="text-xs text-gray-500 mt-1">Leave empty if no agency share</p>
+                  <p className="text-xs text-gray-500 mt-1">{t('addDriver.hints.agencyShare')}</p>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    Insurance Amount
+                    {t('addDriver.fields.insuranceAmount')}
                   </label>
                   <input
                     type="number"
@@ -409,22 +411,22 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                     onChange={handleDriverChange}
                     min="0"
                     step="0.01"
-                    placeholder="Enter insurance amount"
+                    placeholder={t('addDriver.placeholders.insurance')}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
-                  <p className="text-xs text-gray-500 mt-1">Leave empty if no insurance</p>
+                  <p className="text-xs text-gray-500 mt-1">{t('addDriver.hints.insurance')}</p>
                 </div>
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    UUID
+                    {t('addDriver.fields.uuid')}
                   </label>
                   <input
                     type="text"
                     name="uuid"
                     value={driverData.uuid}
                     onChange={handleDriverChange}
-                    placeholder="Leave empty for auto-generation"
+                    placeholder={t('addDriver.placeholders.uuid')}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
                 </div>
@@ -438,7 +440,7 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                     className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                   />
                   <label className="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Active Driver
+                    {t('addDriver.fields.activeDriver')}
                   </label>
                 </div>
               </div>
@@ -448,14 +450,14 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
             <div className="mb-6">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 border-b pb-2">
-                  Contract Information
+                  {t('addDriver.sections.contractInfo')}
                 </h3>
                 <button
                   type="button"
                   onClick={addContract}
                   className="px-3 py-1 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm"
                 >
-                  Add Contract
+                  {t('addDriver.buttons.addContract')}
                 </button>
               </div>
               
@@ -473,7 +475,7 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                   
                   <div>
                     <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                      Contract Number
+                      {t('addDriver.fields.contractNumber')}
                     </label>
                     <input
                       type="text"
@@ -485,7 +487,7 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                   
                   <div>
                     <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                      Issue Date
+                      {t('addDriver.fields.issueDate')}
                     </label>
                     <input
                       type="date"
@@ -497,7 +499,7 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                   
                   <div>
                     <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                      Expiry Date
+                      {t('addDriver.fields.expiryDate')}
                     </label>
                     <input
                       type="date"
@@ -509,20 +511,20 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                   
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                      Notes
+                      {t('addDriver.fields.notes')}
                     </label>
                     <textarea
                       value={contract.notes}
                       onChange={(e) => handleContractChange(index, 'notes', e.target.value)}
                       rows={3}
                       className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                      placeholder="Additional contract notes..."
+                      placeholder={t('addDriver.placeholders.contractNotes')}
                     />
                   </div>
                   
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                      Contract Document
+                      {t('addDriver.fields.contractDocument')}
                     </label>
                     <input
                       type="file"
@@ -530,7 +532,7 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                       onChange={(e) => handleFileChange('contracts', 'file', e.target.files?.[0] || null, index)}
                       className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-gray-600 dark:file:text-gray-300"
                     />
-                    <p className="text-xs text-gray-500 mt-1">Upload contract document (PDF, JPG, PNG)</p>
+                    <p className="text-xs text-gray-500 mt-1">{t('addDriver.hints.contractDocument')}</p>
                   </div>
                 </div>
               ))}
@@ -539,12 +541,12 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
             {/* License Section */}
             <div className="mb-6">
               <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300 border-b pb-2">
-                Driver License Information
+                {t('addDriver.sections.licenseInfo')}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    License Number *
+                    {t('addDriver.fields.licenseNumber')} *
                   </label>
                   <input
                     type="text"
@@ -557,7 +559,7 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    License Type *
+                    {t('addDriver.fields.licenseType')} *
                   </label>
                   <select
                     value={licenseData.license_type}
@@ -565,17 +567,17 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                     required
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   >
-                    <option value="">Select License Type</option>
-                    <option value="standard">Standard</option>
-                    <option value="commercial">Commercial</option>
-                    <option value="motorcycle">Motorcycle</option>
-                    <option value="heavy_vehicle">Heavy Vehicle</option>
+                    <option value="">{t('addDriver.selectLicenseType')}</option>
+                    <option value="standard">{t('addDriver.licenseTypes.standard')}</option>
+                    <option value="commercial">{t('addDriver.licenseTypes.commercial')}</option>
+                    <option value="motorcycle">{t('addDriver.licenseTypes.motorcycle')}</option>
+                    <option value="heavy_vehicle">{t('addDriver.licenseTypes.heavyVehicle')}</option>
                   </select>
                 </div>
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    Issue Date
+                    {t('addDriver.fields.issueDate')}
                   </label>
                   <input
                     type="date"
@@ -587,7 +589,7 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    Expiry Date
+                    {t('addDriver.fields.expiryDate')}
                   </label>
                   <input
                     type="date"
@@ -599,7 +601,7 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                 
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    License Document
+                    {t('addDriver.fields.licenseDocument')}
                   </label>
                   <input
                     type="file"
@@ -607,19 +609,19 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                     onChange={(e) => handleFileChange('license', 'file', e.target.files?.[0] || null)}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-gray-600 dark:file:text-gray-300"
                   />
-                  <p className="text-xs text-gray-500 mt-1">Upload driver license document (PDF, JPG, PNG)</p>
+                  <p className="text-xs text-gray-500 mt-1">{t('addDriver.hints.licenseDocument')}</p>
                 </div>
                 
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    License Notes
+                    {t('addDriver.fields.notes')}
                   </label>
                   <textarea
                     value={licenseData.notes}
                     onChange={(e) => handleLicenseChange('notes', e.target.value)}
                     rows={3}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                    placeholder="Additional license notes..."
+                    placeholder={t('addDriver.placeholders.licenseNotes')}
                   />
                 </div>
               </div>
@@ -628,12 +630,12 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
             {/* National ID Document Section */}
             <div className="mb-6">
               <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300 border-b pb-2">
-                National ID Document
+                {t('addDriver.sections.nationalId')}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    Issue Date
+                    {t('addDriver.fields.issueDate')}
                   </label>
                   <input
                     type="date"
@@ -645,7 +647,7 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    Expiry Date
+                    {t('addDriver.fields.expiryDate')}
                   </label>
                   <input
                     type="date"
@@ -657,7 +659,7 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                 
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    National ID Document
+                    {t('addDriver.fields.nationalIdDocument')}
                   </label>
                   <input
                     type="file"
@@ -665,19 +667,19 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                     onChange={(e) => handleFileChange('nationalId', 'file', e.target.files?.[0] || null)}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-gray-600 dark:file:text-gray-300"
                   />
-                  <p className="text-xs text-gray-500 mt-1">Upload national ID document (PDF, JPG, PNG)</p>
+                  <p className="text-xs text-gray-500 mt-1">{t('addDriver.hints.nationalIdDocument')}</p>
                 </div>
                 
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    National ID Notes
+                    {t('addDriver.fields.notes')}
                   </label>
                   <textarea
                     value={nationalIdData.notes}
                     onChange={(e) => handleNationalIdChange('notes', e.target.value)}
                     rows={3}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                    placeholder="Additional national ID notes..."
+                    placeholder={t('addDriver.placeholders.nationalIdNotes')}
                   />
                 </div>
               </div>
@@ -686,12 +688,12 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
             {/* Vehicle License Section */}
             <div className="mb-6">
               <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300 border-b pb-2">
-                Vehicle License Information
+                {t('addDriver.sections.vehicleLicense')}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    License Number
+                    {t('addDriver.fields.licenseNumber')}
                   </label>
                   <input
                     type="text"
@@ -703,7 +705,7 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    License Plate
+                    {t('addDriver.fields.licensePlate')}
                   </label>
                   <input
                     type="text"
@@ -716,42 +718,42 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    License Type
+                    {t('addDriver.fields.licenseType')}
                   </label>
                   <select
                     value={vehicleLicenseData.license_type}
                     onChange={(e) => handleVehicleLicenseChange('license_type', e.target.value)}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   >
-                    <option value="">Select License Type</option>
-                    <option value="commercial">Commercial</option>
-                    <option value="private">Private</option>
-                    <option value="motorcycle">Motorcycle</option>
-                    <option value="heavy_vehicle">Heavy Vehicle</option>
+                    <option value="">{t('addDriver.selectLicenseType')}</option>
+                    <option value="commercial">{t('addDriver.licenseTypes.commercial')}</option>
+                    <option value="private">{t('addDriver.licenseTypes.private')}</option>
+                    <option value="motorcycle">{t('addDriver.licenseTypes.motorcycle')}</option>
+                    <option value="heavy_vehicle">{t('addDriver.licenseTypes.heavyVehicle')}</option>
                   </select>
                 </div>
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    Vehicle Type
+                    {t('addDriver.fields.vehicleType')}
                   </label>
                   <select
                     value={vehicleLicenseData.vehicle_type}
                     onChange={(e) => handleVehicleLicenseChange('vehicle_type', e.target.value)}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   >
-                    <option value="">Select Vehicle Type</option>
-                    <option value="motorcycle">Motorcycle</option>
-                    <option value="car">Car</option>
-                    <option value="van">Van</option>
-                    <option value="truck">Truck</option>
-                    <option value="bicycle">Bicycle</option>
+                    <option value="">{t('addDriver.selectVehicleType')}</option>
+                    <option value="motorcycle">{t('addDriver.vehicleTypes.motorcycle')}</option>
+                    <option value="car">{t('addDriver.vehicleTypes.car')}</option>
+                    <option value="van">{t('addDriver.vehicleTypes.van')}</option>
+                    <option value="truck">{t('addDriver.vehicleTypes.truck')}</option>
+                    <option value="bicycle">{t('addDriver.vehicleTypes.bicycle')}</option>
                   </select>
                 </div>
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    Issue Date
+                    {t('addDriver.fields.issueDate')}
                   </label>
                   <input
                     type="date"
@@ -763,7 +765,7 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    Expiry Date
+                    {t('addDriver.fields.expiryDate')}
                   </label>
                   <input
                     type="date"
@@ -775,7 +777,7 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                 
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    Vehicle License Document
+                    {t('addDriver.fields.vehicleLicenseDocument')}
                   </label>
                   <input
                     type="file"
@@ -783,19 +785,19 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                     onChange={(e) => handleFileChange('vehicleLicense', 'file', e.target.files?.[0] || null)}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-gray-600 dark:file:text-gray-300"
                   />
-                  <p className="text-xs text-gray-500 mt-1">Upload vehicle license document (PDF, JPG, PNG)</p>
+                  <p className="text-xs text-gray-500 mt-1">{t('addDriver.hints.vehicleLicenseDocument')}</p>
                 </div>
                 
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    Vehicle License Notes
+                    {t('addDriver.fields.notes')}
                   </label>
                   <textarea
                     value={vehicleLicenseData.notes}
                     onChange={(e) => handleVehicleLicenseChange('notes', e.target.value)}
                     rows={3}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                    placeholder="Additional vehicle license notes..."
+                    placeholder={t('addDriver.placeholders.vehicleLicenseNotes')}
                   />
                 </div>
               </div>
@@ -808,7 +810,7 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                 disabled={isLoading}
                 className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700 disabled:opacity-50 transition-colors"
               >
-                Cancel
+                {t('addDriver.buttons.cancel')}
               </button>
               <button
                 type="submit"
@@ -818,10 +820,10 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                 {isLoading ? (
                   <>
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    Creating Driver...
+                    {t('addDriver.buttons.creatingDriver')}
                   </>
                 ) : (
-                  'Add Driver'
+                  t('addDriver.buttons.addDriver')
                 )}
               </button>
             </div>

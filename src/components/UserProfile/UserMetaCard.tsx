@@ -5,12 +5,14 @@ import Input from "../form/input/InputField";
 import Label from "../form/Label";
 import { useDriverProfile } from "../../hooks/useDriverProfile";
 import EditDriverModal from "../modals/AddDriverModal";
+import { useTranslation } from "react-i18next";
 
 interface UserMetaCardProps {
   driverId?: number;
 }
 
 export default function UserMetaCard({ driverId = 1117 }: UserMetaCardProps) {
+  const { t } = useTranslation();
   const { isOpen, openModal, closeModal } = useModal();
   const { data: driverData, isLoading, error } = useDriverProfile(driverId);
   
@@ -25,7 +27,7 @@ export default function UserMetaCard({ driverId = 1117 }: UserMetaCardProps) {
       <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
         <div className="flex items-center justify-center py-8">
           <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-          <span className="ml-3 text-gray-600 dark:text-gray-400">Loading driver data...</span>
+          <span className="ml-3 text-gray-600 dark:text-gray-400">{t('userMetaCard.loading')}</span>
         </div>
       </div>
     );
@@ -35,7 +37,7 @@ export default function UserMetaCard({ driverId = 1117 }: UserMetaCardProps) {
     return (
       <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
         <div className="text-center py-8">
-          <p className="text-red-600 dark:text-red-400">Failed to load driver data</p>
+          <p className="text-red-600 dark:text-red-400">{t('userMetaCard.errors.loadFailed')}</p>
         </div>
       </div>
     );
@@ -57,7 +59,7 @@ export default function UserMetaCard({ driverId = 1117 }: UserMetaCardProps) {
               </h4>
               <div className="flex flex-col items-center gap-1 text-center xl:flex-row xl:gap-3 xl:text-left">
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {driver.company_name} Driver
+                  {driver.company_name} {t('userMetaCard.driver')}
                 </p>
                 <div className="hidden h-3.5 w-px bg-gray-300 dark:bg-gray-700 xl:block"></div>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -69,7 +71,7 @@ export default function UserMetaCard({ driverId = 1117 }: UserMetaCardProps) {
                     ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
                     : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
                 }`}>
-                  {driver.is_active ? 'Active' : 'Inactive'}
+                  {driver.is_active ? t('userMetaCard.status.active') : t('userMetaCard.status.inactive')}
                 </span>
               </div>
             </div>

@@ -1,0 +1,385 @@
+{
+    "title": "تسجيل الدخول",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "login": "تسجيل الدخول",
+    "error": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
+    "keepLoggedIn": "ابقني مسجلاً الدخول",
+    "forgotPassword": "نسيت كلمة المرور؟",
+    "common": {
+      "retry": "إعادة المحاولة",
+      "error": "خطأ",
+      "previous": "السابق",
+      "next": "التالي",
+      "notAvailable": "غير متوفر"
+    },
+    "drivers": {
+      "loadingError": "فشل تحميل السائقين",
+      "exportFailed": "فشل التصدير. يرجى المحاولة مرة أخرى.",
+      "searchPlaceholder": "البحث بالاسم، الهاتف، الرقم القومي، أو الرمز...",
+      "searchingFor": "جاري البحث عن: \"{{term}}\"",
+      "totalDrivers": "إجمالي السائقين: {{count}}",
+      "filtered": "مصفى",
+      "company": "الشركة",
+      "allCompanies": "جميع الشركات",
+      "loadingCompanies": "جاري تحميل الشركات...",
+      "companiesError": "خطأ في تحميل الشركات",
+      "documentStatus": "حالة المستندات",
+      "allDocuments": "جميع المستندات",
+      "missingDocuments": "مستندات مفقودة",
+      "expiredDocuments": "مستندات منتهية",
+      "validDocuments": "مستندات سارية",
+      "addDriver": "إضافة سائق",
+      "updatingDrivers": "جاري تحديث السائقين...",
+      "id": "المعرف",
+      "user": "المستخدم",
+      "phone": "الهاتف",
+      "agencyShare": "حصة الوكالة",
+      "insurance": "التأمين",
+      "nid": "الرقم القومي",
+      "license": "رخصة القيادة",
+      "vehicleLicense": "رخصة المركبة",
+      "contract": "العقد",
+      "actions": "الإجراءات",
+      "noMatchingDrivers": "لا توجد سائقين تطابق بحثك",
+      "noDriversFound": "لم يتم العثور على سائقين",
+      "adjustSearchTerms": "حاول تعديل مصطلحات البحث",
+      "addFirstDriver": "ابدأ بإضافة أول سائق لك",
+      "noInsurance": "لا يوجد تأمين",
+      "uploaded": "تم الرفع",
+      "noDocument": "لا يوجد مستند",
+      "notUploaded": "لم يتم الرفع",
+      "editDriver": "تعديل السائق",
+      "deleteDriver": "حذف السائق",
+      "exporting": "جاري التصدير...",
+      "export": "تصدير"
+    },
+    "addDriver": {
+    "title": "إضافة سائق جديد",
+    "sections": {
+      "basicInfo": "المعلومات الأساسية",
+      "contractInfo": "معلومات العقد",
+      "licenseInfo": "معلومات رخصة القيادة",
+      "nationalId": "وثيقة الرقم القومي",
+      "vehicleLicense": "معلومات رخصة المركبة"
+    },
+    "fields": {
+      "firstName": "الاسم الأول",
+      "lastName": "الاسم الأخير",
+      "nid": "الرقم القومي",
+      "phoneNumber": "رقم الهاتف",
+      "company": "الشركة",
+      "agencyShare": "حصة الوكالة (%)",
+      "insuranceAmount": "مبلغ التأمين",
+      "uuid": "الرمز التعريفي",
+      "activeDriver": "سائق نشط",
+      "contractNumber": "رقم العقد",
+      "issueDate": "تاريخ الإصدار",
+      "expiryDate": "تاريخ الانتهاء",
+      "notes": "ملاحظات",
+      "contractDocument": "وثيقة العقد",
+      "licenseNumber": "رقم الرخصة",
+      "licenseType": "نوع الرخصة",
+      "licenseDocument": "وثيقة الرخصة",
+      "nationalIdDocument": "وثيقة الرقم القومي",
+      "licensePlate": "رقم اللوحة",
+      "vehicleType": "نوع المركبة",
+      "vehicleLicenseDocument": "وثيقة رخصة المركبة"
+    },
+    "placeholders": {
+      "nid": "أدخل رقم الرقم القومي",
+      "agencyShare": "أدخل النسبة المئوية (0-100)",
+      "insurance": "أدخل مبلغ التأمين",
+      "uuid": "اتركه فارغاً للإنشاء التلقائي",
+      "contractNotes": "ملاحظات إضافية حول العقد...",
+      "licenseNotes": "ملاحظات إضافية حول الرخصة...",
+      "nationalIdNotes": "ملاحظات إضافية حول الرقم القومي...",
+      "vehicleLicenseNotes": "ملاحظات إضافية حول رخصة المركبة..."
+    },
+    "hints": {
+      "agencyShare": "اتركه فارغاً إذا لم توجد حصة وكالة",
+      "insurance": "اتركه فارغاً إذا لم يوجد تأمين",
+      "contractDocument": "رفع وثيقة العقد (PDF, JPG, PNG)",
+      "licenseDocument": "رفع وثيقة رخصة القيادة (PDF, JPG, PNG)",
+      "nationalIdDocument": "رفع وثيقة الرقم القومي (PDF, JPG, PNG)",
+      "vehicleLicenseDocument": "رفع وثيقة رخصة المركبة (PDF, JPG, PNG)"
+    },
+    "buttons": {
+      "addContract": "إضافة عقد",
+      "cancel": "إلغاء",
+      "addDriver": "إضافة سائق",
+      "creatingDriver": "جاري إنشاء السائق..."
+    },
+    "selectCompany": "اختر شركة",
+    "selectLicenseType": "اختر نوع الرخصة",
+    "selectVehicleType": "اختر نوع المركبة",
+    "loadingCompanies": "جاري تحميل الشركات...",
+    "companiesError": "خطأ في تحميل الشركات",
+    "licenseTypes": {
+      "standard": "قياسي",
+      "commercial": "تجاري",
+      "motorcycle": "دراجة نارية",
+      "heavyVehicle": "مركبة ثقيلة",
+      "private": "خاص"
+    },
+    "vehicleTypes": {
+      "motorcycle": "دراجة نارية",
+      "car": "سيارة",
+      "van": "فان",
+      "truck": "شاحنة",
+      "bicycle": "دراجة هوائية"
+    },
+    "validation": {
+      "requiredFields": "الاسم الأول والاسم الأخير ورقم الهاتف مطلوبة",
+      "licenseRequired": "رقم الرخصة ونوعها مطلوبان",
+      "submitError": "فشل إضافة السائق. يرجى المحاولة مرة أخرى.",
+      "defaultError": "فشل إضافة السائق"
+    }
+  },
+  "editDriver": {
+    "title": "تعديل السائق",
+    "loading": " (جاري التحميل...)",
+    "requiredFields": "* الحقول المطلوبة",
+    "sections": {
+      "basicInfo": "المعلومات الأساسية",
+      "contractInfo": "معلومات العقد",
+      "licenseInfo": "معلومات رخصة القيادة",
+      "nationalId": "وثيقة الرقم القومي",
+      "vehicleLicense": "معلومات رخصة المركبة"
+    },
+    "fields": {
+      "firstName": "الاسم الأول",
+      "lastName": "الاسم الأخير",
+      "nid": "الرقم القومي",
+      "phoneNumber": "رقم الهاتف",
+      "company": "الشركة",
+      "agencyShare": "حصة الوكالة (%)",
+      "insuranceAmount": "مبلغ التأمين",
+      "uuid": "الرمز التعريفي",
+      "activeDriver": "سائق نشط",
+      "contractNumber": "رقم العقد",
+      "issueDate": "تاريخ الإصدار",
+      "expiryDate": "تاريخ الانتهاء",
+      "notes": "ملاحظات",
+      "contractDocument": "وثيقة العقد",
+      "licenseNumber": "رقم الرخصة",
+      "licenseType": "نوع الرخصة",
+      "licenseDocument": "وثيقة الرخصة",
+      "nationalIdDocument": "وثيقة الرقم القومي",
+      "licensePlate": "رقم اللوحة",
+      "vehicleType": "نوع المركبة",
+      "vehicleLicenseDocument": "وثيقة رخصة المركبة"
+    },
+    "placeholders": {
+      "nid": "أدخل رقم الرقم القومي",
+      "agencyShare": "أدخل النسبة المئوية (0-100)",
+      "insurance": "أدخل مبلغ التأمين",
+      "uuid": "اتركه فارغاً للإنشاء التلقائي",
+      "contractNotes": "ملاحظات إضافية حول العقد...",
+      "licenseNotes": "ملاحظات إضافية حول الرخصة...",
+      "nationalIdNotes": "ملاحظات إضافية حول الرقم القومي...",
+      "vehicleLicenseNotes": "ملاحظات إضافية حول رخصة المركبة..."
+    },
+    "hints": {
+      "agencyShare": "اتركه فارغاً إذا لم توجد حصة وكالة",
+      "insurance": "اتركه فارغاً إذا لم يوجد تأمين",
+      "contractDocument": "رفع وثيقة العقد (PDF, JPG, PNG)",
+      "licenseDocument": "رفع وثيقة رخصة القيادة (PDF, JPG, PNG)",
+      "nationalIdDocument": "رفع وثيقة الرقم القومي (PDF, JPG, PNG)",
+      "vehicleLicenseDocument": "رفع وثيقة رخصة المركبة (PDF, JPG, PNG)"
+    },
+    "buttons": {
+      "addContract": "إضافة عقد",
+      "cancel": "إلغاء",
+      "updateDriver": "تحديث السائق",
+      "updatingDriver": "جاري تحديث السائق...",
+      "delete": "حذف",
+      "deleteDocument": "حذف المستند"
+    },
+    "selectCompany": "اختر شركة *",
+    "selectLicenseType": "اختر نوع الرخصة *",
+    "selectVehicleType": "اختر نوع المركبة",
+    "loadingCompanies": "جاري تحميل الشركات...",
+    "companiesError": "خطأ في تحميل الشركات",
+    "loadingDriverData": "جاري تحميل بيانات السائق...",
+    "licenseTypes": {
+      "standard": "قياسي",
+      "commercial": "تجاري",
+      "motorcycle": "دراجة نارية",
+      "heavyVehicle": "مركبة ثقيلة",
+      "private": "خاص"
+    },
+    "vehicleTypes": {
+      "motorcycle": "دراجة نارية",
+      "car": "سيارة",
+      "van": "فان",
+      "truck": "شاحنة",
+      "bicycle": "دراجة هوائية"
+    },
+    "validation": {
+      "requiredFields": "الاسم الأول والاسم الأخير ورقم الهاتف والرقم القومي والشركة مطلوبة",
+      "nidRequired": "الرقم القومي مطلوب ولا يمكن أن يكون فارغاً",
+      "licenseRequired": "رقم الرخصة ونوعها مطلوبان",
+      "nidDuplicate": "هذا الرقم القومي مسجل بالفعل لسائق آخر. يرجى استخدام رقم قومي مختلف.",
+      "submitError": "فشل تحديث السائق. يرجى المحاولة مرة أخرى."
+    },
+    "errors": {
+      "loadFailed": "فشل تحميل بيانات السائق",
+      "updateFailed": "فشل تحديث السائق"
+    },
+    "fileLabels": {
+      "currentFile": "الملف الحالي",
+      "uploadedFile": "ملف مرفوع"
+    }
+  },
+  "deleteDriver": {
+    "title": "حذف السائق",
+    "confirmationMessagePart1": "هل أنت متأكد أنك تريد حذف",
+    "confirmationMessagePart2": "؟ لا يمكن التراجع عن هذا الإجراء.",
+    "buttons": {
+      "cancel": "إلغاء",
+      "delete": "حذف",
+      "deleting": "جاري الحذف..."
+    }
+  },
+
+    "payrollUpload": {
+      "title": "رفع وكشف المرتبات والإعدادات",
+      "sections": {
+        "configuration": "إعدادات كشف المرتبات",
+        "fileUpload": "رفع ملف المرتبات",
+        "fileRequirements": "متطلبات الملف"
+      },
+      "fields": {
+        "company": "الشركة",
+        "taxPercentage": "الضريبة (%)",
+        "companyShare": "حصة الشركة (%)",
+        "insurance": "التأمين (يورو)",
+        "selectFile": "اختر ملف المرتبات"
+      },
+      "descriptions": {
+        "fileUpload": "قم برفع ملف Excel (.xlsx, .xls) أو CSV يحتوي على بيانات المرتبات. سيقوم النظام بمعالجة الملف وتحديث سجلات المرتبات وفقًا لذلك."
+      },
+      "hints": {
+        "supportedFormats": "الصيغ المدعومة: ملفات Excel (.xlsx, .xls) أو CSV"
+      },
+      "buttons": {
+        "uploadPayroll": "رفع كشف المرتبات",
+        "uploading": "جاري الرفع...",
+        "generateReport": "إنشاء التقرير",
+        "generating": "جاري الإنشاء...",
+        "clearFile": "مسح الملف"
+      },
+      "validation": {
+        "selectFile": "يرجى اختيار ملف أولاً",
+        "selectCompany": "يرجى اختيار شركة",
+        "selectCompanyFirst": "يرجى اختيار شركة أولاً",
+        "fileType": "يرجى رفع ملف Excel (.xlsx, .xls) أو CSV"
+      },
+      "messages": {
+        "uploadSuccess": "تم رفع ملف المرتبات ومعالجته بنجاح!",
+        "uploadFailed": "فشل رفع ملف المرتبات",
+        "reportSuccess": "تم إنشاء التقرير وتنزيله بنجاح!",
+        "reportFailed": "فشل إنشاء التقرير",
+        "networkError": "خطأ في الشبكة. يرجى المحاولة مرة أخرى."
+      },
+      "requirements": {
+        "requiredColumns": "الأعمدة المطلوبة (Excel/CSV)",
+        "driverId": "معرف السائق / معرف الموظف",
+        "driverName": "اسم السائق",
+        "hoursWorked": "ساعات العمل",
+        "ratePerHour": "المعدل لكل ساعة",
+        "totalAmount": "المبلغ الإجمالي",
+        "paymentDate": "تاريخ الدفع",
+        "formatGuidelines": "إرشادات التنسيق",
+        "fileSize": "حد حجم الملف: 10 ميجابايت",
+        "dateFormat": "يجب أن تكون التواريخ بصيغة YYYY-MM-DD",
+        "currencyValues": "يجب أن تكون قيم العملة رقمية",
+        "firstRowHeaders": "يجب أن يحتوي الصف الأول على عناوين"
+      },
+      "fileLabels": {
+        "selectedFile": "الملف المختار",
+        "size": "الحجم"
+      },
+      "loadingCompanies": "جاري تحميل الشركات...",
+      "companiesError": "خطأ في تحميل الشركات",
+      "selectCompany": "اختر شركة"
+    },
+    "userMetaCard": {
+      "loading": "جاري تحميل بيانات السائق...",
+      "driver": "سائق",
+      "status": {
+        "active": "نشط",
+        "inactive": "غير نشط"
+      },
+      "errors": {
+        "loadFailed": "فشل تحميل بيانات السائق"
+      }
+    },
+    "userInfoCard": {
+      "sections": {
+        "personalInfo": "المعلومات الشخصية"
+      },
+      "fields": {
+        "firstName": "الاسم الأول",
+        "lastName": "الاسم الأخير",
+        "email": "البريد الإلكتروني",
+        "phone": "الهاتف",
+        "nationalId": "الرقم القومي",
+        "uuid": "الرمز التعريفي",
+        "agencyShare": "حصة الوكالة",
+        "insuranceAmount": "مبلغ التأمين"
+      },
+      "buttons": {
+        "edit": "تعديل"
+      },
+      "errors": {
+        "noDriverId": "لا يمكن تعديل السائق: لم يتم العثور على معرف السائق"
+      },
+      "notSet": "غير محدد"
+    },
+    "driverFilesCard": {
+      "title": "مستندات وملفات السائق",
+      "sections": {
+        "contracts": "العقود ({{count}})",
+        "driverLicense": "رخصة القيادة",
+        "nationalId": "وثيقة الرقم القومي",
+        "vehicleLicense": "رخصة المركبة"
+      },
+      "fields": {
+        "issueDate": "تاريخ الإصدار",
+        "expiryDate": "تاريخ الانتهاء",
+        "notes": "ملاحظات",
+        "type": "النوع",
+        "licenseNumber": "رقم الرخصة",
+        "licenseType": "نوع الرخصة"
+      },
+      "status": {
+        "active": "نشط",
+        "expired": "منتهي",
+        "expiringSoon": "ينتهي قريباً"
+      },
+      "buttons": {
+        "viewContract": "عرض وثيقة العقد",
+        "viewLicense": "عرض وثيقة الرخصة",
+        "viewNationalId": "عرض وثيقة الرقم القومي",
+        "viewVehicleLicense": "عرض وثيقة رخصة المركبة"
+      },
+      "noNotes": "لا توجد ملاحظات"
+    },
+    "userDropdown": {
+      "userImageAlt": "صورة الملف الشخصي للمستخدم",
+      "userName": "مشارف",
+      "userFullName": "مشارف شودري",
+      "userEmail": "randomuser@pimjo.com",
+      "menu": {
+        "editProfile": "تعديل الملف الشخصي",
+        "accountSettings": "إعدادات الحساب",
+        "language": "اللغة",
+        "signOut": "تسجيل الخروج"
+      }
+    }
+  
+    
+  
+  }
