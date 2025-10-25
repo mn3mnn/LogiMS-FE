@@ -444,7 +444,7 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
             </div>
 
             {/* Contracts Section */}
-            <div className="mb-6">
+            <div className="mt-12 md:mt-16 mb-8">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 border-b pb-2">
                   {t('addDriver.sections.contractInfo')}
@@ -536,7 +536,7 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
             </div>
 
             {/* License Section */}
-            <div className="mb-6">
+            <div className="mt-12 md:mt-16 mb-8">
               <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300 border-b pb-2">
                 {t('addDriver.sections.licenseInfo')}
               </h3>
@@ -623,7 +623,7 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
             </div>
 
             {/* National ID Document Section */}
-            <div className="mb-6">
+            <div className="mt-12 md:mt-16 mb-8">
               <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300 border-b pb-2">
                 {t('addDriver.sections.nationalId')}
               </h3>
@@ -681,7 +681,7 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
             </div>
 
             {/* Vehicle License Section */}
-            <div className="mb-6">
+            <div className="mt-12 md:mt-16 mb-8">
               <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300 border-b pb-2">
                 {t('addDriver.sections.vehicleLicense')}
               </h3>
