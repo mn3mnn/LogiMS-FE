@@ -79,17 +79,18 @@ export default function FilesPage() {
   };
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [newCompany, setNewCompany] = useState<string>('');
   const [newFrom, setNewFrom] = useState<string>('');
   const [newTo, setNewTo] = useState<string>('');
   const createUpload = useCreateFileUpload();
 
   const canSubmit = useMemo(() => {
-    return !!newCompany && !!newFrom && !!newTo && !!fileInputRef.current?.files?.[0];
-  }, [newCompany, newFrom, newTo]);
+    return !!newCompany && !!newFrom && !!newTo && !!uploadFile;
+  }, [newCompany, newFrom, newTo, uploadFile]);
 
   const handleCreate = async () => {
-    const file = fileInputRef.current?.files?.[0];
+    const file = uploadFile;
     if (!file) return;
     await createUpload.mutateAsync({
       company: Number(newCompany),
@@ -102,6 +103,7 @@ export default function FilesPage() {
     setNewCompany('');
     setNewFrom('');
     setNewTo('');
+    setUploadFile(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
@@ -266,7 +268,13 @@ export default function FilesPage() {
               </div>
               <div>
                 <label className="block text-sm mb-1">File (.csv, .xlsx)</label>
-                <input ref={fileInputRef} type="file" accept=".csv,.xlsx,.xls" className="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:text-white" />
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".csv,.xlsx,.xls"
+                  className="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:text-white"
+                  onChange={(e) => setUploadFile(e.target.files?.[0] || null)}
+                />
               </div>
             </div>
             <div className="flex justify-end gap-2 mt-6">
