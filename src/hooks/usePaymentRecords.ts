@@ -7,6 +7,7 @@ export interface PaymentRecordItem {
   id: number;
   file_upload: number;
   company_name: string;
+  driver_id?: number | null;
   driver_uuid: string;
   driver_name: string;
   driver_first_name: string;

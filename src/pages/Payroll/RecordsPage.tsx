@@ -97,13 +97,13 @@ export default function RecordsPage() {
             </TableHeader>
             <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
               {error && (
-                <TableRow><TableCell colSpan={12} className="px-3 py-3 text-red-600 text-sm">{String((error as any)?.message || error)}</TableCell></TableRow>
+                <TableRow><td colSpan={12} className="px-3 py-3 text-red-600 text-sm">{String((error as any)?.message || error)}</td></TableRow>
               )}
               {isLoading && (
-                <TableRow><TableCell colSpan={12} className="px-3 py-5 text-sm">Loading...</TableCell></TableRow>
+                <TableRow><td colSpan={12} className="px-3 py-5 text-sm">Loading...</td></TableRow>
               )}
               {!isLoading && results.length === 0 && (
-                <TableRow><TableCell colSpan={12} className="px-3 py-5 text-sm">No records found</TableCell></TableRow>
+                <TableRow><td colSpan={12} className="px-3 py-5 text-sm">No records found</td></TableRow>
               )}
               {results.map((r) => (
                 <TableRow key={r.id} className="transition-colors hover:bg-gray-50 dark:hover:bg-white/[0.02]">
@@ -118,7 +118,19 @@ export default function RecordsPage() {
                     </Link>
                   </TableCell>
                   <TableCell className="px-3 py-2 text-sm">{r.company_name}</TableCell>
-                  <TableCell className="px-3 py-2 text-sm">{r.driver_name}</TableCell>
+                  <TableCell className="px-3 py-2 text-sm">
+                    {r.driver_id ? (
+                      <Link
+                        to={`/drivers/${r.driver_id}`}
+                        className="text-blue-600 hover:underline"
+                        title="View driver profile"
+                      >
+                        {r.driver_name}
+                      </Link>
+                    ) : (
+                      r.driver_name
+                    )}
+                  </TableCell>
                   <TableCell className="px-3 py-2 text-sm">{r.driver_uuid}</TableCell>
                   <TableCell className="px-3 py-2 text-sm">{r.total_revenue ?? '-'}</TableCell>
                   <TableCell className="px-3 py-2 text-sm">{r.tax_deduction ?? '-'}</TableCell>
