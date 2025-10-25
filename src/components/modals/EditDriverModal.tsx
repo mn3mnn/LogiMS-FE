@@ -48,9 +48,15 @@ interface EditDriverModalProps {
     vehicle_type: 'motorcycle'
   });
   
+  // Local editable types with optional id for existing documents
+  type EditableLicense = Omit<LicenseData, 'driver_id'> & { id?: number };
+  type EditableNationalId = Omit<NationalIdData, 'driver_id'> & { id?: number };
+  type EditableVehicleLicense = Omit<VehicleLicenseData, 'driver_id'> & { id?: number };
+  type EditableContract = Omit<ContractData, 'driver_id'> & { id?: number };
+  
   export default function EditDriverModal({ isOpen, onClose, onSuccess, driverId }: EditDriverModalProps) {
     const { t } = useTranslation();
-    const { updateDriver, getDriver, isLoading, error, resetError } = useEditDriver();
+    const { updateDriver, getDriver, isLoading, error, resetError, createFormData, saveDocument, deleteDocument } = useEditDriver();
     const [validationError, setValidationError] = useState<string>('');
     const { companies, isLoading: companiesLoading, error: companiesError } = useCompanies();
     const [isFetchingDriver, setIsFetchingDriver] = useState(false);
@@ -69,10 +75,10 @@ interface EditDriverModalProps {
       insurance: null,
     });
   
-    const [licenseData, setLicenseData] = useState<Omit<LicenseData, 'driver_id'>>(createEmptyLicense());
-    const [nationalIdData, setNationalIdData] = useState<Omit<NationalIdData, 'driver_id'>>(createEmptyNationalId());
-    const [vehicleLicenseData, setVehicleLicenseData] = useState<Omit<VehicleLicenseData, 'driver_id'>>(createEmptyVehicleLicense());
-    const [contractsData, setContractsData] = useState<Omit<ContractData, 'driver_id'>[]>([createEmptyContract()]);
+    const [licenseData, setLicenseData] = useState<EditableLicense>(createEmptyLicense());
+    const [nationalIdData, setNationalIdData] = useState<EditableNationalId>(createEmptyNationalId());
+    const [vehicleLicenseData, setVehicleLicenseData] = useState<EditableVehicleLicense>(createEmptyVehicleLicense());
+    const [contractsData, setContractsData] = useState<EditableContract[]>([createEmptyContract()]);
 
     // Track which documents have existing files
     const [existingFiles, setExistingFiles] = useState({
@@ -85,6 +91,7 @@ interface EditDriverModalProps {
     // Use ref to track if component is mounted and active
     const isMountedRef = useRef(true);
     const currentDriverIdRef = useRef<number | null>(null);
+    const originalContractIdsRef = useRef<Set<number>>(new Set());
   
     // Reset everything when modal closes
     useEffect(() => {
@@ -151,6 +158,7 @@ interface EditDriverModalProps {
           // Populate license data if exists
           if (driver.license) {
             const newLicenseData = {
+              id: (driver.license as any).id,
               file: driver.license.file || '',
               notes: driver.license.notes || '',
               issue_date: driver.license.issue_date || new Date().toISOString().split('T')[0],
@@ -168,6 +176,7 @@ interface EditDriverModalProps {
           // Populate national ID data if exists
           if (driver.national_id_doc) {
             const newNationalIdData = {
+              id: (driver.national_id_doc as any).id,
               file: driver.national_id_doc.file || '',
               notes: driver.national_id_doc.notes || '',
               issue_date: driver.national_id_doc.issue_date || new Date().toISOString().split('T')[0],
@@ -183,6 +192,7 @@ interface EditDriverModalProps {
           // Populate vehicle license data if exists
           if (driver.vehicle_license) {
             const newVehicleLicenseData = {
+              id: (driver.vehicle_license as any).id,
               file: driver.vehicle_license.file || '',
               notes: driver.vehicle_license.notes || '',
               issue_date: driver.vehicle_license.issue_date || new Date().toISOString().split('T')[0],
@@ -201,7 +211,8 @@ interface EditDriverModalProps {
       
           // Populate contracts data if exists
           if (driver.contracts && driver.contracts.length > 0) {
-            const contracts = driver.contracts.map(contract => ({
+            const contracts = driver.contracts.map((contract: any) => ({
+              id: contract.id,
               file: contract.file || '',
               notes: contract.notes || '',
               issue_date: contract.issue_date || new Date().toISOString().split('T')[0],
@@ -213,9 +224,11 @@ interface EditDriverModalProps {
               ...prev, 
               contracts: contracts.map(contract => !!contract.file)
             }));
+            originalContractIdsRef.current = new Set(contracts.filter(c => c.id).map(c => c.id as number));
           } else {
             setContractsData([createEmptyContract()]);
             setExistingFiles(prev => ({ ...prev, contracts: [false] }));
+            originalContractIdsRef.current = new Set();
           }
       
           setHasFetched(true);
@@ -326,8 +339,84 @@ interface EditDriverModalProps {
           formData.append('insurance', driverData.insurance.toString());
         }
 
-        // ✅ Trigger the API call safely
+        // ✅ Update base driver fields
         await updateDriver(driverId, formData);
+
+        // ✅ Sync documents (create/update/delete)
+        const ops: Promise<any>[] = [];
+
+        // License
+        const licenseHasFile = hasFile(licenseData.file);
+        if (licenseData.id) {
+          if (!licenseHasFile) {
+            ops.push(deleteDocument('licenses', licenseData.id));
+          } else {
+            const { id, ...payload } = licenseData as any;
+            const licFD = createFormData({ ...payload });
+            ops.push(saveDocument('licenses', licFD, licenseData.id));
+          }
+        } else if (licenseHasFile) {
+          const licFD = createFormData({ ...licenseData, driver_id: driverId });
+          ops.push(saveDocument('licenses', licFD));
+        }
+
+        // National ID
+        const nidHasFile = hasFile(nationalIdData.file);
+        if (nationalIdData.id) {
+          if (!nidHasFile) {
+            ops.push(deleteDocument('national-ids', nationalIdData.id));
+          } else {
+            const { id, ...payload } = nationalIdData as any;
+            const nidFD = createFormData({ ...payload });
+            ops.push(saveDocument('national-ids', nidFD, nationalIdData.id));
+          }
+        } else if (nidHasFile) {
+          const nidFD = createFormData({ ...nationalIdData, driver_id: driverId });
+          ops.push(saveDocument('national-ids', nidFD));
+        }
+
+        // Vehicle License
+        const vhlHasFile = hasFile(vehicleLicenseData.file);
+        if (vehicleLicenseData.id) {
+          if (!vhlHasFile) {
+            ops.push(deleteDocument('vehicle-licenses', vehicleLicenseData.id));
+          } else {
+            const { id, ...payload } = vehicleLicenseData as any;
+            const vhlFD = createFormData({ ...payload });
+            ops.push(saveDocument('vehicle-licenses', vhlFD, vehicleLicenseData.id));
+          }
+        } else if (vhlHasFile) {
+          const vhlFD = createFormData({ ...vehicleLicenseData, driver_id: driverId });
+          ops.push(saveDocument('vehicle-licenses', vhlFD));
+        }
+
+        // Contracts (create/update/delete)
+        const currentIds = new Set(contractsData.filter(c => (c as any).id).map(c => (c as any).id as number));
+        const removedIds: number[] = Array.from(originalContractIdsRef.current).filter(id => !currentIds.has(id));
+        removedIds.forEach((id) => ops.push(deleteDocument('contracts', id)));
+
+        contractsData.forEach((c) => {
+          const hasDoc = hasFile(c.file);
+          if ((c as any).id) {
+            const cid = (c as any).id as number;
+            if (!hasDoc) {
+              ops.push(deleteDocument('contracts', cid));
+            } else {
+              const { id, ...payload } = c as any;
+              const cFD = createFormData({ ...payload });
+              ops.push(saveDocument('contracts', cFD, cid));
+            }
+          } else if (hasDoc) {
+            const cFD = createFormData({ ...c, driver_id: driverId });
+            ops.push(saveDocument('contracts', cFD));
+          }
+        });
+
+        const results = await Promise.allSettled(ops);
+        const failures = results.filter(r => r.status === 'rejected');
+        if (failures.length) {
+          console.warn('Some document operations failed:', failures);
+        }
         
         // Handle success
         console.log("✅ Driver updated successfully, closing modal...");

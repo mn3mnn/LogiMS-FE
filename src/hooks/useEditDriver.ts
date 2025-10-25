@@ -5,10 +5,13 @@ import config from '../config/env';
 
 
 export interface DocumentBase {
+  id?: number;
+  driver_id?: number;
   file?: string;
   notes?: string;
   issue_date?: string;
   expiry_date?: string;
+  status?: string;
 }
 
 // Form-specific interfaces that allow File objects
@@ -69,6 +72,8 @@ export interface DriverData {
   phone_number: string;
   is_active: boolean;
   company_code: string;
+  agency_share?: number | null;
+  insurance?: number | null;
   contracts: Contract[];
   license: License | null;
   national_id_doc: NationalIdDoc | null;
@@ -179,9 +184,54 @@ export const useEditDriver = () => {
     setError(null);
   };
 
+  // Helpers for document CRUD (licenses, national-ids, vehicle-licenses, contracts)
+  const createFormData = (data: Record<string, any>, fileKeys: string[] = ["file"]): FormData => {
+    const formData = new FormData();
+    Object.entries(data).forEach(([key, value]) => {
+      if (value === undefined || value === null || value === "") return;
+      if (fileKeys.includes(key)) {
+        if (value instanceof File) {
+          formData.append(key, value);
+        } else {
+          // Skip appending non-File values for file fields to avoid sending string paths
+        }
+      } else {
+        formData.append(key, String(value));
+      }
+    });
+    return formData;
+  };
+
+  const saveDocument = async (endpoint: string, formData: FormData, documentId?: number) => {
+    if (!token) throw new Error('No authentication token available');
+    const headers: any = {
+      Authorization: `Token ${token}`,
+      accept: 'application/json',
+    };
+    const url = documentId
+      ? `${config.API_BASE_URL}/v1/${endpoint}/${documentId}/`
+      : `${config.API_BASE_URL}/v1/${endpoint}/`;
+    const method = documentId ? 'patch' : 'post';
+    const response = await axios({ url, method: method as any, data: formData, headers });
+    return response.data;
+  };
+
+  const deleteDocument = async (endpoint: string, documentId: number) => {
+    if (!token) throw new Error('No authentication token available');
+    const headers: any = {
+      Authorization: `Token ${token}`,
+      accept: 'application/json',
+    };
+    const url = `${config.API_BASE_URL}/v1/${endpoint}/${documentId}/`;
+    await axios.delete(url, { headers });
+  };
+
   return {
     getDriver,
     updateDriver,
+    createFormData,
+    saveDocument,
+    deleteDocument,
     isLoading,
     error,
     resetError,
