@@ -1,0 +1,383 @@
+{
+    "title": "Anmelden",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "login": "Anmelden",
+    "error": "Ungültige E-Mail oder Passwort",
+    "keepLoggedIn": "Angemeldet bleiben",
+    "forgotPassword": "Passwort vergessen?",
+    "common": {
+      "retry": "Wiederholen",
+      "error": "Fehler",
+      "previous": "Zurück",
+      "next": "Weiter",
+      "notAvailable": "N/V"
+    },
+    "drivers": {
+      "loadingError": "Fehler beim Laden der Fahrer",
+      "exportFailed": "Export fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "searchPlaceholder": "Suche nach Name, Telefon, Ausweis oder UUID...",
+      "searchingFor": "Suche nach: \"{{term}}\"",
+      "totalDrivers": "Gesamte Fahrer: {{count}}",
+      "filtered": "gefiltert",
+      "company": "Unternehmen",
+      "allCompanies": "Alle Unternehmen",
+      "loadingCompanies": "Unternehmen werden geladen...",
+      "companiesError": "Fehler beim Laden der Unternehmen",
+      "documentStatus": "Dokumentstatus",
+      "allDocuments": "Alle Dokumente",
+      "missingDocuments": "Fehlende Dokumente",
+      "expiredDocuments": "Abgelaufene Dokumente",
+      "validDocuments": "Gültige Dokumente",
+      "addDriver": "Fahrer hinzufügen",
+      "updatingDrivers": "Fahrer werden aktualisiert...",
+      "id": "ID",
+      "user": "Benutzer",
+      "phone": "Telefon",
+      "agencyShare": "Agenturanteil",
+      "insurance": "Versicherung",
+      "nid": "Ausweis",
+      "license": "Führerschein",
+      "vehicleLicense": "Fahrzeugschein",
+      "contract": "Vertrag",
+      "actions": "Aktionen",
+      "noMatchingDrivers": "Keine Fahrer entsprechen Ihrer Suche",
+      "noDriversFound": "Keine Fahrer gefunden",
+      "adjustSearchTerms": "Versuchen Sie, Ihre Suchbegriffe anzupassen",
+      "addFirstDriver": "Beginnen Sie mit dem Hinzufügen Ihres ersten Fahrers",
+      "noInsurance": "Keine Versicherung",
+      "uploaded": "Hochgeladen",
+      "noDocument": "Kein Dokument",
+      "notUploaded": "Nicht hochgeladen",
+      "editDriver": "Fahrer bearbeiten",
+      "deleteDriver": "Fahrer löschen",
+      "exporting": "Wird exportiert...",
+      "export": "Exportieren"
+    },
+    "addDriver": {
+    "title": "Neuen Fahrer hinzufügen",
+    "sections": {
+      "basicInfo": "Grundinformationen",
+      "contractInfo": "Vertragsinformationen",
+      "licenseInfo": "Führerscheininformationen",
+      "nationalId": "Personalausweisdokument",
+      "vehicleLicense": "Fahrzeugscheininformationen"
+    },
+    "fields": {
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "nid": "Personalausweisnummer",
+      "phoneNumber": "Telefonnummer",
+      "company": "Unternehmen",
+      "agencyShare": "Agenturanteil (%)",
+      "insuranceAmount": "Versicherungsbetrag",
+      "uuid": "UUID",
+      "activeDriver": "Aktiver Fahrer",
+      "contractNumber": "Vertragsnummer",
+      "issueDate": "Ausstellungsdatum",
+      "expiryDate": "Ablaufdatum",
+      "notes": "Notizen",
+      "contractDocument": "Vertragsdokument",
+      "licenseNumber": "Lizenznummer",
+      "licenseType": "Lizenztyp",
+      "licenseDocument": "Lizendokument",
+      "nationalIdDocument": "Personalausweisdokument",
+      "licensePlate": "Nummernschild",
+      "vehicleType": "Fahrzeugtyp",
+      "vehicleLicenseDocument": "Fahrzeugscheindokument"
+    },
+    "placeholders": {
+      "nid": "Personalausweisnummer eingeben",
+      "agencyShare": "Prozentsatz eingeben (0-100)",
+      "insurance": "Versicherungsbetrag eingeben",
+      "uuid": "Leer lassen für automatische Generierung",
+      "contractNotes": "Zusätzliche Vertragsnotizen...",
+      "licenseNotes": "Zusätzliche Lizenznotizen...",
+      "nationalIdNotes": "Zusätzliche Personalausweisnotizen...",
+      "vehicleLicenseNotes": "Zusätzliche Fahrzeugscheinnnotizen..."
+    },
+    "hints": {
+      "agencyShare": "Leer lassen, wenn kein Agenturanteil",
+      "insurance": "Leer lassen, wenn keine Versicherung",
+      "contractDocument": "Vertragsdokument hochladen (PDF, JPG, PNG)",
+      "licenseDocument": "Führerscheindokument hochladen (PDF, JPG, PNG)",
+      "nationalIdDocument": "Personalausweisdokument hochladen (PDF, JPG, PNG)",
+      "vehicleLicenseDocument": "Fahrzeugscheindokument hochladen (PDF, JPG, PNG)"
+    },
+    "buttons": {
+      "addContract": "Vertrag hinzufügen",
+      "cancel": "Abbrechen",
+      "addDriver": "Fahrer hinzufügen",
+      "creatingDriver": "Fahrer wird erstellt..."
+    },
+    "selectCompany": "Unternehmen auswählen",
+    "selectLicenseType": "Lizenztyp auswählen",
+    "selectVehicleType": "Fahrzeugtyp auswählen",
+    "loadingCompanies": "Unternehmen werden geladen...",
+    "companiesError": "Fehler beim Laden der Unternehmen",
+    "licenseTypes": {
+      "standard": "Standard",
+      "commercial": "Kommerziell",
+      "motorcycle": "Motorrad",
+      "heavyVehicle": "Schwerfahrzeug",
+      "private": "Privat"
+    },
+    "vehicleTypes": {
+      "motorcycle": "Motorrad",
+      "car": "Auto",
+      "van": "Van",
+      "truck": "LKW",
+      "bicycle": "Fahrrad"
+    },
+    "validation": {
+      "requiredFields": "Vorname, Nachname und Telefonnummer sind erforderlich",
+      "licenseRequired": "Lizenznummer und -typ sind erforderlich",
+      "submitError": "Fehler beim Hinzufügen des Fahrers. Bitte versuchen Sie es erneut.",
+      "defaultError": "Fehler beim Hinzufügen des Fahrers"
+    }
+  },
+  "editDriver": {
+    "title": "Fahrer bearbeiten",
+    "loading": " (Wird geladen...)",
+    "requiredFields": "* Erforderliche Felder",
+    "sections": {
+      "basicInfo": "Grundinformationen",
+      "contractInfo": "Vertragsinformationen",
+      "licenseInfo": "Führerscheininformationen",
+      "nationalId": "Personalausweisdokument",
+      "vehicleLicense": "Fahrzeugscheininformationen"
+    },
+    "fields": {
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "nid": "Personalausweisnummer",
+      "phoneNumber": "Telefonnummer",
+      "company": "Unternehmen",
+      "agencyShare": "Agenturanteil (%)",
+      "insuranceAmount": "Versicherungsbetrag",
+      "uuid": "UUID",
+      "activeDriver": "Aktiver Fahrer",
+      "contractNumber": "Vertragsnummer",
+      "issueDate": "Ausstellungsdatum",
+      "expiryDate": "Ablaufdatum",
+      "notes": "Notizen",
+      "contractDocument": "Vertragsdokument",
+      "licenseNumber": "Lizenznummer",
+      "licenseType": "Lizenztyp",
+      "licenseDocument": "Lizendokument",
+      "nationalIdDocument": "Personalausweisdokument",
+      "licensePlate": "Nummernschild",
+      "vehicleType": "Fahrzeugtyp",
+      "vehicleLicenseDocument": "Fahrzeugscheindokument"
+    },
+    "placeholders": {
+      "nid": "Personalausweisnummer eingeben",
+      "agencyShare": "Prozentsatz eingeben (0-100)",
+      "insurance": "Versicherungsbetrag eingeben",
+      "uuid": "Leer lassen für automatische Generierung",
+      "contractNotes": "Zusätzliche Vertragsnotizen...",
+      "licenseNotes": "Zusätzliche Lizenznotizen...",
+      "nationalIdNotes": "Zusätzliche Personalausweisnotizen...",
+      "vehicleLicenseNotes": "Zusätzliche Fahrzeugscheinnnotizen..."
+    },
+    "hints": {
+      "agencyShare": "Leer lassen, wenn kein Agenturanteil",
+      "insurance": "Leer lassen, wenn keine Versicherung",
+      "contractDocument": "Vertragsdokument hochladen (PDF, JPG, PNG)",
+      "licenseDocument": "Führerscheindokument hochladen (PDF, JPG, PNG)",
+      "nationalIdDocument": "Personalausweisdokument hochladen (PDF, JPG, PNG)",
+      "vehicleLicenseDocument": "Fahrzeugscheindokument hochladen (PDF, JPG, PNG)"
+    },
+    "buttons": {
+      "addContract": "Vertrag hinzufügen",
+      "cancel": "Abbrechen",
+      "updateDriver": "Fahrer aktualisieren",
+      "updatingDriver": "Fahrer wird aktualisiert...",
+      "delete": "Löschen",
+      "deleteDocument": "Dokument löschen"
+    },
+    "selectCompany": "Unternehmen auswählen *",
+    "selectLicenseType": "Lizenztyp auswählen *",
+    "selectVehicleType": "Fahrzeugtyp auswählen",
+    "loadingCompanies": "Unternehmen werden geladen...",
+    "companiesError": "Fehler beim Laden der Unternehmen",
+    "loadingDriverData": "Fahrerdaten werden geladen...",
+    "licenseTypes": {
+      "standard": "Standard",
+      "commercial": "Kommerziell",
+      "motorcycle": "Motorrad",
+      "heavyVehicle": "Schwerfahrzeug",
+      "private": "Privat"
+    },
+    "vehicleTypes": {
+      "motorcycle": "Motorrad",
+      "car": "Auto",
+      "van": "Van",
+      "truck": "LKW",
+      "bicycle": "Fahrrad"
+    },
+    "validation": {
+      "requiredFields": "Vorname, Nachname, Telefonnummer, Personalausweisnummer und Unternehmen sind erforderlich",
+      "nidRequired": "Personalausweisnummer ist erforderlich und darf nicht leer sein",
+      "licenseRequired": "Lizenznummer und -typ sind erforderlich",
+      "nidDuplicate": "Diese Personalausweisnummer ist bereits für einen anderen Fahrer registriert. Bitte verwenden Sie eine andere Personalausweisnummer.",
+      "submitError": "Fehler beim Aktualisieren des Fahrers. Bitte versuchen Sie es erneut."
+    },
+    "errors": {
+      "loadFailed": "Fehler beim Laden der Fahrerdaten",
+      "updateFailed": "Fehler beim Aktualisieren des Fahrers"
+    },
+    "fileLabels": {
+      "currentFile": "Aktuelle Datei",
+      "uploadedFile": "Hochgeladene Datei"
+    }
+  },
+  "deleteDriver": {
+    "title": "Fahrer löschen",
+    "confirmationMessagePart1": "Sind Sie sicher, dass Sie",
+    "confirmationMessagePart2": "löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "buttons": {
+      "cancel": "Abbrechen",
+      "delete": "Löschen",
+      "deleting": "Wird gelöscht..."
+    }
+  },
+  "payrollUpload": {
+    "title": "Gehaltsabrechnung Hochladen & Konfiguration",
+    "sections": {
+      "configuration": "Gehaltsabrechnungskonfiguration",
+      "fileUpload": "Gehaltsabrechnungsdatei hochladen",
+      "fileRequirements": "Dateianforderungen"
+    },
+    "fields": {
+      "company": "Unternehmen",
+      "taxPercentage": "Steuer (%)",
+      "companyShare": "Unternehmensanteil (%)",
+      "insurance": "Versicherung (EUR)",
+      "selectFile": "Gehaltsabrechnungsdatei auswählen"
+    },
+    "descriptions": {
+      "fileUpload": "Laden Sie eine Excel (.xlsx, .xls) oder CSV-Datei mit Gehaltsdaten hoch. Das System verarbeitet die Datei und aktualisiert die Gehaltsabrechnungsdatensätze entsprechend."
+    },
+    "hints": {
+      "supportedFormats": "Unterstützte Formate: Excel (.xlsx, .xls) oder CSV-Dateien"
+    },
+    "buttons": {
+      "uploadPayroll": "Gehaltsabrechnung hochladen",
+      "uploading": "Wird hochgeladen...",
+      "generateReport": "Bericht generieren",
+      "generating": "Wird generiert...",
+      "clearFile": "Datei löschen"
+    },
+    "validation": {
+      "selectFile": "Bitte wählen Sie zuerst eine Datei aus",
+      "selectCompany": "Bitte wählen Sie ein Unternehmen aus",
+      "selectCompanyFirst": "Bitte wählen Sie zuerst ein Unternehmen aus",
+      "fileType": "Bitte laden Sie eine Excel (.xlsx, .xls) oder CSV-Datei hoch"
+    },
+    "messages": {
+      "uploadSuccess": "Gehaltsabrechnungsdatei erfolgreich hochgeladen und verarbeitet!",
+      "uploadFailed": "Fehler beim Hochladen der Gehaltsabrechnungsdatei",
+      "reportSuccess": "Bericht erfolgreich generiert und heruntergeladen!",
+      "reportFailed": "Fehler beim Generieren des Berichts",
+      "networkError": "Netzwerkfehler. Bitte versuchen Sie es erneut."
+    },
+    "requirements": {
+      "requiredColumns": "Erforderliche Spalten (Excel/CSV)",
+      "driverId": "Fahrer-ID / Mitarbeiter-ID",
+      "driverName": "Fahrername",
+      "hoursWorked": "Gearbeitete Stunden",
+      "ratePerHour": "Stundensatz",
+      "totalAmount": "Gesamtbetrag",
+      "paymentDate": "Zahlungsdatum",
+      "formatGuidelines": "Formatrichtlinien",
+      "fileSize": "Dateigrößenlimit: 10MB",
+      "dateFormat": "Daten sollten im Format JJJJ-MM-TT sein",
+      "currencyValues": "Währungswerte sollten numerisch sein",
+      "firstRowHeaders": "Erste Zeile sollte Überschriften enthalten"
+    },
+    "fileLabels": {
+      "selectedFile": "Ausgewählte Datei",
+      "size": "Größe"
+    },
+    "loadingCompanies": "Unternehmen werden geladen...",
+    "companiesError": "Fehler beim Laden der Unternehmen",
+    "selectCompany": "Unternehmen auswählen"
+  },
+  "userMetaCard": {
+    "loading": "Fahrerdaten werden geladen...",
+    "driver": "Fahrer",
+    "status": {
+      "active": "Aktiv",
+      "inactive": "Inaktiv"
+    },
+    "errors": {
+      "loadFailed": "Fehler beim Laden der Fahrerdaten"
+    }
+  },
+  "userInfoCard": {
+    "sections": {
+      "personalInfo": "Persönliche Informationen"
+    },
+    "fields": {
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "email": "E-Mail-Adresse",
+      "phone": "Telefon",
+      "nationalId": "Personalausweisnummer",
+      "uuid": "UUID",
+      "agencyShare": "Agenturanteil",
+      "insuranceAmount": "Versicherungsbetrag"
+    },
+    "buttons": {
+      "edit": "Bearbeiten"
+    },
+    "errors": {
+      "noDriverId": "Fahrer kann nicht bearbeitet werden: Keine Fahrer-ID gefunden"
+    },
+    "notSet": "Nicht festgelegt"
+  },
+  "driverFilesCard": {
+    "title": "Fahrerdokumente & Dateien",
+    "sections": {
+      "contracts": "Verträge ({{count}})",
+      "driverLicense": "Führerschein",
+      "nationalId": "Personalausweisdokument",
+      "vehicleLicense": "Fahrzeugschein"
+    },
+    "fields": {
+      "issueDate": "Ausstellungsdatum",
+      "expiryDate": "Ablaufdatum",
+      "notes": "Notizen",
+      "type": "Typ",
+      "licenseNumber": "Lizenznummer",
+      "licenseType": "Lizenztyp"
+    },
+    "status": {
+      "active": "Aktiv",
+      "expired": "Abgelaufen",
+      "expiringSoon": "Läuft bald ab"
+    },
+    "buttons": {
+      "viewContract": "Vertragsdokument anzeigen",
+      "viewLicense": "Lizendokument anzeigen",
+      "viewNationalId": "Personalausweisdokument anzeigen",
+      "viewVehicleLicense": "Fahrzeugscheindokument anzeigen"
+    },
+    "noNotes": "Keine Notizen"
+  },
+  "userDropdown": {
+    "userImageAlt": "Benutzerprofilbild",
+    "userName": "Musharof",
+    "userFullName": "Musharof Chowdhury",
+    "userEmail": "randomuser@pimjo.com",
+    "menu": {
+      "editProfile": "Profil bearbeiten",
+      "accountSettings": "Kontoeinstellungen",
+      "language": "Sprache",
+      "signOut": "Abmelden"
+    }
+  }
+
+  
+  }
