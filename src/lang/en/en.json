@@ -196,8 +196,8 @@
       "delete": "Delete",
       "deleteDocument": "Delete document"
     },
-    "selectCompany": "Select a company *",
-    "selectLicenseType": "Select License Type *",
+    "selectCompany": "Select a company",
+    "selectLicenseType": "Select License Type",
     "selectVehicleType": "Select Vehicle Type",
     "loadingCompanies": "Loading companies...",
     "companiesError": "Error loading companies",
@@ -378,6 +378,4 @@
       "signOut": "Sign out"
     }
   }
-  
-
   }

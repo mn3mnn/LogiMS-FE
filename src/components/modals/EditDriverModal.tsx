@@ -302,29 +302,19 @@ interface EditDriverModalProps {
       // Clear old validation errors
       setValidationError("");
     
-      // ✅ Validate required fields - name, phone, nid, company
+      // ✅ Validate required fields - name, phone, company
       if (
         !driverData.first_name.trim() ||
         !driverData.last_name.trim() ||
         !driverData.phone_number.trim() ||
-        !driverData.nid.trim() ||
         !driverData.company_code.trim()
       ) {
         setValidationError(t('editDriver.validation.requiredFields'));
         return;
       }
-
-      // Additional NID validation - must not be empty and should be unique
-      if (driverData.nid.trim() === '') {
-        setValidationError(t('editDriver.validation.nidRequired'));
-        return;
-      }
+      // NID is optional
     
-      // License validation (if you want to keep license as required)
-      if (!licenseData.license_number || !licenseData.license_type) {
-        setValidationError(t('editDriver.validation.licenseRequired'));
-        return;
-      }
+      // No license required to update driver core fields
     
       try {
         if (!driverId) {
@@ -650,7 +640,7 @@ interface EditDriverModalProps {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    {t('editDriver.fields.firstName')} *
+                    {t('editDriver.fields.firstName')} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -665,7 +655,7 @@ interface EditDriverModalProps {
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    {t('editDriver.fields.lastName')} *
+                    {t('editDriver.fields.lastName')} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -680,7 +670,7 @@ interface EditDriverModalProps {
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    {t('editDriver.fields.nid')} *
+                    {t('editDriver.fields.nid')}
                   </label>
                   <input
                     type="text"
@@ -688,7 +678,6 @@ interface EditDriverModalProps {
                     value={driverData.nid}
                     onChange={handleDriverChange}
                     placeholder={t('editDriver.placeholders.nid')}
-                    required
                     disabled={isFetchingDriver}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white disabled:opacity-50"
                   />
@@ -696,7 +685,7 @@ interface EditDriverModalProps {
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    {t('editDriver.fields.phoneNumber')} *
+                    {t('editDriver.fields.phoneNumber')} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="tel"
@@ -711,7 +700,7 @@ interface EditDriverModalProps {
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    {t('editDriver.fields.company')} *
+                    {t('editDriver.fields.company')} <span className="text-red-500">*</span>
                   </label>
                   <select
                     name="company_code"
@@ -793,7 +782,6 @@ interface EditDriverModalProps {
                     name="uuid"
                     value={driverData.uuid}
                     onChange={handleDriverChange}
-                    placeholder={t('editDriver.placeholders.uuid')}
                     disabled={isFetchingDriver}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white disabled:opacity-50"
                   />
@@ -935,18 +923,17 @@ interface EditDriverModalProps {
             {/* License Section */}
             <div className="mb-6">
               <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300 border-b pb-2">
-                {t('editDriver.sections.licenseInfo')} <span className="text-red-500 text-sm">{t('editDriver.requiredFields')}</span>
+                {t('editDriver.sections.licenseInfo')}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    {t('editDriver.fields.licenseNumber')} *
+                    {t('editDriver.fields.licenseNumber')}
                   </label>
                   <input
                     type="text"
                     value={licenseData.license_number}
                     onChange={(e) => handleLicenseChange('license_number', e.target.value)}
-                    required
                     disabled={isFetchingDriver}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white disabled:opacity-50"
                   />
@@ -954,12 +941,11 @@ interface EditDriverModalProps {
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    {t('editDriver.fields.licenseType')} *
+                    {t('editDriver.fields.licenseType')}
                   </label>
                   <select
                     value={licenseData.license_type}
                     onChange={(e) => handleLicenseChange('license_type', e.target.value)}
-                    required
                     disabled={isFetchingDriver}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white disabled:opacity-50"
                   >

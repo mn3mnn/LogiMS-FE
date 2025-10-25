@@ -138,10 +138,7 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
       return;
     }
   
-    if (!licenseData.license_number || !licenseData.license_type) {
-      setValidationError(t('addDriver.validation.licenseRequired'));
-      return;
-    }
+    // No license required at creation (backend allows creating driver without docs)
   
     try {
       // ✅ Trigger the API call safely
@@ -290,7 +287,7 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    {t('addDriver.fields.firstName')} *
+                    {t('addDriver.fields.firstName')} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -304,7 +301,7 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    {t('addDriver.fields.lastName')} *
+                    {t('addDriver.fields.lastName')} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -332,7 +329,7 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    {t('addDriver.fields.phoneNumber')} *
+                    {t('addDriver.fields.phoneNumber')} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="tel"
@@ -346,13 +343,14 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    {t('addDriver.fields.company')}
+                    {t('addDriver.fields.company')} <span className="text-red-500">*</span>
                   </label>
                   <select
                     name="company_code"
                     value={driverData.company_code}
                     onChange={handleDriverChange}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    required
                     disabled={isLoading}
                   >
                     {companiesLoading ? (
@@ -426,7 +424,6 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                     name="uuid"
                     value={driverData.uuid}
                     onChange={handleDriverChange}
-                    placeholder={t('addDriver.placeholders.uuid')}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
                 </div>
@@ -546,25 +543,23 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    {t('addDriver.fields.licenseNumber')} *
+                    {t('addDriver.fields.licenseNumber')}
                   </label>
                   <input
                     type="text"
                     value={licenseData.license_number}
                     onChange={(e) => handleLicenseChange('license_number', e.target.value)}
-                    required
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
                 </div>
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    {t('addDriver.fields.licenseType')} *
+                    {t('addDriver.fields.licenseType')}
                   </label>
                   <select
                     value={licenseData.license_type}
                     onChange={(e) => handleLicenseChange('license_type', e.target.value)}
-                    required
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   >
                     <option value="">{t('addDriver.selectLicenseType')}</option>
