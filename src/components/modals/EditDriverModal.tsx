@@ -1,6 +1,6 @@
 // components/EditDriverModal.tsx
 import { useState, useEffect, useRef } from 'react';
-import { DriverData, LicenseData, NationalIdData, VehicleLicenseData, ContractData } from '../../hooks/useAddDriver';
+import { LicenseData, NationalIdData, VehicleLicenseData, ContractData } from '../../hooks/useAddDriver';
 import { useCompanies } from '../../hooks/useCompanies';
 import { useEditDriver } from '../../hooks/useEditDriver';
 import { useTranslation } from 'react-i18next';
@@ -16,36 +16,36 @@ interface EditDriverModalProps {
   const createEmptyContract = (): Omit<ContractData, 'driver_id'> => ({
     file: '',
     notes: '',
-    issue_date: new Date().toISOString().split('T')[0],
-    expiry_date: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    contract_number: `CONTRACT-${Date.now()}`
+    issue_date: '',
+    expiry_date: '',
+    contract_number: ''
   });
   
   const createEmptyLicense = (): Omit<LicenseData, 'driver_id'> => ({
     file: '',
     notes: '',
-    issue_date: new Date().toISOString().split('T')[0],
-    expiry_date: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    issue_date: '',
+    expiry_date: '',
     license_number: '',
-    license_type: 'standard'
+    license_type: ''
   });
   
   const createEmptyNationalId = (): Omit<NationalIdData, 'driver_id'> => ({
     file: '',
     notes: '',
-    issue_date: new Date().toISOString().split('T')[0],
-    expiry_date: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+    issue_date: '',
+    expiry_date: ''
   });
   
   const createEmptyVehicleLicense = (): Omit<VehicleLicenseData, 'driver_id'> => ({
     file: '',
     notes: '',
-    issue_date: new Date().toISOString().split('T')[0],
-    expiry_date: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    issue_date: '',
+    expiry_date: '',
     license_number: '',
     license_plate: '',
-    license_type: 'commercial',
-    vehicle_type: 'motorcycle'
+    license_type: '',
+    vehicle_type: ''
   });
   
   // Local editable types with optional id for existing documents
@@ -53,6 +53,17 @@ interface EditDriverModalProps {
   type EditableNationalId = Omit<NationalIdData, 'driver_id'> & { id?: number };
   type EditableVehicleLicense = Omit<VehicleLicenseData, 'driver_id'> & { id?: number };
   type EditableContract = Omit<ContractData, 'driver_id'> & { id?: number };
+  type EditableDriverCore = {
+    first_name: string;
+    last_name: string;
+    nid: string;
+    uuid: string;
+    phone_number: string;
+    is_active: boolean;
+    company_code: string;
+    agency_share: number | null;
+    insurance: number | null;
+  };
   
   export default function EditDriverModal({ isOpen, onClose, onSuccess, driverId }: EditDriverModalProps) {
     const { t } = useTranslation();
@@ -63,7 +74,7 @@ interface EditDriverModalProps {
     const [hasFetched, setHasFetched] = useState(false);
   
     // Form state
-    const [driverData, setDriverData] = useState<DriverData>({
+    const [driverData, setDriverData] = useState<EditableDriverCore>({
       first_name: '',
       last_name: '',
       nid: '',
@@ -149,61 +160,64 @@ interface EditDriverModalProps {
             phone_number: driver.phone_number || '',
             is_active: driver.is_active !== undefined ? driver.is_active : true,
             company_code: driver.company_code || '',
-            agency_share: driver.agency_share !== undefined ? driver.agency_share : null,
-            insurance: driver.insurance !== undefined ? driver.insurance : null,
+            agency_share: driver.agency_share ?? null,
+            insurance: driver.insurance ?? null,
           };
           
           setDriverData(newDriverData);
       
           // Populate license data if exists
-          if (driver.license) {
+          if (driver.license != null) {
+            const dl = driver.license!;
             const newLicenseData = {
-              id: (driver.license as any).id,
-              file: driver.license.file || '',
-              notes: driver.license.notes || '',
-              issue_date: driver.license.issue_date || new Date().toISOString().split('T')[0],
-              expiry_date: driver.license.expiry_date || new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-              license_number: driver.license.license_number || '',
-              license_type: driver.license.license_type || 'standard'
+              id: (dl as any).id,
+              file: dl.file || '',
+              notes: dl.notes || '',
+              issue_date: dl.issue_date || '',
+              expiry_date: dl.expiry_date || '',
+              license_number: dl.license_number || '',
+              license_type: dl.license_type || ''
             };
             setLicenseData(newLicenseData);
-            setExistingFiles(prev => ({ ...prev, license: !!driver.license.file }));
+            setExistingFiles(prev => ({ ...prev, license: !!dl.file }));
           } else {
             setLicenseData(createEmptyLicense());
             setExistingFiles(prev => ({ ...prev, license: false }));
           }
       
           // Populate national ID data if exists
-          if (driver.national_id_doc) {
+          if (driver.national_id_doc != null) {
+            const nd = driver.national_id_doc!;
             const newNationalIdData = {
-              id: (driver.national_id_doc as any).id,
-              file: driver.national_id_doc.file || '',
-              notes: driver.national_id_doc.notes || '',
-              issue_date: driver.national_id_doc.issue_date || new Date().toISOString().split('T')[0],
-              expiry_date: driver.national_id_doc.expiry_date || new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+              id: (nd as any).id,
+              file: nd.file || '',
+              notes: nd.notes || '',
+              issue_date: nd.issue_date || '',
+              expiry_date: nd.expiry_date || ''
             };
             setNationalIdData(newNationalIdData);
-            setExistingFiles(prev => ({ ...prev, nationalId: !!driver.national_id_doc.file }));
+            setExistingFiles(prev => ({ ...prev, nationalId: !!nd.file }));
           } else {
             setNationalIdData(createEmptyNationalId());
             setExistingFiles(prev => ({ ...prev, nationalId: false }));
           }
       
           // Populate vehicle license data if exists
-          if (driver.vehicle_license) {
+          if (driver.vehicle_license != null) {
+            const vl = driver.vehicle_license!;
             const newVehicleLicenseData = {
-              id: (driver.vehicle_license as any).id,
-              file: driver.vehicle_license.file || '',
-              notes: driver.vehicle_license.notes || '',
-              issue_date: driver.vehicle_license.issue_date || new Date().toISOString().split('T')[0],
-              expiry_date: driver.vehicle_license.expiry_date || new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-              license_number: driver.vehicle_license.license_number || '',
-              license_plate: driver.vehicle_license.license_plate || '',
-              license_type: driver.vehicle_license.license_type || 'commercial',
-              vehicle_type: driver.vehicle_license.vehicle_type || 'motorcycle'
+              id: (vl as any).id,
+              file: vl.file || '',
+              notes: vl.notes || '',
+              issue_date: vl.issue_date || '',
+              expiry_date: vl.expiry_date || '',
+              license_number: vl.license_number || '',
+              license_plate: vl.license_plate || '',
+              license_type: vl.license_type || '',
+              vehicle_type: vl.vehicle_type || ''
             };
             setVehicleLicenseData(newVehicleLicenseData);
-            setExistingFiles(prev => ({ ...prev, vehicleLicense: !!driver.vehicle_license.file }));
+            setExistingFiles(prev => ({ ...prev, vehicleLicense: !!vl.file }));
           } else {
             setVehicleLicenseData(createEmptyVehicleLicense());
             setExistingFiles(prev => ({ ...prev, vehicleLicense: false }));
@@ -215,9 +229,9 @@ interface EditDriverModalProps {
               id: contract.id,
               file: contract.file || '',
               notes: contract.notes || '',
-              issue_date: contract.issue_date || new Date().toISOString().split('T')[0],
-              expiry_date: contract.expiry_date || new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-              contract_number: contract.contract_number || `CONTRACT-${Date.now()}`
+              issue_date: contract.issue_date || '',
+              expiry_date: contract.expiry_date || '',
+              contract_number: contract.contract_number || ''
             }));
             setContractsData(contracts);
             setExistingFiles(prev => ({ 

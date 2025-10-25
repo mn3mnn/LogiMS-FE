@@ -14,6 +14,8 @@ export interface DriverData {
   phone_number: string;
   is_active: boolean;
   company_code: string;
+  agency_share?: number | null;
+  insurance?: number | null;
 }
 
 export interface LicenseData {

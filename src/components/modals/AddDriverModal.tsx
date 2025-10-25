@@ -14,36 +14,36 @@ interface AddDriverModalProps {
 const createEmptyContract = (): Omit<ContractData, 'driver_id'> => ({
   file: '',
   notes: '',
-  issue_date: new Date().toISOString().split('T')[0],
-  expiry_date: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-  contract_number: `CONTRACT-${Date.now()}`
+  issue_date: '',
+  expiry_date: '',
+  contract_number: ''
 });
 
 const createEmptyLicense = (): Omit<LicenseData, 'driver_id'> => ({
   file: '',
   notes: '',
-  issue_date: new Date().toISOString().split('T')[0],
-  expiry_date: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-  license_number: `LICENSE-${Date.now()}`,
-  license_type: 'standard'
+  issue_date: '',
+  expiry_date: '',
+  license_number: '',
+  license_type: ''
 });
 
 const createEmptyNationalId = (): Omit<NationalIdData, 'driver_id'> => ({
   file: '',
   notes: '',
-  issue_date: new Date().toISOString().split('T')[0],
-  expiry_date: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+  issue_date: '',
+  expiry_date: ''
 });
 
 const createEmptyVehicleLicense = (): Omit<VehicleLicenseData, 'driver_id'> => ({
   file: '',
   notes: '',
-  issue_date: new Date().toISOString().split('T')[0],
-  expiry_date: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-  license_number: `VEHICLE-${Date.now()}`,
-  license_plate: 'ABC-123',
-  license_type: 'commercial',
-  vehicle_type: 'motorcycle'
+  issue_date: '',
+  expiry_date: '',
+  license_number: '',
+  license_plate: '',
+  license_type: '',
+  vehicle_type: ''
 });
 
 export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriverModalProps) {
