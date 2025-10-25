@@ -106,7 +106,7 @@ export default function BasicTableOne() {
     debouncedSearchTerm
   );
   
-  // Debounce effect - 2 second delay
+  // Debounce effect - 0.5 second delay
   useEffect(() => {
     if (searchTerm.trim() !== debouncedSearchTerm.trim()) {
       setIsSearching(true);
@@ -115,7 +115,7 @@ export default function BasicTableOne() {
         setDebouncedSearchTerm(searchTerm);
         setCurrentPage(1);
         setIsSearching(false);
-      }, 2000);
+      }, 700);
 
       return () => {
         clearTimeout(timer);
