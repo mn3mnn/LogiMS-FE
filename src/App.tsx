@@ -24,7 +24,8 @@ import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
 import DriverProfile from "./pages/DriverProfile";
 import ExpiredDriverData from "./pages/ExpiredDriverData";
-import PayrollUpload from "./pages/Payroll/PayrollUpload"; // ✅ Add this import
+import FilesPage from "./pages/Payroll/FilesPage";
+import RecordsPage from "./pages/Payroll/RecordsPage";
 
 export default function App() {
   return (
@@ -55,7 +56,8 @@ export default function App() {
             <Route path="/expired-driver-data" element={<ExpiredDriverData />} />
 
             {/* Payroll */}
-            <Route path="/payroll" element={<PayrollUpload />} /> {/* ✅ Add this route */}
+            <Route path="/payroll/uploads" element={<FilesPage />} />
+            <Route path="/payroll/records" element={<RecordsPage />} />
 
             {/* Driver Profile */}
             <Route path="/drivers/:id" element={<UserProfiles />} />

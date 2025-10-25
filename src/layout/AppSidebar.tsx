@@ -13,9 +13,10 @@ import { useSidebar } from "../context/SidebarContext";
 type NavItem = {
   name: string;
   icon: React.ReactNode;
-  path: string;
+  path?: string;
   pro?: boolean;
   new?: boolean;
+  children?: { name: string; path: string }[];
 };
 
 const navItems: NavItem[] = [
@@ -32,8 +33,10 @@ const navItems: NavItem[] = [
   {
     name: "Payroll",
     icon: <TableIcon />,
-    path: "/payroll",
-    new: true,
+    children: [
+      { name: "File Uploads", path: "/payroll/uploads" },
+      { name: "Payroll Records", path: "/payroll/records" },
+    ],
   },
 ];
 
@@ -84,49 +87,109 @@ const AppSidebar: React.FC = () => {
     <ul className="flex flex-col gap-4">
       {items.map((nav, index) => (
         <li key={nav.name}>
-          <Link
-            to={nav.path}
-            className={`menu-item group ${
-              isActive(nav.path) ? "menu-item-active" : "menu-item-inactive"
-            }`}
-          >
-            <span
-              className={`menu-item-icon-size ${
-                isActive(nav.path)
-                  ? "menu-item-icon-active"
-                  : "menu-item-icon-inactive"
+          {nav.children ? (
+            <>
+              <button
+                onClick={() => handleSubmenuToggle(index, menuType)}
+                className={`menu-item group ${
+                  openSubmenu?.type === menuType && openSubmenu?.index === index
+                    ? "menu-item-active"
+                    : "menu-item-inactive"
+                } w-full text-left`}
+              >
+                <span className={`menu-item-icon-size ${"menu-item-icon-inactive"}`}>
+                  {nav.icon}
+                </span>
+                {(isExpanded || isHovered || isMobileOpen) && (
+                  <span className="menu-item-text flex items-center gap-2">
+                    {nav.name}
+                    <ChevronDownIcon
+                      className={`ml-auto transition-transform ${
+                        openSubmenu?.type === menuType && openSubmenu?.index === index
+                          ? "rotate-180"
+                          : "rotate-0"
+                      }`}
+                    />
+                  </span>
+                )}
+              </button>
+
+              <div
+                ref={(el) => {
+                  const key = `${menuType}-${index}`;
+                  subMenuRefs.current[key] = el;
+                }}
+                className="overflow-hidden transition-[height] duration-300"
+                style={{
+                  height:
+                    openSubmenu?.type === menuType && openSubmenu?.index === index
+                      ? subMenuHeight[`${menuType}-${index}`] || 'auto'
+                      : 0,
+                }}
+              >
+                <ul className="mt-2 ml-12 flex flex-col gap-2">
+                  {nav.children.map((child) => (
+                    <li key={child.name}>
+                      <Link
+                        to={child.path}
+                        className={`menu-item group ${
+                          isActive(child.path)
+                            ? "menu-item-active"
+                            : "menu-item-inactive"
+                        }`}
+                      >
+                        <span className="menu-item-text">{child.name}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </>
+          ) : (
+            <Link
+              to={nav.path as string}
+              className={`menu-item group ${
+                isActive(nav.path as string) ? "menu-item-active" : "menu-item-inactive"
               }`}
             >
-              {nav.icon}
-            </span>
-            {(isExpanded || isHovered || isMobileOpen) && (
-              <span className="menu-item-text flex items-center gap-2">
-                {nav.name}
-                {nav.new && (
-                  <span
-                    className={`ml-auto ${
-                      isActive(nav.path)
-                        ? "menu-dropdown-badge-active"
-                        : "menu-dropdown-badge-inactive"
-                    } menu-dropdown-badge`}
-                  >
-                    new
-                  </span>
-                )}
-                {nav.pro && (
-                  <span
-                    className={`ml-auto ${
-                      isActive(nav.path)
-                        ? "menu-dropdown-badge-active"
-                        : "menu-dropdown-badge-inactive"
-                    } menu-dropdown-badge`}
-                  >
-                    pro
-                  </span>
-                )}
+              <span
+                className={`menu-item-icon-size ${
+                  isActive(nav.path as string)
+                    ? "menu-item-icon-active"
+                    : "menu-item-icon-inactive"
+                }`}
+              >
+                {nav.icon}
               </span>
-            )}
-          </Link>
+              {(isExpanded || isHovered || isMobileOpen) && (
+                <span className="menu-item-text flex items-center gap-2">
+                  {nav.name}
+                  {nav.new && (
+                    <span
+                      className={`ml-auto ${
+                        isActive(nav.path as string)
+                          ? "menu-dropdown-badge-active"
+                          : "menu-dropdown-badge-inactive"
+                      } menu-dropdown-badge`}
+                    >
+                      new
+                    </span>
+                  )}
+                  {nav.pro && (
+                    <span
+                      className={`ml-auto ${
+                        isActive(nav.path as string)
+                          ? "menu-dropdown-badge-active"
+                          : "menu-dropdown-badge-inactive"
+                      } menu-dropdown-badge`}
+                    >
+                      pro
+                    </span>
+                  )}
+                </span>
+              )}
+            </Link>
+          )}
         </li>
       ))}
     </ul>
