@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useCompanies } from '../../hooks/useCompanies';
 import { usePaymentRecords } from '../../hooks/usePaymentRecords';
 import { Table, TableBody, TableCell, TableHeader, TableRow } from '../../components/ui/table';
+import { Link } from 'react-router-dom';
 
 export default function RecordsPage() {
   const { t } = useTranslation();
@@ -107,7 +108,15 @@ export default function RecordsPage() {
               {results.map((r) => (
                 <TableRow key={r.id} className="transition-colors hover:bg-gray-50 dark:hover:bg-white/[0.02]">
                   <TableCell className="px-3 py-2 text-sm">{r.id}</TableCell>
-                  <TableCell className="px-3 py-2 text-sm">{r.file_upload}</TableCell>
+                  <TableCell className="px-3 py-2 text-sm">
+                    <Link
+                      to={`/payroll/uploads?id=${r.file_upload}`}
+                      className="text-blue-600 hover:underline"
+                      title="View this upload"
+                    >
+                      {r.file_upload}
+                    </Link>
+                  </TableCell>
                   <TableCell className="px-3 py-2 text-sm">{r.company_name}</TableCell>
                   <TableCell className="px-3 py-2 text-sm">{r.driver_name}</TableCell>
                   <TableCell className="px-3 py-2 text-sm">{r.driver_uuid}</TableCell>

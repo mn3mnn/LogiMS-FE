@@ -35,6 +35,7 @@ export interface FileUploadsFilters {
   toDate?: string;   // YYYY-MM-DD
   fileType?: 'payments' | 'trips';
   status?: 'pending' | 'processing' | 'completed' | 'failed';
+  uploadId?: number;
 }
 
 const buildAuthHeaders = (token: string | null) => ({
@@ -59,6 +60,7 @@ export const useFileUploads = (filters: FileUploadsFilters) => {
       if (filters.companyCode && filters.companyCode !== 'All') params.company_code = filters.companyCode;
       if (filters.fileType) params.file_type = filters.fileType;
       if (filters.status) params.status = filters.status;
+      if (filters.uploadId) params.id = filters.uploadId;
 
       // Server-side date range
       if (filters.fromDate) params.from_date = filters.fromDate;

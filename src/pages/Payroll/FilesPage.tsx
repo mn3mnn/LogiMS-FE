@@ -7,6 +7,7 @@ import Button from '../../components/ui/button/Button';
 import config from '../../config/env';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function FilesPage() {
   const { t } = useTranslation();
@@ -23,6 +24,11 @@ export default function FilesPage() {
   const [status, setStatus] = useState<'pending' | 'processing' | 'completed' | 'failed' | ''>('');
   const [isNewOpen, setIsNewOpen] = useState(false);
 
+  const location = useLocation();
+  const navigate = useNavigate();
+  const query = new URLSearchParams(location.search);
+  const uploadIdFromUrl = query.get('id');
+
   const { data, isLoading, isFetching, error } = useFileUploads({
     page,
     pageSize,
@@ -32,6 +38,7 @@ export default function FilesPage() {
     toDate: toDate || undefined,
     fileType: fileType || undefined,
     status: status || undefined,
+    uploadId: uploadIdFromUrl ? Number(uploadIdFromUrl) : undefined,
   });
 
   const { mutateAsync: deleteUpload, isLoading: isDeleting } = useDeleteFileUpload();
