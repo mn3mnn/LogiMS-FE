@@ -743,7 +743,7 @@ interface EditDriverModalProps {
                     onChange={handleDriverChange}
                     min="0"
                     max="100"
-                    step="0.1"
+                    step="0.001"
                     placeholder={t('editDriver.placeholders.agencyShare')}
                     disabled={isFetchingDriver}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white disabled:opacity-50"
