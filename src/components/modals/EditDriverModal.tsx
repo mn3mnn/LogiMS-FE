@@ -321,30 +321,21 @@ interface EditDriverModalProps {
           throw new Error('Driver ID is required for update');
         }
 
-        // Create FormData for file uploads
-        const formData = new FormData();
-        
-        // Append required driver data
-        formData.append('first_name', driverData.first_name.trim());
-        formData.append('last_name', driverData.last_name.trim());
-        formData.append('nid', driverData.nid.trim()); // Ensure trimmed NID
-        formData.append('phone_number', driverData.phone_number.trim());
-        formData.append('company_code', driverData.company_code);
-        
-        // Append optional fields
-        formData.append('uuid', driverData.uuid || '');
-        formData.append('is_active', driverData.is_active.toString());
+        // Build JSON payload so nulls (e.g., agency_share) are sent explicitly
+        const payload: any = {
+          first_name: driverData.first_name.trim(),
+          last_name: driverData.last_name.trim(),
+          nid: driverData.nid.trim(),
+          phone_number: driverData.phone_number.trim(),
+          company_code: driverData.company_code,
+          uuid: driverData.uuid || '',
+          is_active: driverData.is_active,
+          agency_share: driverData.agency_share, // null or number
+          insurance: driverData.insurance,       // null or number
+        };
 
-        // Append agency_share and insurance if they exist
-        if (driverData.agency_share !== null) {
-          formData.append('agency_share', driverData.agency_share.toString());
-        }
-        if (driverData.insurance !== null) {
-          formData.append('insurance', driverData.insurance.toString());
-        }
-
-        // ✅ Update base driver fields
-        await updateDriver(driverId, formData);
+        // ✅ Update base driver fields with JSON (ensures nulls are applied)
+        await updateDriver(driverId, payload as any);
 
         // ✅ Sync documents (create/update/delete)
         const ops: Promise<any>[] = [];

@@ -549,32 +549,62 @@ export default function BasicTableOne() {
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                     <span className={`transition-colors duration-200 ${
-                      typeof driver.insurance === 'number' ? "text-green-600" : 
-                      driver.insurance && driver.insurance.file ? "text-green-600" : 
-                      driver.insurance ? "text-yellow-600" : "text-red-600"
+                      driver.insurance === null || driver.insurance === undefined || driver.insurance === ''
+                        ? "text-gray-400"
+                        : "text-green-600"
                     }`}>
-                      {getInsuranceStatus(driver.insurance)}
+                      {driver.insurance === null || driver.insurance === undefined || driver.insurance === ''
+                        ? t('common.notAvailable')
+                        : driver.insurance}
                     </span>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                    <span className={`transition-colors duration-200 ${driver.national_id_doc ? "text-green-600" : "text-red-600"}`}>
-                      {driver.national_id_doc ? t('drivers.uploaded') : t('drivers.notUploaded')}
-                    </span>
+                    {(() => {
+                      const doc = driver.national_id_doc;
+                      const status = doc?.status as ("valid" | "expired" | undefined);
+                      const { label, cls } = !doc
+                        ? { label: t('drivers.noDocument'), cls: 'text-red-600' }
+                        : status === 'expired'
+                          ? { label: 'Expired', cls: 'text-red-600' }
+                          : { label: 'Valid', cls: 'text-green-600' };
+                      return <span className={`transition-colors duration-200 ${cls}`}>{label}</span>;
+                    })()}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                    <span className={`transition-colors duration-200 ${driver.license ? "text-green-600" : "text-red-600"}`}>
-                      {driver.license ? t('drivers.uploaded') : t('drivers.notUploaded')}
-                    </span>
+                    {(() => {
+                      const doc = driver.license;
+                      const status = doc?.status as ("valid" | "expired" | undefined);
+                      const { label, cls } = !doc
+                        ? { label: t('drivers.noDocument'), cls: 'text-red-600' }
+                        : status === 'expired'
+                          ? { label: 'Expired', cls: 'text-red-600' }
+                          : { label: 'Valid', cls: 'text-green-600' };
+                      return <span className={`transition-colors duration-200 ${cls}`}>{label}</span>;
+                    })()}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                    <span className={`transition-colors duration-200 ${driver.vehicle_license ? "text-green-600" : "text-red-600"}`}>
-                      {driver.vehicle_license ? t('drivers.uploaded') : t('drivers.notUploaded')}
-                    </span>
+                    {(() => {
+                      const doc = driver.vehicle_license;
+                      const status = doc?.status as ("valid" | "expired" | undefined);
+                      const { label, cls } = !doc
+                        ? { label: t('drivers.noDocument'), cls: 'text-red-600' }
+                        : status === 'expired'
+                          ? { label: 'Expired', cls: 'text-red-600' }
+                          : { label: 'Valid', cls: 'text-green-600' };
+                      return <span className={`transition-colors duration-200 ${cls}`}>{label}</span>;
+                    })()}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                    <span className={`transition-colors duration-200 ${driver.contracts && driver.contracts.length > 0 ? "text-green-600" : "text-red-600"}`}>
-                      {driver.contracts && driver.contracts.length > 0 ? t('drivers.uploaded') : t('drivers.notUploaded')}
-                    </span>
+                    {(() => {
+                      const contracts = (driver.contracts || []) as Array<{ status?: 'valid' | 'expired' }>;
+                      if (!contracts.length) {
+                        return <span className="transition-colors duration-200 text-red-600">{t('drivers.noDocument')}</span>;
+                      }
+                      const hasExpired = contracts.some(c => c?.status === 'expired');
+                      const label = hasExpired ? 'Expired' : 'Valid';
+                      const cls = hasExpired ? 'text-red-600' : 'text-green-600';
+                      return <span className={`transition-colors duration-200 ${cls}`}>{label}</span>;
+                    })()}
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
