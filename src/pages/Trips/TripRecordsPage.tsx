@@ -100,7 +100,13 @@ export default function TripRecordsPage() {
                     <Link to={`/uploads?id=${r.file_upload}`} className="text-blue-600 hover:underline">{r.file_upload}</Link>
                   </TableCell>
                   <TableCell className="px-3 py-2 text-sm">{r.company_name}</TableCell>
-                  <TableCell className="px-3 py-2 text-sm">{r.driver_name}</TableCell>
+                  <TableCell className="px-3 py-2 text-sm">
+                    {r.driver_id ? (
+                      <Link to={`/drivers/${r.driver_id}`} className="text-blue-600 hover:underline" title="View driver profile">
+                        {r.driver_name}
+                      </Link>
+                    ) : r.driver_name}
+                  </TableCell>
                   <TableCell className="px-3 py-2 text-sm">{r.trip_uuid}</TableCell>
                   <TableCell className="px-3 py-2 text-sm">{r.fare_amount ?? '-'}</TableCell>
                   <TableCell className="px-3 py-2 text-sm">{r.trip_distance ?? '-'}</TableCell>
