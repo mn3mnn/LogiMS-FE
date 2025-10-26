@@ -41,7 +41,7 @@ export default function FilesPage() {
     uploadId: uploadIdFromUrl ? Number(uploadIdFromUrl) : undefined,
   });
 
-  const { mutateAsync: deleteUpload, isLoading: isDeleting } = useDeleteFileUpload();
+  const { mutateAsync: deleteUpload, isPending: isDeleting } = useDeleteFileUpload();
 
   const total = data?.count ?? 0;
   const results = data?.results ?? [];
@@ -112,6 +112,22 @@ export default function FilesPage() {
     setNewTo('');
     setUploadFile(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  // Helpers for filename inference
+  const normalize = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const inferFromFilename = (filename: string) => {
+    const base = filename.split('\\').pop()!.split('/').pop()!; // handle paths
+    const match = base.match(/^(\d{8})-(\d{8})-([a-zA-Z_]+)-(.+)\.[A-Za-z0-9]+$/);
+    if (!match) return;
+    const [, fromRaw, toRaw, kindRaw] = match;
+    const toIso = (d: string) => `${d.slice(0,4)}-${d.slice(4,6)}-${d.slice(6,8)}`;
+    setNewFrom(toIso(fromRaw));
+    setNewTo(toIso(toRaw));
+
+    const kind = kindRaw.toLowerCase();
+    if (kind.includes('trip')) setFileType('trips');
+    else if (kind.includes('pay')) setFileType('payments');
   };
 
   return (
@@ -256,6 +272,21 @@ export default function FilesPage() {
           <div className="bg-white dark:bg-gray-800 rounded-xl w-full max-w-2xl p-6" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-xl font-semibold mb-4">New Upload</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="md:col-span-2">
+                <label className="block text-sm mb-1">File (.csv, .xlsx)</label>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".csv,.xlsx,.xls"
+                  className="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:text-white"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0] || null;
+                    setUploadFile(f);
+                    if (f) inferFromFilename(f.name);
+                  }}
+                />
+                <p className="text-xs text-gray-500 mt-1">Selecting a file will try to auto-fill type, company and dates.</p>
+              </div>
               <div>
                 <label className="block text-sm mb-1">Type</label>
                 <select value={fileType || 'payments'} onChange={(e) => setFileType(e.target.value as any)} className="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:text-white">
@@ -280,16 +311,7 @@ export default function FilesPage() {
                 <label className="block text-sm mb-1">To date</label>
                 <input type="date" value={newTo} onChange={(e) => setNewTo(e.target.value)} className="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:text-white" />
               </div>
-              <div>
-                <label className="block text-sm mb-1">File (.csv, .xlsx)</label>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept=".csv,.xlsx,.xls"
-                  className="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:text-white"
-                  onChange={(e) => setUploadFile(e.target.files?.[0] || null)}
-                />
-              </div>
+              
             </div>
             <div className="flex justify-end gap-2 mt-6">
               <button
@@ -298,12 +320,12 @@ export default function FilesPage() {
               >
                 Cancel
               </button>
-              <button
-                disabled={!canSubmit || createUpload.isLoading}
+                <button
+                  disabled={!canSubmit || createUpload.isPending}
                 onClick={handleCreate}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
               >
-                {createUpload.isLoading ? 'Uploading…' : 'Upload'}
+                  {createUpload.isPending ? 'Uploading…' : 'Upload'}
               </button>
             </div>
           </div>
