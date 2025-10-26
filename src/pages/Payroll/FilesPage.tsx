@@ -104,7 +104,7 @@ export default function FilesPage() {
       from_date: newFrom,
       to_date: newTo,
       file,
-      file_type: 'payments',
+      file_type: fileType || 'payments',
     });
     setIsNewOpen(false);
     setNewCompany('');
@@ -256,6 +256,13 @@ export default function FilesPage() {
           <div className="bg-white dark:bg-gray-800 rounded-xl w-full max-w-2xl p-6" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-xl font-semibold mb-4">New Upload</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm mb-1">Type</label>
+                <select value={fileType || 'payments'} onChange={(e) => setFileType(e.target.value as any)} className="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:text-white">
+                  <option value="payments">Payments</option>
+                  <option value="trips">Trips</option>
+                </select>
+              </div>
               <div>
                 <label className="block text-sm mb-1">Company</label>
                 <select value={newCompany} onChange={(e) => setNewCompany(e.target.value)} className="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:text-white">

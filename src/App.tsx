@@ -26,6 +26,8 @@ import DriverProfile from "./pages/DriverProfile";
 import ExpiredDriverData from "./pages/ExpiredDriverData";
 import FilesPage from "./pages/Payroll/FilesPage";
 import RecordsPage from "./pages/Payroll/RecordsPage";
+import TripFilesPage from "./pages/Trips/TripFilesPage";
+import TripRecordsPage from "./pages/Trips/TripRecordsPage";
 
 export default function App() {
   return (
@@ -55,9 +57,11 @@ export default function App() {
             <Route path="/basic-tables" element={<BasicTables />} />
             <Route path="/expired-driver-data" element={<ExpiredDriverData />} />
 
-            {/* Payroll */}
-            <Route path="/payroll/uploads" element={<FilesPage />} />
+            {/* Unified Uploads */}
+            <Route path="/uploads" element={<FilesPage />} />
             <Route path="/payroll/records" element={<RecordsPage />} />
+
+            <Route path="/trips/records" element={<TripRecordsPage />} />
 
             {/* Driver Profile */}
             <Route path="/drivers/:id" element={<UserProfiles />} />

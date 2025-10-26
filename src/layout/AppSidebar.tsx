@@ -31,11 +31,22 @@ const navItems: NavItem[] = [
     path: "/basic-tables",
   },
   {
+    name: "File Uploads",
+    icon: <TableIcon />,
+    path: "/uploads",
+  },
+  {
     name: "Payroll",
     icon: <TableIcon />,
     children: [
-      { name: "File Uploads", path: "/payroll/uploads" },
       { name: "Payroll Records", path: "/payroll/records" },
+    ],
+  },
+  {
+    name: "Trips",
+    icon: <TableIcon />,
+    children: [
+      { name: "Trip Records", path: "/trips/records" },
     ],
   },
 ];

@@ -110,7 +110,7 @@ export default function RecordsPage() {
                   <TableCell className="px-3 py-2 text-sm">{r.id}</TableCell>
                   <TableCell className="px-3 py-2 text-sm">
                     <Link
-                      to={`/payroll/uploads?id=${r.file_upload}`}
+                      to={`/uploads?id=${r.file_upload}`}
                       className="text-blue-600 hover:underline"
                       title="View this upload"
                     >
