@@ -40,6 +40,7 @@ export interface TripRecordsFilters {
   fromDate?: string; // YYYY-MM-DD
   toDate?: string;   // YYYY-MM-DD
   uploadId?: number;
+  tripStatus?: string;
 }
 
 const buildAuthHeaders = (token: string | null) => ({
@@ -65,6 +66,7 @@ export const useTripRecords = (filters: TripRecordsFilters) => {
       if (filters.fromDate) params.from_date = filters.fromDate;
       if (filters.toDate) params.to_date = filters.toDate;
       if (filters.uploadId) params.file_upload = filters.uploadId;
+      if (filters.tripStatus) params.trip_status = filters.tripStatus;
 
       const { data } = await axios.get<PaginatedResponse<TripRecordItem>>(
         `${config.API_BASE_URL}/v1/trip-records/`,

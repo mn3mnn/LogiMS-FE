@@ -13,6 +13,7 @@ export default function TripRecordsPage() {
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [fromDate, setFromDate] = useState<string>('');
   const [toDate, setToDate] = useState<string>('');
+  const [tripStatus, setTripStatus] = useState<string>('');
 
   const location = useLocation();
   const query = new URLSearchParams(location.search);
@@ -26,6 +27,7 @@ export default function TripRecordsPage() {
     fromDate: fromDate || undefined,
     toDate: toDate || undefined,
     uploadId: uploadIdFromUrl ? Number(uploadIdFromUrl) : undefined,
+    tripStatus: tripStatus || undefined,
   });
 
   const total = data?.count ?? 0;
@@ -66,6 +68,17 @@ export default function TripRecordsPage() {
           <label className="block text-sm mb-1">To</label>
           <input type="date" value={toDate} onChange={(e) => { setToDate(e.target.value); setPage(1); }} className="border rounded-lg px-3 py-2" />
         </div>
+        <div>
+          <label className="block text-sm mb-1">Trip Status</label>
+          <select value={tripStatus} onChange={(e) => { setTripStatus(e.target.value); setPage(1); }} className="border rounded-lg px-3 py-2">
+            <option value="">All</option>
+            <option value="completed">completed</option>
+            <option value="failed">failed</option>
+            <option value="rider_cancelled">rider_cancelled</option>
+            <option value="driver_cancelled">driver_cancelled</option>
+            <option value="delivery_failed">delivery_failed</option>
+          </select>
+        </div>
       </div>
 
       <div className="rounded-xl border border-gray-200 bg-white">
@@ -78,6 +91,7 @@ export default function TripRecordsPage() {
                 <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">Company</TableCell>
                 <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">Driver</TableCell>
                 <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">Trip UUID</TableCell>
+                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">Status</TableCell>
                 <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">Fare</TableCell>
                 <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">Distance</TableCell>
                 <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">Created</TableCell>
@@ -108,6 +122,7 @@ export default function TripRecordsPage() {
                     ) : r.driver_name}
                   </TableCell>
                   <TableCell className="px-3 py-2 text-sm">{r.trip_uuid}</TableCell>
+                  <TableCell className="px-3 py-2 text-sm">{r.trip_status ?? '-'}</TableCell>
                   <TableCell className="px-3 py-2 text-sm">{r.fare_amount ?? '-'}</TableCell>
                   <TableCell className="px-3 py-2 text-sm">{r.trip_distance ?? '-'}</TableCell>
                   <TableCell className="px-3 py-2 text-xs text-gray-500">{new Date(r.created_at).toLocaleString()}</TableCell>
