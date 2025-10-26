@@ -38,16 +38,12 @@ const navItems: NavItem[] = [
   {
     name: "Payroll",
     icon: <TableIcon />,
-    children: [
-      { name: "Payroll Records", path: "/payroll/records" },
-    ],
+    path: "/payroll/records",
   },
   {
     name: "Trips",
     icon: <TableIcon />,
-    children: [
-      { name: "Trip Records", path: "/trips/records" },
-    ],
+    path: "/trips/records",
   },
 ];
 
