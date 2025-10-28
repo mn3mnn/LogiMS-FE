@@ -9,6 +9,19 @@ import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import { useLocation, useNavigate } from 'react-router-dom';
 
+// Loading spinner component
+const LoadingSpinner = ({ size = "small" }: { size?: "small" | "medium" | "large" }) => {
+  const sizeClasses = {
+    small: "w-4 h-4",
+    medium: "w-6 h-6",
+    large: "w-8 h-8"
+  };
+
+  return (
+    <div className={`${sizeClasses[size]} border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin`}></div>
+  );
+};
+
 export default function FilesPage() {
   const { t } = useTranslation();
   const { companies } = useCompanies();
@@ -134,44 +147,44 @@ export default function FilesPage() {
     <div className="p-6 space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">File Uploads</h2>
-        <Button onClick={() => setIsNewOpen(true)} size="sm" className="!px-4 !py-2 text-sm">+ New Upload</Button>
+        <Button onClick={() => setIsNewOpen(true)} size="sm" className="!px-4 !py-2 text-sm">+ {t('payroll.newUpload')}</Button>
       </div>
 
       {/* Search bar above filters */}
       <div className="w-full md:w-[430px]">
-        <label className="block text-sm mb-1 text-gray-600 dark:text-gray-300">Search</label>
+        <label className="block text-sm mb-1 text-gray-600 dark:text-gray-300">{t('payroll.search')}</label>
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search by file name"
+          placeholder={t('payroll.searchPlaceholder')}
           className="h-11 w-full rounded-lg border border-gray-200 bg-transparent px-3 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
         />
       </div>
 
       <div className="flex flex-wrap gap-3 items-end mt-2">
         <div>
-          <label className="block text-sm mb-1">Company</label>
+          <label className="block text-sm mb-1">{t('payroll.company')}</label>
           <select
             value={companyCode}
             onChange={(e) => { setCompanyCode(e.target.value as any); setPage(1); }}
             className="border rounded-lg px-3 py-2 dark:bg-gray-800 dark:text-white"
           >
-            <option value="All">All</option>
+            <option value="All">{t('payroll.all')}</option>
             {companies.filter(c => c.is_active).map(c => (
               <option key={c.code} value={c.code}>{c.name}</option>
             ))}
           </select>
         </div>
         <div>
-          <label className="block text-sm mb-1">From</label>
+          <label className="block text-sm mb-1">{t('payroll.from')}</label>
           <input type="date" value={fromDate} onChange={(e) => { setFromDate(e.target.value); setPage(1); }} className="border rounded-lg px-3 py-2 dark:bg-gray-800 dark:text-white" />
         </div>
         <div>
-          <label className="block text-sm mb-1">To</label>
+          <label className="block text-sm mb-1">{t('payroll.to')}</label>
           <input type="date" value={toDate} onChange={(e) => { setToDate(e.target.value); setPage(1); }} className="border rounded-lg px-3 py-2 dark:bg-gray-800 dark:text-white" />
         </div>
         <div>
-          <label className="block text-sm mb-1">File Type</label>
+          <label className="block text-sm mb-1">{t('payroll.fileType')}</label>
           <select value={fileType} onChange={(e) => { setFileType(e.target.value as any); setPage(1); }} className="border rounded-lg px-3 py-2 dark:bg-gray-800 dark:text-white">
             <option value="">All</option>
             <option value="payments">Payments</option>
@@ -179,9 +192,9 @@ export default function FilesPage() {
           </select>
         </div>
         <div>
-          <label className="block text-sm mb-1">Status</label>
+          <label className="block text-sm mb-1">{t('payroll.status')}</label>
           <select value={status} onChange={(e) => { setStatus(e.target.value as any); setPage(1); }} className="border rounded-lg px-3 py-2 dark:bg-gray-800 dark:text-white">
-            <option value="">All</option>
+            <option value="">{t('payroll.all')}</option>
             <option value="pending">Pending</option>
             <option value="processing">Processing</option>
             <option value="completed">Completed</option>
@@ -195,15 +208,15 @@ export default function FilesPage() {
           <Table>
             <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
               <TableRow>
-                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">ID</TableCell>
-                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">Company</TableCell>
-                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">File</TableCell>
-                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">From</TableCell>
-                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">To</TableCell>
-                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">Status</TableCell>
-                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">Error</TableCell>
-                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">Created</TableCell>
-                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">Actions</TableCell>
+                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('payroll.tableHeaders.id')}</TableCell>
+                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('payroll.tableHeaders.company')}</TableCell>
+                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('payroll.tableHeaders.file')}</TableCell>
+                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('payroll.tableHeaders.from')}</TableCell>
+                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('payroll.tableHeaders.to')}</TableCell>
+                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('payroll.tableHeaders.status')}</TableCell>
+                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('payroll.tableHeaders.error')}</TableCell>
+                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('payroll.tableHeaders.created')}</TableCell>
+                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('payroll.tableHeaders.actions')}</TableCell>
               </TableRow>
             </TableHeader>
             <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
@@ -211,10 +224,10 @@ export default function FilesPage() {
                 <TableRow><TableCell colSpan={9} className="px-3 py-3 text-red-600 text-sm">{String((error as any)?.message || error)}</TableCell></TableRow>
               )}
               {isLoading && (
-                <TableRow><TableCell colSpan={9} className="px-3 py-5 text-sm">Loading...</TableCell></TableRow>
+                <TableRow><TableCell colSpan={9} className="px-3 py-5 text-sm">{t('payroll.loading')}</TableCell></TableRow>
               )}
               {!isLoading && results.length === 0 && (
-                <TableRow><TableCell colSpan={9} className="px-3 py-5 text-sm">No uploads found</TableCell></TableRow>
+                <TableRow><TableCell colSpan={9} className="px-3 py-5 text-sm">{t('payroll.noUploadsFound')}</TableCell></TableRow>
               )}
               {results.map((u) => (
                 <TableRow key={u.id} className="transition-colors hover:bg-gray-50 dark:hover:bg-white/[0.02]">
@@ -230,7 +243,7 @@ export default function FilesPage() {
                         <button
                           onClick={() => handleOpenFile(u.id)}
                           className="text-blue-600 hover:underline"
-                          title="Open file"
+                          title={t('payroll.openFile')}
                         >
                           {u.file_name}
                         </button>
@@ -248,7 +261,7 @@ export default function FilesPage() {
                       onClick={() => handleDelete(u.id)}
                       disabled={isDeleting}
                     >
-                      Delete
+{t('common.delete')}
                     </button>
                   </TableCell>
                 </TableRow>
@@ -257,12 +270,45 @@ export default function FilesPage() {
           </Table>
         </div>
 
+        {/* Pagination Section */}
         <div className="flex items-center justify-between p-4 border-t border-gray-100 dark:border-white/[0.05]">
-          <div className="text-xs text-gray-600">{isFetching ? 'Updating…' : `Total: ${total}`}</div>
-          <div className="flex items-center gap-2">
-            <button className="px-2.5 py-1 rounded bg-blue-600 text-white text-sm disabled:opacity-30" disabled={page<=1} onClick={() => setPage((p) => p-1)}>Previous</button>
-            <span className="text-xs">{page} / {totalPages}</span>
-            <button className="px-2.5 py-1 rounded bg-blue-600 text-white text-sm disabled:opacity-30" disabled={page>=totalPages} onClick={() => setPage((p) => p+1)}>Next</button>
+          <div className="flex items-center justify-center gap-1 flex-1">
+            <button
+              disabled={page === 1}
+              onClick={() => setPage(page - 1)}
+              className="px-3 py-1 rounded disabled:opacity-30 bg-blue-600 text-white transition-all duration-200 hover:bg-blue-700 disabled:hover:bg-blue-600 hover:scale-105 active:scale-95"
+            >
+              {t('common.previous')}
+            </button>
+
+            {totalPages > 0 && [...Array(totalPages)].map((_, index) => (
+              <button
+                key={index + 1}
+                onClick={() => setPage(index + 1)}
+                className={`px-3 py-1 rounded transition-all duration-200 hover:scale-105 active:scale-95 ${
+                  page === index + 1
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                }`}
+              >
+                {index + 1}
+              </button>
+            ))}
+
+            <button
+              disabled={page === totalPages || totalPages === 0}
+              onClick={() => setPage(page + 1)}
+              className="px-3 py-1 rounded disabled:opacity-30 bg-blue-600 text-white transition-all duration-200 hover:bg-blue-700 disabled:hover:bg-blue-600 hover:scale-105 active:scale-95"
+            >
+              {t('common.next')}
+            </button>
+          </div>
+
+          <div className="flex justify-end">
+            <div className="text-gray-700 text-sm flex items-center gap-2">
+              {t('payroll.totalFiles', { count: total })}
+              {isFetching && <LoadingSpinner size="small" />}
+            </div>
           </div>
         </div>
       </div>
@@ -270,10 +316,10 @@ export default function FilesPage() {
       {isNewOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setIsNewOpen(false)}>
           <div className="bg-white dark:bg-gray-800 rounded-xl w-full max-w-2xl p-6" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-xl font-semibold mb-4">New Upload</h3>
+            <h3 className="text-xl font-semibold mb-4">{t('payroll.newUpload')}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="md:col-span-2">
-                <label className="block text-sm mb-1">File (.csv, .xlsx)</label>
+                <label className="block text-sm mb-1">{t('payroll.fileUpload')}</label>
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -285,17 +331,17 @@ export default function FilesPage() {
                     if (f) inferFromFilename(f.name);
                   }}
                 />
-                <p className="text-xs text-gray-500 mt-1">Selecting a file will try to auto-fill type, company and dates.</p>
+                <p className="text-xs text-gray-500 mt-1">{t('payroll.autoFillNote')}</p>
               </div>
               <div>
-                <label className="block text-sm mb-1">Type</label>
+                <label className="block text-sm mb-1">{t('payroll.type')}</label>
                 <select value={fileType || 'payments'} onChange={(e) => setFileType(e.target.value as any)} className="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:text-white">
                   <option value="payments">Payments</option>
                   <option value="trips">Trips</option>
                 </select>
               </div>
               <div>
-                <label className="block text-sm mb-1">Company</label>
+                <label className="block text-sm mb-1">{t('payroll.company')}</label>
                 <select value={newCompany} onChange={(e) => setNewCompany(e.target.value)} className="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:text-white">
                   <option value="">Select company</option>
                   {companies.filter(c => c.is_active).map(c => (
@@ -304,11 +350,11 @@ export default function FilesPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm mb-1">From date</label>
+                <label className="block text-sm mb-1">{t('payroll.fromDate')}</label>
                 <input type="date" value={newFrom} onChange={(e) => setNewFrom(e.target.value)} className="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:text-white" />
               </div>
               <div>
-                <label className="block text-sm mb-1">To date</label>
+                <label className="block text-sm mb-1">{t('payroll.toDate')}</label>
                 <input type="date" value={newTo} onChange={(e) => setNewTo(e.target.value)} className="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:text-white" />
               </div>
               
@@ -318,7 +364,7 @@ export default function FilesPage() {
                 className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700 transition"
                 onClick={() => setIsNewOpen(false)}
               >
-                Cancel
+{t('payroll.cancel')}
               </button>
                 <button
                   disabled={!canSubmit || createUpload.isPending}

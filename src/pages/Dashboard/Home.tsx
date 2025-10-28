@@ -1,9 +1,12 @@
 import PageMeta from "../../components/common/PageMeta";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useUploadsStats, usePaymentSummary, useTripSummary, useTripStats, usePaymentStats, usePaymentTimeseries, useTripTimeseries } from "../../hooks/useStats";
 import BarList from "../../components/charts/BarList";
 
 export default function Home() {
+  const { t } = useTranslation();
+  
   // Only completed uploads for by-type widget
   const { data: uploadsStats } = useUploadsStats({ status: 'completed' });
   const { data: paySummary } = usePaymentSummary();
@@ -26,25 +29,25 @@ export default function Home() {
           {/* Key metrics */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="rounded-xl border p-4">
-              <div className="text-sm text-gray-500">Payments net</div>
+              <div className="text-sm text-gray-500">{t('dashboard.paymentsNet')}</div>
               <div className="text-2xl font-semibold">
                 {paySummary?.total_net_earnings != null ? Number(paySummary.total_net_earnings).toFixed(2) : '-'}
               </div>
             </div>
             <div className="rounded-xl border p-4">
-              <div className="text-sm text-gray-500">Payments revenue</div>
+              <div className="text-sm text-gray-500">{t('dashboard.paymentsRevenue')}</div>
               <div className="text-2xl font-semibold">
                 {paySummary?.total_revenue != null ? Number(paySummary.total_revenue).toFixed(2) : '-'}
               </div>
             </div>
             <div className="rounded-xl border p-4">
-              <div className="text-sm text-gray-500">Trips total fare</div>
+              <div className="text-sm text-gray-500">{t('dashboard.tripsTotalFare')}</div>
               <div className="text-2xl font-semibold">
                 {tripSummary?.total_fare_amount != null ? Number(tripSummary.total_fare_amount).toFixed(2) : '-'}
               </div>
             </div>
             <div className="rounded-xl border p-4">
-              <div className="text-sm text-gray-500">Trips total</div>
+              <div className="text-sm text-gray-500">{t('dashboard.tripsTotal')}</div>
               <div className="text-2xl font-semibold">{tripSummary?.total_trips ?? '-'}</div>
             </div>
           </div>
@@ -54,12 +57,12 @@ export default function Home() {
           {/* Completed uploads by type and trip status distribution */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <BarList
-              title="Completed uploads by type"
+              title={t('dashboard.completedUploadsByType')}
               items={(uploadsStats?.by_type || []).map((t: any) => ({ key: t.file_type ?? 'unknown', labelLeft: t.file_type ?? 'unknown', value: t.count }))}
               colorClass="bg-emerald-500"
             />
             <BarList
-              title="Trips by status"
+              title={t('dashboard.tripsByStatus')}
               items={(tripStats?.by_status || []).map((s: any) => ({ key: s.trip_status ?? 'unknown', labelLeft: s.trip_status ?? 'unknown', value: s.count }))}
               colorClass="bg-purple-500"
             />
@@ -67,7 +70,7 @@ export default function Home() {
 
           {/* Top drivers (trips) */}
           <div className="rounded-xl border p-4">
-            <div className="text-sm mb-3 font-medium">Top drivers (trips)</div>
+            <div className="text-sm mb-3 font-medium">{t('dashboard.topDriversTrips')}</div>
             {(() => {
               const list = (tripStats?.top_drivers || []) as any[];
               const maxFare = Math.max(1, ...list.map(d => Number(d?.fare || 0)));
@@ -104,7 +107,7 @@ export default function Home() {
                           </div>
                           <div className="text-right">
                             <div className="text-sm font-semibold tabular-nums">€ {fareNum.toFixed(2)}</div>
-                            <div className="text-xs text-gray-500">{d.trips} trips</div>
+                            <div className="text-xs text-gray-500">{d.trips} {t('dashboard.trips')}</div>
                           </div>
                         </div>
                       </div>
@@ -118,7 +121,7 @@ export default function Home() {
           {/* Trends by upload period (reverted to lists) */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="rounded-xl border p-4">
-              <div className="text-sm mb-2 font-medium">Payments by upload period</div>
+              <div className="text-sm mb-2 font-medium">{t('dashboard.paymentsByUploadPeriod')}</div>
               <ul className="text-sm max-h-60 overflow-auto space-y-1">
                 {(payTs || []).map((u: any) => (
                   <li key={`p-${u.upload_id}`} className="grid grid-cols-5 items-center gap-2">
@@ -130,7 +133,7 @@ export default function Home() {
               </ul>
             </div>
             <div className="rounded-xl border p-4">
-              <div className="text-sm mb-2 font-medium">Trips by upload period</div>
+              <div className="text-sm mb-2 font-medium">{t('dashboard.tripsByUploadPeriod')}</div>
               <ul className="text-sm max-h-60 overflow-auto space-y-1">
                 {(tripTs || []).map((u: any) => (
                   <li key={`t-${u.upload_id}`} className="grid grid-cols-5 items-center gap-2">

@@ -5,6 +5,19 @@ import { usePaymentRecords } from '../../hooks/usePaymentRecords';
 import { Table, TableBody, TableCell, TableHeader, TableRow } from '../../components/ui/table';
 import { Link } from 'react-router-dom';
 
+// Loading spinner component
+const LoadingSpinner = ({ size = "small" }: { size?: "small" | "medium" | "large" }) => {
+  const sizeClasses = {
+    small: "w-4 h-4",
+    medium: "w-6 h-6",
+    large: "w-8 h-8"
+  };
+
+  return (
+    <div className={`${sizeClasses[size]} border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin`}></div>
+  );
+};
+
 export default function RecordsPage() {
   const { t } = useTranslation();
   const { companies } = useCompanies();
@@ -43,35 +56,35 @@ export default function RecordsPage() {
 
       {/* Search above filters (match Drivers width/UX) */}
       <div className="w-full md:w-[430px]">
-        <label className="block text-sm mb-1 text-gray-600 dark:text-gray-300">Search</label>
+        <label className="block text-sm mb-1 text-gray-600 dark:text-gray-300">{t('payroll.search')}</label>
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Driver name or UUID"
+          placeholder={t('payroll.searchPlaceholder')}
           className="h-11 w-full rounded-lg border border-gray-200 bg-transparent px-3 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
         />
       </div>
 
       <div className="flex flex-wrap gap-3 items-end mt-2">
         <div>
-          <label className="block text-sm mb-1">Company</label>
+          <label className="block text-sm mb-1">{t('payroll.company')}</label>
           <select
             value={companyCode}
             onChange={(e) => { setCompanyCode(e.target.value as any); setPage(1); }}
             className="border rounded-lg px-3 py-2 dark:bg-gray-800 dark:text-white"
           >
-            <option value="All">All</option>
+            <option value="All">{t('payroll.all')}</option>
             {companies.filter(c => c.is_active).map(c => (
               <option key={c.code} value={c.code}>{c.name}</option>
             ))}
           </select>
         </div>
         <div>
-          <label className="block text-sm mb-1">From</label>
+          <label className="block text-sm mb-1">{t('payroll.from')}</label>
           <input type="date" value={fromDate} onChange={(e) => { setFromDate(e.target.value); setPage(1); }} className="border rounded-lg px-3 py-2 dark:bg-gray-800 dark:text-white" />
         </div>
         <div>
-          <label className="block text-sm mb-1">To</label>
+          <label className="block text-sm mb-1">{t('payroll.to')}</label>
           <input type="date" value={toDate} onChange={(e) => { setToDate(e.target.value); setPage(1); }} className="border rounded-lg px-3 py-2 dark:bg-gray-800 dark:text-white" />
         </div>
       </div>
@@ -81,18 +94,18 @@ export default function RecordsPage() {
           <Table>
             <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
               <TableRow>
-                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">ID</TableCell>
-                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">Upload</TableCell>
-                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">Company</TableCell>
-                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">Driver</TableCell>
-                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">Driver UUID</TableCell>
-                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">Total Revenue</TableCell>
-                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">Tax</TableCell>
-                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">Agency Share</TableCell>
-                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">Insurance</TableCell>
-                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">Total Deductions</TableCell>
-                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">Final Net</TableCell>
-                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">Created</TableCell>
+                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('payroll.tableHeaders.id')}</TableCell>
+                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('payroll.tableHeaders.upload')}</TableCell>
+                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('payroll.tableHeaders.company')}</TableCell>
+                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('payroll.tableHeaders.driver')}</TableCell>
+                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('payroll.tableHeaders.driverUuid')}</TableCell>
+                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('payroll.tableHeaders.totalRevenue')}</TableCell>
+                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('payroll.tableHeaders.tax')}</TableCell>
+                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('payroll.tableHeaders.agencyShare')}</TableCell>
+                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('payroll.tableHeaders.insurance')}</TableCell>
+                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('payroll.tableHeaders.totalDeductions')}</TableCell>
+                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('payroll.tableHeaders.finalNet')}</TableCell>
+                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('payroll.tableHeaders.created')}</TableCell>
               </TableRow>
             </TableHeader>
             <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
@@ -100,10 +113,10 @@ export default function RecordsPage() {
                 <TableRow><td colSpan={12} className="px-3 py-3 text-red-600 text-sm">{String((error as any)?.message || error)}</td></TableRow>
               )}
               {isLoading && (
-                <TableRow><td colSpan={12} className="px-3 py-5 text-sm">Loading...</td></TableRow>
+                <TableRow><td colSpan={12} className="px-3 py-5 text-sm">{t('payroll.loading')}</td></TableRow>
               )}
               {!isLoading && results.length === 0 && (
-                <TableRow><td colSpan={12} className="px-3 py-5 text-sm">No records found</td></TableRow>
+                <TableRow><td colSpan={12} className="px-3 py-5 text-sm">{t('payroll.noRecordsFound')}</td></TableRow>
               )}
               {results.map((r) => (
                 <TableRow key={r.id} className="transition-colors hover:bg-gray-50 dark:hover:bg-white/[0.02]">
@@ -112,7 +125,7 @@ export default function RecordsPage() {
                     <Link
                       to={`/uploads?id=${r.file_upload}`}
                       className="text-blue-600 hover:underline"
-                      title="View this upload"
+                      title={t('payroll.viewUpload')}
                     >
                       {r.file_upload}
                     </Link>
@@ -123,7 +136,7 @@ export default function RecordsPage() {
                       <Link
                         to={`/drivers/${r.driver_id}`}
                         className="text-blue-600 hover:underline"
-                        title="View driver profile"
+                        title={t('payroll.viewDriverProfile')}
                       >
                         {r.driver_name}
                       </Link>
@@ -145,12 +158,45 @@ export default function RecordsPage() {
           </Table>
         </div>
 
+        {/* Pagination Section */}
         <div className="flex items-center justify-between p-4 border-t border-gray-100 dark:border-white/[0.05]">
-          <div className="text-xs text-gray-600">{isFetching ? 'Updating…' : `Total: ${total}`}</div>
-          <div className="flex items-center gap-2">
-            <button className="px-2.5 py-1 rounded bg-blue-600 text-white text-sm disabled:opacity-30" disabled={page<=1} onClick={() => setPage((p) => p-1)}>Previous</button>
-            <span className="text-xs">{page} / {totalPages}</span>
-            <button className="px-2.5 py-1 rounded bg-blue-600 text-white text-sm disabled:opacity-30" disabled={page>=totalPages} onClick={() => setPage((p) => p+1)}>Next</button>
+          <div className="flex items-center justify-center gap-1 flex-1">
+            <button
+              disabled={page === 1}
+              onClick={() => setPage(page - 1)}
+              className="px-3 py-1 rounded disabled:opacity-30 bg-blue-600 text-white transition-all duration-200 hover:bg-blue-700 disabled:hover:bg-blue-600 hover:scale-105 active:scale-95"
+            >
+              {t('common.previous')}
+            </button>
+
+            {totalPages > 0 && [...Array(totalPages)].map((_, index) => (
+              <button
+                key={index + 1}
+                onClick={() => setPage(index + 1)}
+                className={`px-3 py-1 rounded transition-all duration-200 hover:scale-105 active:scale-95 ${
+                  page === index + 1
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                }`}
+              >
+                {index + 1}
+              </button>
+            ))}
+
+            <button
+              disabled={page === totalPages || totalPages === 0}
+              onClick={() => setPage(page + 1)}
+              className="px-3 py-1 rounded disabled:opacity-30 bg-blue-600 text-white transition-all duration-200 hover:bg-blue-700 disabled:hover:bg-blue-600 hover:scale-105 active:scale-95"
+            >
+              {t('common.next')}
+            </button>
+          </div>
+
+          <div className="flex justify-end">
+            <div className="text-gray-700 text-sm flex items-center gap-2">
+              {t('payroll.totalRecords', { count: total })}
+              {isFetching && <LoadingSpinner size="small" />}
+            </div>
           </div>
         </div>
       </div>

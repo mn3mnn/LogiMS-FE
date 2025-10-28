@@ -12,6 +12,7 @@ export interface DriverData {
   nid: string;
   uuid: string;
   phone_number: string;
+  email: string;
   is_active: boolean;
   company_code: string;
   agency_share?: number | null;

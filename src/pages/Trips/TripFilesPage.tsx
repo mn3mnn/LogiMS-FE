@@ -1,11 +1,26 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useCompanies } from '../../hooks/useCompanies';
 import { useFileUploads, useCreateFileUpload } from '../../hooks/useFileUploads';
 import { Table, TableBody, TableCell, TableHeader, TableRow } from '../../components/ui/table';
 import { useLocation, Link } from 'react-router-dom';
 import Button from '../../components/ui/button/Button';
 
+// Loading spinner component
+const LoadingSpinner = ({ size = "small" }: { size?: "small" | "medium" | "large" }) => {
+  const sizeClasses = {
+    small: "w-4 h-4",
+    medium: "w-6 h-6",
+    large: "w-8 h-8"
+  };
+
+  return (
+    <div className={`${sizeClasses[size]} border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin`}></div>
+  );
+};
+
 export default function TripFilesPage() {
+  const { t } = useTranslation();
   const { companies } = useCompanies();
   const [page, setPage] = useState(1);
   const [pageSize] = useState(10);
@@ -138,12 +153,45 @@ export default function TripFilesPage() {
           </Table>
         </div>
 
-        <div className="flex items-center justify-between p-4 border-t border-gray-100">
-          <div className="text-xs text-gray-600">{isFetching ? 'Updating…' : `Total: ${total}`}</div>
-          <div className="flex items-center gap-2">
-            <button className="px-2.5 py-1 rounded bg-blue-600 text-white text-sm disabled:opacity-30" disabled={page<=1} onClick={() => setPage((p) => p-1)}>Previous</button>
-            <span className="text-xs">{page} / {totalPages}</span>
-            <button className="px-2.5 py-1 rounded bg-blue-600 text-white text-sm disabled:opacity-30" disabled={page>=totalPages} onClick={() => setPage((p) => p+1)}>Next</button>
+        {/* Pagination Section */}
+        <div className="flex items-center justify-between p-4 border-t border-gray-100 dark:border-white/[0.05]">
+          <div className="flex items-center justify-center gap-1 flex-1">
+            <button
+              disabled={page === 1}
+              onClick={() => setPage(page - 1)}
+              className="px-3 py-1 rounded disabled:opacity-30 bg-blue-600 text-white transition-all duration-200 hover:bg-blue-700 disabled:hover:bg-blue-600 hover:scale-105 active:scale-95"
+            >
+              {t('common.previous')}
+            </button>
+
+            {totalPages > 0 && [...Array(totalPages)].map((_, index) => (
+              <button
+                key={index + 1}
+                onClick={() => setPage(index + 1)}
+                className={`px-3 py-1 rounded transition-all duration-200 hover:scale-105 active:scale-95 ${
+                  page === index + 1
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                }`}
+              >
+                {index + 1}
+              </button>
+            ))}
+
+            <button
+              disabled={page === totalPages || totalPages === 0}
+              onClick={() => setPage(page + 1)}
+              className="px-3 py-1 rounded disabled:opacity-30 bg-blue-600 text-white transition-all duration-200 hover:bg-blue-700 disabled:hover:bg-blue-600 hover:scale-105 active:scale-95"
+            >
+              {t('common.next')}
+            </button>
+          </div>
+
+          <div className="flex justify-end">
+            <div className="text-gray-700 text-sm flex items-center gap-2">
+              {t('trips.totalFiles', { count: total })}
+              {isFetching && <LoadingSpinner size="small" />}
+            </div>
           </div>
         </div>
       </div>

@@ -60,6 +60,7 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
     nid: '',
     uuid: '',
     phone_number: '',
+    email: '',
     is_active: true,
     company_code: 'talabat',
     agency_share: null,
@@ -110,6 +111,7 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
       nid: '',
       uuid: '',
       phone_number: '',
+      email: '',
       is_active: true,
       company_code: 'talabat',
       agency_share: null,
@@ -132,7 +134,8 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
     if (
       !driverData.first_name.trim() ||
       !driverData.last_name.trim() ||
-      !driverData.phone_number.trim()
+      !driverData.phone_number.trim() ||
+      !driverData.email.trim()
     ) {
       setValidationError(t('addDriver.validation.requiredFields'));
       return;
@@ -335,6 +338,20 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                     type="tel"
                     name="phone_number"
                     value={driverData.phone_number}
+                    onChange={handleDriverChange}
+                    required
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                    {t('addDriver.fields.email')} <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={driverData.email}
                     onChange={handleDriverChange}
                     required
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"

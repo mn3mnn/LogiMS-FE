@@ -10,6 +10,7 @@ interface Driver {
   last_name: string;
   uuid: string;
   phone_number: string;
+  email: string;
   is_active: boolean;
   company_code: string;
   company_name?: string;
@@ -147,6 +148,12 @@ const DriverProfile = () => {
                   Phone Number
                 </label>
                 <p className="text-gray-800 dark:text-white">{driver.phone_number}</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
+                  Email
+                </label>
+                <p className="text-gray-800 dark:text-white">{driver.email}</p>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">

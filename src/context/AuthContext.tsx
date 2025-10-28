@@ -53,7 +53,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.error("Logout API call failed, but continuing with client-side logout:", error);
     } finally {
       localStorage.removeItem("token");
+      localStorage.removeItem("user");
       setToken(null);
+      setUser(null);
       isLoggingOutRef.current = false;
     }
   };

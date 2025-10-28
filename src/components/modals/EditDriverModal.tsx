@@ -59,6 +59,7 @@ interface EditDriverModalProps {
     nid: string;
     uuid: string;
     phone_number: string;
+    email: string;
     is_active: boolean;
     company_code: string;
     agency_share: number | null;
@@ -80,6 +81,7 @@ interface EditDriverModalProps {
       nid: '',
       uuid: '',
       phone_number: '',
+      email: '',
       is_active: true,
       company_code: '',
       agency_share: null,
@@ -158,6 +160,7 @@ interface EditDriverModalProps {
             nid: driver.nid || '',
             uuid: driver.uuid || '',
             phone_number: driver.phone_number || '',
+            email: driver.email || '',
             is_active: driver.is_active !== undefined ? driver.is_active : true,
             company_code: driver.company_code || '',
             agency_share: driver.agency_share ?? null,
@@ -277,6 +280,7 @@ interface EditDriverModalProps {
         nid: '',
         uuid: '',
         phone_number: '',
+        email: '',
         is_active: true,
         company_code: '',
         agency_share: null,
@@ -327,6 +331,7 @@ interface EditDriverModalProps {
           last_name: driverData.last_name.trim(),
           nid: driverData.nid.trim(),
           phone_number: driverData.phone_number.trim(),
+          email: driverData.email.trim(),
           company_code: driverData.company_code,
           uuid: driverData.uuid || '',
           is_active: driverData.is_active,
@@ -682,6 +687,21 @@ interface EditDriverModalProps {
                     type="tel"
                     name="phone_number"
                     value={driverData.phone_number}
+                    onChange={handleDriverChange}
+                    required
+                    disabled={isFetchingDriver}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white disabled:opacity-50"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                    {t('editDriver.fields.email')} <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={driverData.email}
                     onChange={handleDriverChange}
                     required
                     disabled={isFetchingDriver}

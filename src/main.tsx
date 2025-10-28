@@ -13,6 +13,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const queryClient = new QueryClient();
 
+// Force light mode on page load
+document.documentElement.classList.remove("dark");
+localStorage.setItem("theme", "light");
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ThemeProvider>
