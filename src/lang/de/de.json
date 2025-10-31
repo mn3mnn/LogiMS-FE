@@ -35,6 +35,7 @@
       "id": "ID",
       "user": "Benutzer",
       "phone": "Telefon",
+      "email": "E-Mail",
       "reportsTo": "Berichtet an",
       "agencyShare": "Agenturanteil",
       "insurance": "Versicherung",

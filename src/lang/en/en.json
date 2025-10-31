@@ -35,6 +35,7 @@
       "id": "Id",
       "user": "User",
       "phone": "Phone",
+      "email": "Email",
       "reportsTo": "Reports To",
       "agencyShare": "Agency Share",
       "insurance": "Insurance",
