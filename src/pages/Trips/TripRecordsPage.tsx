@@ -4,6 +4,7 @@ import { useCompanies } from '../../hooks/useCompanies';
 import { useTripRecords } from '../../hooks/useTripRecords';
 import { Table, TableBody, TableCell, TableHeader, TableRow } from '../../components/ui/table';
 import { Link, useLocation } from 'react-router-dom';
+import { generatePaginationPages } from '../../utils/pagination';
 
 // Loading spinner component
 const LoadingSpinner = ({ size = "small" }: { size?: "small" | "medium" | "large" }) => {
@@ -158,19 +159,28 @@ export default function TripRecordsPage() {
               {t('common.previous')}
             </button>
 
-            {totalPages > 0 && [...Array(totalPages)].map((_, index) => (
-              <button
-                key={index + 1}
-                onClick={() => setPage(index + 1)}
-                className={`px-3 py-1 rounded transition-all duration-200 hover:scale-105 active:scale-95 ${
-                  page === index + 1
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
-                }`}
-              >
-                {index + 1}
-              </button>
-            ))}
+            {totalPages > 0 && generatePaginationPages(page, totalPages).map((pageNum, index) => {
+              if (pageNum === 'ellipsis') {
+                return (
+                  <span key={`ellipsis-${index}`} className="px-2 text-gray-500 dark:text-gray-400">
+                    ...
+                  </span>
+                );
+              }
+              return (
+                <button
+                  key={pageNum}
+                  onClick={() => setPage(pageNum)}
+                  className={`px-3 py-1 rounded transition-all duration-200 hover:scale-105 active:scale-95 ${
+                    page === pageNum
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                  }`}
+                >
+                  {pageNum}
+                </button>
+              );
+            })}
 
             <button
               disabled={page === totalPages || totalPages === 0}

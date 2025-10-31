@@ -8,6 +8,7 @@ import {
   TableRow,
 } from "../../ui/table";
 import { useDrivers } from "../../../hooks/useDrivers";
+import { generatePaginationPages } from "../../../utils/pagination";
 import { useDeleteDriver } from '../../../hooks/useDeleteDriver';
 import { useExportDrivers } from '../../../hooks/useExportDrivers';
 import DeleteConfirmationModal from '../../modals/DeleteConfirmationModal';
@@ -649,19 +650,28 @@ export default function BasicTableOne() {
             {t('common.previous')}
           </button>
 
-          {totalPages > 0 && [...Array(totalPages)].map((_, index) => (
-            <button
-              key={index + 1}
-              onClick={() => handlePageChange(index + 1)}
-              className={`px-3 py-1 rounded transition-all duration-200 hover:scale-105 active:scale-95 ${
-                currentPage === index + 1
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
-              }`}
-            >
-              {index + 1}
-            </button>
-          ))}
+          {totalPages > 0 && generatePaginationPages(currentPage, totalPages).map((pageNum, index) => {
+            if (pageNum === 'ellipsis') {
+              return (
+                <span key={`ellipsis-${index}`} className="px-2 text-gray-500 dark:text-gray-400">
+                  ...
+                </span>
+              );
+            }
+            return (
+              <button
+                key={pageNum}
+                onClick={() => handlePageChange(pageNum)}
+                className={`px-3 py-1 rounded transition-all duration-200 hover:scale-105 active:scale-95 ${
+                  currentPage === pageNum
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                }`}
+              >
+                {pageNum}
+              </button>
+            );
+          })}
 
           <button
             disabled={currentPage === totalPages || totalPages === 0}

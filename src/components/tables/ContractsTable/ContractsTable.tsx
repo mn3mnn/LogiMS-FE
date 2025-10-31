@@ -8,6 +8,7 @@ import {
 } from "../../ui/table";
 import { useContracts } from "../../../hooks/useContracts";
 import UploadContractModal from "../../modals/UploadContractModal";
+import { generatePaginationPages } from "../../../utils/pagination";
 
 export default function ContractsTable() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -234,19 +235,28 @@ export default function ContractsTable() {
             Prev
           </button>
 
-          {totalPages > 0 && [...Array(totalPages)].map((_, index) => (
-            <button
-              key={index + 1}
-              onClick={() => handlePageChange(index + 1)}
-              className={`px-3 py-1 rounded ${
-                currentPage === index + 1
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
-            >
-              {index + 1}
-            </button>
-          ))}
+          {totalPages > 0 && generatePaginationPages(currentPage, totalPages).map((pageNum, index) => {
+            if (pageNum === 'ellipsis') {
+              return (
+                <span key={`ellipsis-${index}`} className="px-2 text-gray-500 dark:text-gray-400">
+                  ...
+                </span>
+              );
+            }
+            return (
+              <button
+                key={pageNum}
+                onClick={() => handlePageChange(pageNum)}
+                className={`px-3 py-1 rounded transition-all duration-200 hover:scale-105 active:scale-95 ${
+                  currentPage === pageNum
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                }`}
+              >
+                {pageNum}
+              </button>
+            );
+          })}
 
           <button
             disabled={currentPage === totalPages || totalPages === 0}
