@@ -4,6 +4,7 @@ import { LicenseData, NationalIdData, VehicleLicenseData, ContractData } from '.
 import { useCompanies } from '../../hooks/useCompanies';
 import { useEditDriver } from '../../hooks/useEditDriver';
 import { useTranslation } from 'react-i18next';
+import { AiOutlineDelete } from 'react-icons/ai';
 
 interface EditDriverModalProps {
     isOpen: boolean;
@@ -935,7 +936,7 @@ interface EditDriverModalProps {
                           className="px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:opacity-50 transition-colors text-sm whitespace-nowrap"
                           title={t('editDriver.buttons.deleteDocument')}
                         >
-                          🗑️ {t('editDriver.buttons.delete')}
+                          <AiOutlineDelete className="inline mr-1" /> {t('editDriver.buttons.delete')}
                         </button>
                       )}
                     </div>
@@ -1033,7 +1034,7 @@ interface EditDriverModalProps {
                         className="px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:opacity-50 transition-colors text-sm whitespace-nowrap"
                         title={t('editDriver.buttons.deleteDocument')}
                       >
-                        🗑️ {t('editDriver.buttons.delete')}
+                        <AiOutlineDelete className="inline mr-1" /> {t('editDriver.buttons.delete')}
                       </button>
                     )}
                   </div>
@@ -1113,7 +1114,7 @@ interface EditDriverModalProps {
                         className="px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:opacity-50 transition-colors text-sm whitespace-nowrap"
                         title={t('editDriver.buttons.deleteDocument')}
                       >
-                        🗑️ {t('editDriver.buttons.delete')}
+                        <AiOutlineDelete className="inline mr-1" /> {t('editDriver.buttons.delete')}
                       </button>
                     )}
                   </div>
@@ -1257,7 +1258,7 @@ interface EditDriverModalProps {
                         className="px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:opacity-50 transition-colors text-sm whitespace-nowrap"
                         title={t('editDriver.buttons.deleteDocument')}
                       >
-                        🗑️ {t('editDriver.buttons.delete')}
+                        <AiOutlineDelete className="inline mr-1" /> {t('editDriver.buttons.delete')}
                       </button>
                     )}
                   </div>

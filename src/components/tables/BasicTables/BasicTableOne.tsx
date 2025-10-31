@@ -12,6 +12,7 @@ import { generatePaginationPages } from "../../../utils/pagination";
 import { useDeleteDriver } from '../../../hooks/useDeleteDriver';
 import { useExportDrivers } from '../../../hooks/useExportDrivers';
 import DeleteConfirmationModal from '../../modals/DeleteConfirmationModal';
+import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai';
 import AddDriverModal from '../../modals/AddDriverModal';
 import EditDriverModal from '../../modals/EditDriverModal';
 import { Link } from "react-router-dom";
@@ -620,7 +621,7 @@ export default function BasicTableOne() {
                         className="text-blue-600 hover:text-blue-800 dark:hover:text-blue-400 transition-colors duration-200 hover:scale-110 transform"
                         title={t('drivers.editDriver')}
                       >
-                        ✏️
+                        <AiOutlineEdit size={18} />
                       </button>
                       <button
                         onClick={() => handleDeleteClick(driver.id, `${driver.first_name} ${driver.last_name}`)}
@@ -628,7 +629,7 @@ export default function BasicTableOne() {
                         className="text-red-600 hover:text-red-800 dark:hover:text-red-400 transition-colors duration-200 hover:scale-110 transform disabled:opacity-50 disabled:cursor-not-allowed"
                         title={t('drivers.deleteDriver')}
                       >
-                        🗑️
+                        <AiOutlineDelete size={18} />
                       </button>
                     </div>
                   </TableCell>
