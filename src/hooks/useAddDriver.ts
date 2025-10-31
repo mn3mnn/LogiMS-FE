@@ -13,6 +13,7 @@ export interface DriverData {
   uuid: string;
   phone_number: string;
   email: string;
+  reports_to?: string;
   is_active: boolean;
   company_code: string;
   agency_share?: number | null;

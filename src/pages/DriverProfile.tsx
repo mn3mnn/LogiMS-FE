@@ -11,6 +11,7 @@ interface Driver {
   uuid: string;
   phone_number: string;
   email: string;
+  reports_to?: string;
   is_active: boolean;
   company_code: string;
   company_name?: string;
@@ -155,6 +156,14 @@ const DriverProfile = () => {
                 </label>
                 <p className="text-gray-800 dark:text-white">{driver.email}</p>
               </div>
+              {driver.reports_to && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
+                    Reports To
+                  </label>
+                  <p className="text-gray-800 dark:text-white">{driver.reports_to}</p>
+                </div>
+              )}
               <div>
                 <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
                   Company

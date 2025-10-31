@@ -10,6 +10,7 @@ interface UserInfoCardProps {
   phone: string;
   nid: string;
   uuid: string;
+  reports_to?: string;
   agency_share?: number | null;
   insurance?: number | null;
 }
@@ -21,6 +22,7 @@ export default function UserInfoCard({
   phone, 
   nid, 
   uuid,
+  reports_to,
   agency_share,
   insurance
 }: UserInfoCardProps) {
@@ -104,6 +106,17 @@ export default function UserInfoCard({
                 {email}
               </p>
             </div>
+
+            {reports_to && (
+              <div>
+                <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                  {t('userInfoCard.fields.reportsTo')}
+                </p>
+                <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                  {reports_to}
+                </p>
+              </div>
+            )}
 
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">

@@ -41,6 +41,7 @@ export default function UserProfiles() { // Remove the id parameter
             phone={driver?.phone_number} 
             nid={driver?.nid} 
             uuid={driver?.uuid} 
+            reports_to={driver?.reports_to}
             insurance={driver?.insurance}
             agency_share={driver?.agency_share}
           />

@@ -61,6 +61,7 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
     uuid: '',
     phone_number: '',
     email: '',
+    reports_to: '',
     is_active: true,
     company_code: 'talabat',
     agency_share: null,
@@ -112,6 +113,7 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
       uuid: '',
       phone_number: '',
       email: '',
+      reports_to: '',
       is_active: true,
       company_code: 'talabat',
       agency_share: null,
@@ -354,6 +356,19 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                     value={driverData.email}
                     onChange={handleDriverChange}
                     required
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                    {t('addDriver.fields.reportsTo')}
+                  </label>
+                  <input
+                    type="text"
+                    name="reports_to"
+                    value={driverData.reports_to || ''}
+                    onChange={handleDriverChange}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
                 </div>
