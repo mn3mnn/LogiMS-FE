@@ -4,12 +4,14 @@ import { Dropdown } from "../ui/dropdown/Dropdown";
 import { Link } from "react-router";
 import { useAuth } from "../../context/AuthContext";
 import { useTranslation } from "react-i18next";
+import { useCurrentUser } from "../../hooks/useCurrentUser";
 
 export default function UserDropdown() {
   const { t, i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
   const { logout } = useAuth();
+  const { user, isLoading: isLoadingUser } = useCurrentUser();
 
   const handleSignOut = () => {
     logout();
@@ -48,7 +50,9 @@ export default function UserDropdown() {
         onClick={toggleDropdown}
         className="flex items-center text-gray-700 dropdown-toggle dark:text-gray-400"
       >
-        <span className="block mr-1 font-medium text-theme-sm">{t('userDropdown.userName')}</span>
+        <span className="block mr-1 font-medium text-theme-sm">
+          {isLoadingUser ? t('userDropdown.userName') : (user?.username || t('userDropdown.userName'))}
+        </span>
         <svg
           className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${
             isOpen ? "rotate-180" : ""
@@ -76,10 +80,12 @@ export default function UserDropdown() {
       >
         <div>
           <span className="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
-            {t('userDropdown.userFullName')}
+            {user?.first_name && user?.last_name 
+              ? `${user.first_name} ${user.last_name}` 
+              : user?.username || t('userDropdown.userFullName')}
           </span>
           <span className="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
-            {t('userDropdown.userEmail')}
+            {user?.email || t('userDropdown.userEmail')}
           </span>
         </div>
 
