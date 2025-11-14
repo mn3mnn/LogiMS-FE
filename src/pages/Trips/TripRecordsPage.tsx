@@ -98,6 +98,28 @@ export default function TripRecordsPage() {
   const results = data?.results ?? [];
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
+  // Initialize filters from URL query parameters on mount and when URL changes
+  useEffect(() => {
+    const urlQuery = new URLSearchParams(location.search);
+    const companyCodeFromUrl = urlQuery.get('company_code');
+    const fromDateFromUrl = urlQuery.get('from_date');
+    const toDateFromUrl = urlQuery.get('to_date');
+    const tripStatusFromUrl = urlQuery.get('trip_status');
+
+    if (companyCodeFromUrl) {
+      setCompanyCode(companyCodeFromUrl);
+    }
+    if (fromDateFromUrl) {
+      setFromDate(fromDateFromUrl);
+    }
+    if (toDateFromUrl) {
+      setToDate(toDateFromUrl);
+    }
+    if (tripStatusFromUrl) {
+      setTripStatus(tripStatusFromUrl);
+    }
+  }, [location.search]);
+
   useEffect(() => {
     const tId = setTimeout(() => setDebouncedSearch(search), 500);
     return () => clearTimeout(tId);
