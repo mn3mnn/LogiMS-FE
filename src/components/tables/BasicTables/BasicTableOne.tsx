@@ -262,20 +262,12 @@ export default function BasicTableOne() {
   };
 
   return (
-    <div className="p-6 space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold dark:text-white">{t('drivers.title', { defaultValue: 'Drivers' })}</h2>
-        <button
-          onClick={() => setIsAddModalOpen(true)}
-          className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 shadow-sm hover:shadow-md transition-all duration-200"
-        >
-          + {t('drivers.addDriver')}
-        </button>
-      </div>
+    <div className="space-y-4">
 
-      {/* Search bar */}
-      <div className="w-full md:w-[430px]">
-        <label className="block text-sm mb-1 text-gray-600 dark:text-gray-300">{t('drivers.search', { defaultValue: 'Search' })}</label>
+      {/* Search bar and Add button */}
+      <div className="flex items-center justify-between gap-4">
+        <div className="w-full md:w-[430px]">
+          <label className="block text-sm mb-1 text-gray-600 dark:text-gray-300">{t('drivers.search', { defaultValue: 'Search' })}</label>
         <div className="relative">
           <input
             ref={inputRef}
@@ -291,6 +283,17 @@ export default function BasicTableOne() {
             </span>
           )}
         </div>
+        </div>
+        
+        <button
+          onClick={() => setIsAddModalOpen(true)}
+          className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-2 whitespace-nowrap"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          </svg>
+          {t('drivers.addDriver')}
+        </button>
       </div>
 
       {/* Filters */}

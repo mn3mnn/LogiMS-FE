@@ -5,6 +5,7 @@ import { useTripRecords } from '../../hooks/useTripRecords';
 import { Table, TableBody, TableCell, TableHeader, TableRow } from '../../components/ui/table';
 import { Link, useLocation } from 'react-router-dom';
 import { generatePaginationPages } from '../../utils/pagination';
+import PageBreadcrumb from '../../components/common/PageBreadCrumb';
 
 // Loading spinner component
 const LoadingSpinner = ({ size = "small" }: { size?: "small" | "medium" | "large" }) => {
@@ -56,10 +57,9 @@ export default function TripRecordsPage() {
   }, [search]);
 
   return (
-    <div className="p-6 space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold dark:text-white">Trip Records</h2>
-      </div>
+    <>
+      <PageBreadcrumb pageTitle="Trip Records" />
+      <div className="space-y-4">
 
       <div className="w-full md:w-[430px]">
         <label className="block text-sm mb-1 text-gray-600 dark:text-gray-300">{t('trips.search')}</label>
@@ -199,7 +199,8 @@ export default function TripRecordsPage() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }
 

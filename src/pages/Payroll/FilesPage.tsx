@@ -9,6 +9,7 @@ import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { generatePaginationPages } from '../../utils/pagination';
+import PageBreadcrumb from '../../components/common/PageBreadCrumb';
 
 // Loading spinner component
 const LoadingSpinner = ({ size = "small" }: { size?: "small" | "medium" | "large" }) => {
@@ -145,21 +146,31 @@ export default function FilesPage() {
   };
 
   return (
-    <div className="p-6 space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">File Uploads</h2>
-        <Button onClick={() => setIsNewOpen(true)} size="sm" className="!px-4 !py-2 text-sm">+ {t('payroll.newUpload')}</Button>
-      </div>
+    <>
+      <PageBreadcrumb pageTitle="File Uploads" />
+      <div className="space-y-4">
 
-      {/* Search bar above filters */}
-      <div className="w-full md:w-[430px]">
-        <label className="block text-sm mb-1 text-gray-600 dark:text-gray-300">{t('payroll.search')}</label>
-        <input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder={t('payroll.searchPlaceholder')}
-          className="h-11 w-full rounded-lg border border-gray-200 bg-transparent px-3 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-        />
+      {/* Search bar and New Upload button */}
+      <div className="flex items-center justify-between gap-4">
+        <div className="w-full md:w-[430px]">
+          <label className="block text-sm mb-1 text-gray-600 dark:text-gray-300">{t('payroll.search')}</label>
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder={t('payroll.searchPlaceholder')}
+            className="h-11 w-full rounded-lg border border-gray-200 bg-transparent px-3 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+          />
+        </div>
+        
+        <button
+          onClick={() => setIsNewOpen(true)}
+          className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-2 whitespace-nowrap"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          </svg>
+          {t('payroll.newUpload')}
+        </button>
       </div>
 
       <div className="flex flex-wrap gap-3 items-end mt-2">
@@ -322,6 +333,7 @@ export default function FilesPage() {
           </div>
         </div>
       </div>
+      </div>
 
       {isNewOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setIsNewOpen(false)}>
@@ -387,7 +399,7 @@ export default function FilesPage() {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }
 

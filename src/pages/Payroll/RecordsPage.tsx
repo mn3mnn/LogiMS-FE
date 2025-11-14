@@ -5,6 +5,7 @@ import { usePaymentRecords } from '../../hooks/usePaymentRecords';
 import { Table, TableBody, TableCell, TableHeader, TableRow } from '../../components/ui/table';
 import { Link } from 'react-router-dom';
 import { generatePaginationPages } from '../../utils/pagination';
+import PageBreadcrumb from '../../components/common/PageBreadCrumb';
 
 // Loading spinner component
 const LoadingSpinner = ({ size = "small" }: { size?: "small" | "medium" | "large" }) => {
@@ -50,10 +51,9 @@ export default function RecordsPage() {
   }, [search]);
 
   return (
-    <div className="p-6 space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold dark:text-white">Payroll Records</h2>
-      </div>
+    <>
+      <PageBreadcrumb pageTitle="Payroll Records" />
+      <div className="space-y-4">
 
       {/* Search above filters (match Drivers width/UX) */}
       <div className="w-full md:w-[430px]">
@@ -210,7 +210,8 @@ export default function RecordsPage() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }
 
