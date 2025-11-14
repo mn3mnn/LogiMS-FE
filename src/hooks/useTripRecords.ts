@@ -41,6 +41,7 @@ export interface TripRecordsFilters {
   toDate?: string;   // YYYY-MM-DD
   uploadId?: number;
   tripStatus?: string;
+  ordering?: string; // Field to sort by (prefix with - for descending)
 }
 
 const buildAuthHeaders = (token: string | null) => ({
@@ -58,7 +59,7 @@ export const useTripRecords = (filters: TripRecordsFilters) => {
       const params: Record<string, any> = {
         page: filters.page ?? 1,
         page_size: filters.pageSize ?? 10,
-        ordering: '-created_at',
+        ordering: filters.ordering || '-created_at',
       };
 
       if (filters.companyCode && filters.companyCode !== 'All') params.company_code = filters.companyCode;

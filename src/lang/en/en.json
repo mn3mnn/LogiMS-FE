@@ -55,7 +55,8 @@
       "editDriver": "Edit driver",
       "deleteDriver": "Delete driver",
       "exporting": "Exporting...",
-      "export": "Export"
+      "export": "Export",
+      "updatedAt": "Updated At"
     },
     "addDriver": {
     "title": "Add New Driver",

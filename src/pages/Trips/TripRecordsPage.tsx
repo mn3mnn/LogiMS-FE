@@ -20,6 +20,47 @@ const LoadingSpinner = ({ size = "small" }: { size?: "small" | "medium" | "large
   );
 };
 
+// Sortable header component
+interface SortableHeaderProps {
+  field: string;
+  label: string;
+  currentOrderBy: string;
+  currentDirection: "asc" | "desc";
+  onSort: (field: string) => void;
+}
+
+const SortableHeader = ({ field, label, currentOrderBy, currentDirection, onSort }: SortableHeaderProps) => {
+  const isActive = currentOrderBy === field;
+  
+  return (
+    <TableCell 
+      isHeader 
+      className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500 cursor-pointer hover:bg-gray-50 dark:hover:bg-white/[0.05] transition-colors select-none"
+      onClick={() => onSort(field)}
+    >
+      <div className="flex items-center gap-1">
+        <span>{label}</span>
+        <div className="flex flex-col">
+          <svg 
+            className={`w-3 h-3 ${isActive && currentDirection === 'asc' ? 'text-blue-600' : 'text-gray-400'}`} 
+            fill="currentColor" 
+            viewBox="0 0 20 20"
+          >
+            <path d="M5 10l5-5 5 5H5z" />
+          </svg>
+          <svg 
+            className={`w-3 h-3 -mt-1 ${isActive && currentDirection === 'desc' ? 'text-blue-600' : 'text-gray-400'}`} 
+            fill="currentColor" 
+            viewBox="0 0 20 20"
+          >
+            <path d="M15 10l-5 5-5-5h10z" />
+          </svg>
+        </div>
+      </div>
+    </TableCell>
+  );
+};
+
 export default function TripRecordsPage() {
   const { t } = useTranslation();
   const { companies } = useCompanies();
@@ -31,10 +72,15 @@ export default function TripRecordsPage() {
   const [fromDate, setFromDate] = useState<string>('');
   const [toDate, setToDate] = useState<string>('');
   const [tripStatus, setTripStatus] = useState<string>('');
+  const [orderBy, setOrderBy] = useState("");
+  const [orderDirection, setOrderDirection] = useState<"asc" | "desc">("asc");
 
   const location = useLocation();
   const query = new URLSearchParams(location.search);
   const uploadIdFromUrl = query.get('id');
+
+  // Build ordering string
+  const ordering = orderBy ? (orderDirection === "desc" ? `-${orderBy}` : orderBy) : "";
 
   const { data, isLoading, isFetching, error } = useTripRecords({
     page,
@@ -45,6 +91,7 @@ export default function TripRecordsPage() {
     toDate: toDate || undefined,
     uploadId: uploadIdFromUrl ? Number(uploadIdFromUrl) : undefined,
     tripStatus: tripStatus || undefined,
+    ordering,
   });
 
   const total = data?.count ?? 0;
@@ -55,6 +102,20 @@ export default function TripRecordsPage() {
     const tId = setTimeout(() => setDebouncedSearch(search), 500);
     return () => clearTimeout(tId);
   }, [search]);
+
+  // Handle sorting
+  const handleSort = (field: string) => {
+    if (orderBy === field) {
+      // Toggle direction if clicking the same field
+      setOrderDirection(orderDirection === "asc" ? "desc" : "asc");
+    } else {
+      // Set new field and default to ascending
+      setOrderBy(field);
+      setOrderDirection("asc");
+    }
+    // Reset to first page when sorting changes
+    setPage(1);
+  };
 
   return (
     <>
@@ -108,9 +169,9 @@ export default function TripRecordsPage() {
                 <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('trips.tableHeaders.driver')}</TableCell>
                 <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('trips.tableHeaders.tripUuid')}</TableCell>
                 <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('trips.tableHeaders.status')}</TableCell>
-                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('trips.tableHeaders.fare')}</TableCell>
-                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('trips.tableHeaders.distance')}</TableCell>
-                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('trips.tableHeaders.created')}</TableCell>
+                <SortableHeader field="fare_amount" label={t('trips.tableHeaders.fare')} currentOrderBy={orderBy} currentDirection={orderDirection} onSort={handleSort} />
+                <SortableHeader field="trip_distance" label={t('trips.tableHeaders.distance')} currentOrderBy={orderBy} currentDirection={orderDirection} onSort={handleSort} />
+                <SortableHeader field="created_at" label={t('trips.tableHeaders.created')} currentOrderBy={orderBy} currentDirection={orderDirection} onSort={handleSort} />
               </TableRow>
             </TableHeader>
             <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">

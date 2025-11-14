@@ -37,7 +37,8 @@ const fetchDrivers = async (
   companyFilter: string = "All", 
   page: number = 1, 
   docStatusFilter: string = "all",
-  searchTerm: string = ""
+  searchTerm: string = "",
+  ordering: string = ""
 ): Promise<DriversResponse> => {
   try {
     const params: any = {
@@ -58,6 +59,11 @@ const fetchDrivers = async (
     // Add search term if provided
     if (searchTerm.trim()) {
       params.search = searchTerm.trim();
+    }
+
+    // Add ordering if provided
+    if (ordering) {
+      params.ordering = ordering;
     }
 
     console.log('Making API request to:', `${config.API_BASE_URL}/v1/drivers/`);
@@ -93,17 +99,18 @@ export const useDrivers = (
   page: number = 1, 
   refreshKey: number = 0,
   docStatusFilter: string = "all",
-  searchTerm: string = ""
+  searchTerm: string = "",
+  ordering: string = ""
 ) => {
   const { token, isLoading: authLoading } = useAuth();
 
   const { data, isLoading, error, isFetching, refetch } = useQuery({
-    queryKey: ['drivers', companyFilter, page, refreshKey, docStatusFilter, searchTerm],
+    queryKey: ['drivers', companyFilter, page, refreshKey, docStatusFilter, searchTerm, ordering],
     queryFn: () => {
       if (!token) {
         throw new Error('No authentication token available');
       }
-      return fetchDrivers(token, companyFilter, page, docStatusFilter, searchTerm);
+      return fetchDrivers(token, companyFilter, page, docStatusFilter, searchTerm, ordering);
     },
     enabled: !!token && !authLoading, // Wait for auth to finish loading
   });

@@ -62,6 +62,9 @@ const TableSkeleton = () => {
             <div className="h-4 bg-gray-200 rounded dark:bg-gray-700 w-20"></div>
           </TableCell>
           <TableCell className="px-3 py-2">
+            <div className="h-4 bg-gray-200 rounded dark:bg-gray-700 w-24"></div>
+          </TableCell>
+          <TableCell className="px-3 py-2">
             <div className="flex gap-2">
               <div className="h-5 w-5 bg-gray-200 rounded dark:bg-gray-700"></div>
               <div className="h-5 w-5 bg-gray-200 rounded dark:bg-gray-700"></div>
@@ -86,6 +89,47 @@ const LoadingSpinner = ({ size = "small" }: { size?: "small" | "medium" | "large
   );
 };
 
+// Sortable header component
+interface SortableHeaderProps {
+  field: string;
+  label: string;
+  currentOrderBy: string;
+  currentDirection: "asc" | "desc";
+  onSort: (field: string) => void;
+}
+
+const SortableHeader = ({ field, label, currentOrderBy, currentDirection, onSort }: SortableHeaderProps) => {
+  const isActive = currentOrderBy === field;
+  
+  return (
+    <TableCell 
+      isHeader 
+      className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500 cursor-pointer hover:bg-gray-50 dark:hover:bg-white/[0.05] transition-colors select-none"
+      onClick={() => onSort(field)}
+    >
+      <div className="flex items-center gap-1">
+        <span>{label}</span>
+        <div className="flex flex-col">
+          <svg 
+            className={`w-3 h-3 ${isActive && currentDirection === 'asc' ? 'text-blue-600' : 'text-gray-400'}`} 
+            fill="currentColor" 
+            viewBox="0 0 20 20"
+          >
+            <path d="M5 10l5-5 5 5H5z" />
+          </svg>
+          <svg 
+            className={`w-3 h-3 -mt-1 ${isActive && currentDirection === 'desc' ? 'text-blue-600' : 'text-gray-400'}`} 
+            fill="currentColor" 
+            viewBox="0 0 20 20"
+          >
+            <path d="M15 10l-5 5-5-5h10z" />
+          </svg>
+        </div>
+      </div>
+    </TableCell>
+  );
+};
+
 export default function BasicTableOne() {
   const { t } = useTranslation();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -97,10 +141,15 @@ export default function BasicTableOne() {
   const [refreshKey, setRefreshKey] = useState(0);
   const [companyFilter, setCompanyFilter] = useState("All");
   const [isSearching, setIsSearching] = useState(false);
+  const [orderBy, setOrderBy] = useState("");
+  const [orderDirection, setOrderDirection] = useState<"asc" | "desc">("asc");
 
   const { companies, isLoading: companiesLoading, error: companiesError } = useCompanies();
   
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Build ordering string
+  const ordering = orderBy ? (orderDirection === "desc" ? `-${orderBy}` : orderBy) : "";
 
   // Use debouncedSearchTerm in the API call
   const { data, isLoading: driversLoading, error: driversError, isFetching } = useDrivers(
@@ -108,7 +157,8 @@ export default function BasicTableOne() {
     currentPage, 
     refreshKey,
     docStatusFilter,
-    debouncedSearchTerm
+    debouncedSearchTerm,
+    ordering
   );
   
   // Debounce effect - 0.5 second delay
@@ -145,6 +195,20 @@ export default function BasicTableOne() {
   const [selectedDriverId, setSelectedDriverId] = useState<number | null>(null);
 
   const [isExporting, setIsExporting] = useState(false);
+
+  // Handle sorting
+  const handleSort = (field: string) => {
+    if (orderBy === field) {
+      // Toggle direction if clicking the same field
+      setOrderDirection(orderDirection === "asc" ? "desc" : "asc");
+    } else {
+      // Set new field and default to ascending
+      setOrderBy(field);
+      setOrderDirection("asc");
+    }
+    // Reset to first page when sorting changes
+    setCurrentPage(1);
+  };
 
   if (driversError) return (
     <div className="p-6">
@@ -351,17 +415,18 @@ export default function BasicTableOne() {
             <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
               <TableRow>
                 <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('drivers.id')}</TableCell>
-                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('drivers.user')}</TableCell>
+                <SortableHeader field="first_name" label={t('drivers.user')} currentOrderBy={orderBy} currentDirection={orderDirection} onSort={handleSort} />
                 <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('drivers.phone')}</TableCell>
                 <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('drivers.email')}</TableCell>
                 <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('drivers.company')}</TableCell>
                 <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('drivers.reportsTo')}</TableCell>
-                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('drivers.agencyShare')}</TableCell>
-                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('drivers.insurance')}</TableCell>
+                <SortableHeader field="agency_share" label={t('drivers.agencyShare')} currentOrderBy={orderBy} currentDirection={orderDirection} onSort={handleSort} />
+                <SortableHeader field="insurance" label={t('drivers.insurance')} currentOrderBy={orderBy} currentDirection={orderDirection} onSort={handleSort} />
                 <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('drivers.nid')}</TableCell>
                 <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('drivers.license')}</TableCell>
                 <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('drivers.vehicleLicense')}</TableCell>
                 <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('drivers.contract')}</TableCell>
+                <SortableHeader field="updated_at" label={t('drivers.updatedAt')} currentOrderBy={orderBy} currentDirection={orderDirection} onSort={handleSort} />
                 <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('drivers.actions')}</TableCell>
               </TableRow>
             </TableHeader>
@@ -457,6 +522,9 @@ export default function BasicTableOne() {
                         const cls = hasExpired ? 'text-red-600' : 'text-green-600';
                         return <span className={cls}>{label}</span>;
                       })()}
+                    </TableCell>
+                    <TableCell className="px-3 py-2 text-sm text-gray-600 dark:text-gray-400">
+                      {driver.updated_at ? new Date(driver.updated_at).toLocaleString() : '-'}
                     </TableCell>
                     <TableCell className="px-3 py-2 text-sm">
                       <div className="flex gap-2">

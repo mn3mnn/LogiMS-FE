@@ -30,6 +30,7 @@ interface TableCellProps {
   isHeader?: boolean; // If true, renders as <th>, otherwise <td>
   className?: string; // Optional className for styling
   colSpan?: number; // Optional colspan for cells
+  onClick?: () => void; // Optional onClick handler
 }
 
 // Table Component
@@ -58,9 +59,18 @@ const TableCell: React.FC<TableCellProps> = ({
   isHeader = false,
   className,
   colSpan,
+  onClick,
 }) => {
   const CellTag = isHeader ? "th" : "td";
-  return <CellTag className={`max-w-xs break-words ${className}`} colSpan={colSpan}>{children}</CellTag>;
+  return (
+    <CellTag 
+      className={`max-w-xs ${className}`} 
+      colSpan={colSpan}
+      onClick={onClick}
+    >
+      {children}
+    </CellTag>
+  );
 };
 
 export { Table, TableHeader, TableBody, TableRow, TableCell };

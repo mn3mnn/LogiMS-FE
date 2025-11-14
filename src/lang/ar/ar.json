@@ -55,7 +55,8 @@
       "editDriver": "تعديل السائق",
       "deleteDriver": "حذف السائق",
       "exporting": "جاري التصدير...",
-      "export": "تصدير"
+      "export": "تصدير",
+      "updatedAt": "آخر تحديث"
     },
     "addDriver": {
     "title": "إضافة سائق جديد",

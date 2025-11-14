@@ -55,7 +55,8 @@
       "editDriver": "Fahrer bearbeiten",
       "deleteDriver": "Fahrer löschen",
       "exporting": "Wird exportiert...",
-      "export": "Exportieren"
+      "export": "Exportieren",
+      "updatedAt": "Aktualisiert am"
     },
     "addDriver": {
     "title": "Neuen Fahrer hinzufügen",
