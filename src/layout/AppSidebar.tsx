@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router";
+import { useTranslation } from "react-i18next";
 
 import {
   ChevronDownIcon,
@@ -11,45 +12,46 @@ import {
 import { useSidebar } from "../context/SidebarContext";
 
 type NavItem = {
-  name: string;
+  nameKey: string;
   icon: React.ReactNode;
   path?: string;
   pro?: boolean;
   new?: boolean;
-  children?: { name: string; path: string }[];
+  children?: { nameKey: string; path: string }[];
 };
 
-const navItems: NavItem[] = [
-  {
-    icon: <GridIcon />,
-    name: "Dashboard",
-    path: "/",
-  },
-  {
-    name: "Drivers",
-    icon: <ListIcon />,
-    path: "/basic-tables",
-  },
-  {
-    name: "File Uploads",
-    icon: <TableIcon />,
-    path: "/uploads",
-  },
-  {
-    name: "Payroll",
-    icon: <TableIcon />,
-    path: "/payroll/records",
-  },
-  {
-    name: "Trips",
-    icon: <TableIcon />,
-    path: "/trips/records",
-  },
-];
-
 const AppSidebar: React.FC = () => {
+  const { t } = useTranslation();
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const location = useLocation();
+
+  const navItems: NavItem[] = [
+    {
+      icon: <GridIcon />,
+      nameKey: "sidebar.dashboard",
+      path: "/",
+    },
+    {
+      nameKey: "sidebar.drivers",
+      icon: <ListIcon />,
+      path: "/basic-tables",
+    },
+    {
+      nameKey: "sidebar.fileUploads",
+      icon: <TableIcon />,
+      path: "/uploads",
+    },
+    {
+      nameKey: "sidebar.payroll",
+      icon: <TableIcon />,
+      path: "/payroll/records",
+    },
+    {
+      nameKey: "sidebar.trips",
+      icon: <TableIcon />,
+      path: "/trips/records",
+    },
+  ];
 
   const [openSubmenu, setOpenSubmenu] = useState<{
     type: "main";
@@ -93,7 +95,7 @@ const AppSidebar: React.FC = () => {
   const renderMenuItems = (items: NavItem[], menuType: "main") => (
     <ul className="flex flex-col gap-4">
       {items.map((nav, index) => (
-        <li key={nav.name}>
+        <li key={nav.nameKey}>
           {nav.children ? (
             <>
               <button
@@ -109,7 +111,7 @@ const AppSidebar: React.FC = () => {
                 </span>
                 {(isExpanded || isHovered || isMobileOpen) && (
                   <span className="menu-item-text flex items-center gap-2">
-                    {nav.name}
+                    {t(nav.nameKey)}
                     <ChevronDownIcon
                       className={`ml-auto transition-transform ${
                         openSubmenu?.type === menuType && openSubmenu?.index === index
@@ -136,7 +138,7 @@ const AppSidebar: React.FC = () => {
               >
                 <ul className="mt-2 ml-12 flex flex-col gap-2">
                   {nav.children.map((child) => (
-                    <li key={child.name}>
+                    <li key={child.nameKey}>
                       <Link
                         to={child.path}
                         className={`menu-item group ${
@@ -145,7 +147,7 @@ const AppSidebar: React.FC = () => {
                             : "menu-item-inactive"
                         }`}
                       >
-                        <span className="menu-item-text">{child.name}</span>
+                        <span className="menu-item-text">{t(child.nameKey)}</span>
                       </Link>
                     </li>
                   ))}
@@ -170,7 +172,7 @@ const AppSidebar: React.FC = () => {
               </span>
               {(isExpanded || isHovered || isMobileOpen) && (
                 <span className="menu-item-text flex items-center gap-2">
-                  {nav.name}
+                  {t(nav.nameKey)}
                   {nav.new && (
                     <span
                       className={`ml-auto ${
@@ -262,7 +264,7 @@ const AppSidebar: React.FC = () => {
                 }`}
               >
                 {isExpanded || isHovered || isMobileOpen ? (
-                  "Menu"
+                  t("sidebar.menu")
                 ) : (
                   <HorizontaLDots className="size-6" />
                 )}
