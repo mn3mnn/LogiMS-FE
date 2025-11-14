@@ -34,7 +34,7 @@ interface TableCellProps {
 
 // Table Component
 const Table: React.FC<TableProps> = ({ children, className }) => {
-  return <table className={`min-w-full  ${className}`}>{children}</table>;
+  return <table className={`w-full ${className}`}>{children}</table>;
 };
 
 // TableHeader Component
@@ -60,7 +60,7 @@ const TableCell: React.FC<TableCellProps> = ({
   colSpan,
 }) => {
   const CellTag = isHeader ? "th" : "td";
-  return <CellTag className={` ${className}`} colSpan={colSpan}>{children}</CellTag>;
+  return <CellTag className={`max-w-xs break-words ${className}`} colSpan={colSpan}>{children}</CellTag>;
 };
 
 export { Table, TableHeader, TableBody, TableRow, TableCell };

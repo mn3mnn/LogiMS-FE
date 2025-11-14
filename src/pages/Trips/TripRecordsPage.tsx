@@ -58,18 +58,18 @@ export default function TripRecordsPage() {
   return (
     <div className="p-6 space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Trip Records</h2>
+        <h2 className="text-2xl font-bold dark:text-white">Trip Records</h2>
       </div>
 
       <div className="w-full md:w-[430px]">
-        <label className="block text-sm mb-1">{t('trips.search')}</label>
-        <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder={t('trips.searchPlaceholder')} className="h-11 w-full rounded-lg border border-gray-200 bg-transparent px-3 py-2.5 text-sm" />
+        <label className="block text-sm mb-1 text-gray-600 dark:text-gray-300">{t('trips.search')}</label>
+        <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder={t('trips.searchPlaceholder')} className="h-11 w-full rounded-lg border border-gray-200 bg-transparent px-3 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800" />
       </div>
 
       <div className="flex flex-wrap gap-3 items-end mt-2">
         <div>
           <label className="block text-sm mb-1">{t('trips.company')}</label>
-          <select value={companyCode} onChange={(e) => { setCompanyCode(e.target.value as any); setPage(1); }} className="border rounded-lg px-3 py-2">
+          <select value={companyCode} onChange={(e) => { setCompanyCode(e.target.value as any); setPage(1); }} className="border rounded-lg px-3 py-2 dark:bg-gray-800 dark:text-white">
             <option value="All">{t('trips.all')}</option>
             {companies.filter(c => c.is_active).map(c => (
               <option key={c.code} value={c.code}>{c.name}</option>
@@ -78,15 +78,15 @@ export default function TripRecordsPage() {
         </div>
         <div>
           <label className="block text-sm mb-1">{t('trips.from')}</label>
-          <input type="date" value={fromDate} onChange={(e) => { setFromDate(e.target.value); setPage(1); }} className="border rounded-lg px-3 py-2" />
+          <input type="date" value={fromDate} onChange={(e) => { setFromDate(e.target.value); setPage(1); }} className="border rounded-lg px-3 py-2 dark:bg-gray-800 dark:text-white" />
         </div>
         <div>
           <label className="block text-sm mb-1">{t('trips.to')}</label>
-          <input type="date" value={toDate} onChange={(e) => { setToDate(e.target.value); setPage(1); }} className="border rounded-lg px-3 py-2" />
+          <input type="date" value={toDate} onChange={(e) => { setToDate(e.target.value); setPage(1); }} className="border rounded-lg px-3 py-2 dark:bg-gray-800 dark:text-white" />
         </div>
         <div>
           <label className="block text-sm mb-1">{t('trips.tripStatus')}</label>
-          <select value={tripStatus} onChange={(e) => { setTripStatus(e.target.value); setPage(1); }} className="border rounded-lg px-3 py-2">
+          <select value={tripStatus} onChange={(e) => { setTripStatus(e.target.value); setPage(1); }} className="border rounded-lg px-3 py-2 dark:bg-gray-800 dark:text-white">
             <option value="">{t('trips.all')}</option>
             <option value="completed">completed</option>
             <option value="failed">failed</option>
@@ -97,10 +97,10 @@ export default function TripRecordsPage() {
         </div>
       </div>
 
-      <div className="rounded-xl border border-gray-200 bg-white">
+      <div className="rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
         <div className="max-w-full overflow-x-auto">
           <Table>
-            <TableHeader className="border-b border-gray-100">
+            <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
               <TableRow>
                 <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('trips.tableHeaders.id')}</TableCell>
                 <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('trips.tableHeaders.upload')}</TableCell>
@@ -113,18 +113,18 @@ export default function TripRecordsPage() {
                 <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('trips.tableHeaders.created')}</TableCell>
               </TableRow>
             </TableHeader>
-            <TableBody className="divide-y divide-gray-100">
+            <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
               {error && (
-                <TableRow><td colSpan={8} className="px-3 py-3 text-red-600 text-sm">{String((error as any)?.message || error)}</td></TableRow>
+                <TableRow><TableCell colSpan={9} className="px-3 py-3 text-red-600 text-sm">{String((error as any)?.message || error)}</TableCell></TableRow>
               )}
               {isLoading && (
-                <TableRow><td colSpan={8} className="px-3 py-5 text-sm">{t('trips.loading')}</td></TableRow>
+                <TableRow><TableCell colSpan={9} className="px-3 py-5 text-sm">{t('trips.loading')}</TableCell></TableRow>
               )}
               {!isLoading && results.length === 0 && (
-                <TableRow><td colSpan={8} className="px-3 py-5 text-sm">{t('trips.noRecordsFound')}</td></TableRow>
+                <TableRow><TableCell colSpan={9} className="px-3 py-5 text-sm">{t('trips.noRecordsFound')}</TableCell></TableRow>
               )}
               {results.map((r) => (
-                <TableRow key={r.id} className="transition-colors hover:bg-gray-50">
+                <TableRow key={r.id} className="transition-colors hover:bg-gray-50 dark:hover:bg-white/[0.02]">
                   <TableCell className="px-3 py-2 text-sm">{r.id}</TableCell>
                   <TableCell className="px-3 py-2 text-sm">
                     <Link to={`/uploads?id=${r.file_upload}`} className="text-blue-600 hover:underline">{r.file_upload}</Link>
@@ -141,7 +141,7 @@ export default function TripRecordsPage() {
                   <TableCell className="px-3 py-2 text-sm">{r.trip_status ?? '-'}</TableCell>
                   <TableCell className="px-3 py-2 text-sm">{r.fare_amount ?? '-'}</TableCell>
                   <TableCell className="px-3 py-2 text-sm">{r.trip_distance ?? '-'}</TableCell>
-                  <TableCell className="px-3 py-2 text-xs text-gray-500">{new Date(r.created_at).toLocaleString()}</TableCell>
+                  <TableCell className="px-3 py-2 text-xs text-gray-500 dark:text-gray-400">{new Date(r.created_at).toLocaleString()}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -192,7 +192,7 @@ export default function TripRecordsPage() {
           </div>
 
           <div className="flex justify-end">
-            <div className="text-gray-700 text-sm flex items-center gap-2">
+            <div className="text-gray-700 dark:text-gray-300 text-sm flex items-center gap-2">
               {t('trips.totalRecords', { count: total })}
               {isFetching && <LoadingSpinner size="small" />}
             </div>

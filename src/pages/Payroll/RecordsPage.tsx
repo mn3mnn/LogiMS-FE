@@ -52,7 +52,7 @@ export default function RecordsPage() {
   return (
     <div className="p-6 space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Payroll Records</h2>
+        <h2 className="text-2xl font-bold dark:text-white">Payroll Records</h2>
       </div>
 
       {/* Search above filters (match Drivers width/UX) */}
@@ -111,13 +111,13 @@ export default function RecordsPage() {
             </TableHeader>
             <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
               {error && (
-                <TableRow><td colSpan={12} className="px-3 py-3 text-red-600 text-sm">{String((error as any)?.message || error)}</td></TableRow>
+                <TableRow><TableCell colSpan={12} className="px-3 py-3 text-red-600 text-sm">{String((error as any)?.message || error)}</TableCell></TableRow>
               )}
               {isLoading && (
-                <TableRow><td colSpan={12} className="px-3 py-5 text-sm">{t('payroll.loading')}</td></TableRow>
+                <TableRow><TableCell colSpan={12} className="px-3 py-5 text-sm">{t('payroll.loading')}</TableCell></TableRow>
               )}
               {!isLoading && results.length === 0 && (
-                <TableRow><td colSpan={12} className="px-3 py-5 text-sm">{t('payroll.noRecordsFound')}</td></TableRow>
+                <TableRow><TableCell colSpan={12} className="px-3 py-5 text-sm">{t('payroll.noRecordsFound')}</TableCell></TableRow>
               )}
               {results.map((r) => (
                 <TableRow key={r.id} className="transition-colors hover:bg-gray-50 dark:hover:bg-white/[0.02]">
@@ -152,7 +152,7 @@ export default function RecordsPage() {
                   <TableCell className="px-3 py-2 text-sm">{r.insurance_deduction ?? '-'}</TableCell>
                   <TableCell className="px-3 py-2 text-sm">{r.total_deductions ?? '-'}</TableCell>
                   <TableCell className="px-3 py-2 text-sm">{r.final_net_earnings ?? '-'}</TableCell>
-                  <TableCell className="px-3 py-2 text-sm">{new Date(r.created_at).toLocaleString()}</TableCell>
+                  <TableCell className="px-3 py-2 text-xs text-gray-500">{new Date(r.created_at).toLocaleString()}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -203,7 +203,7 @@ export default function RecordsPage() {
           </div>
 
           <div className="flex justify-end">
-            <div className="text-gray-700 text-sm flex items-center gap-2">
+            <div className="text-gray-700 dark:text-gray-300 text-sm flex items-center gap-2">
               {t('payroll.totalRecords', { count: total })}
               {isFetching && <LoadingSpinner size="small" />}
             </div>
