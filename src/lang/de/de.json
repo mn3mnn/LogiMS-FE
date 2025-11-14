@@ -201,7 +201,9 @@
       "updateDriver": "Fahrer aktualisieren",
       "updatingDriver": "Fahrer wird aktualisiert...",
       "delete": "Löschen",
-      "deleteDocument": "Dokument löschen"
+      "deleteDocument": "Dokument löschen",
+      "view": "Ansehen",
+      "viewDocument": "Dokument ansehen"
     },
     "selectCompany": "Unternehmen auswählen *",
     "selectLicenseType": "Lizenztyp auswählen *",

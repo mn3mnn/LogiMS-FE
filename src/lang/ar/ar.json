@@ -201,7 +201,9 @@
       "updateDriver": "تحديث السائق",
       "updatingDriver": "جاري تحديث السائق...",
       "delete": "حذف",
-      "deleteDocument": "حذف المستند"
+      "deleteDocument": "حذف المستند",
+      "view": "عرض",
+      "viewDocument": "عرض المستند"
     },
     "selectCompany": "اختر شركة *",
     "selectLicenseType": "اختر نوع الرخصة *",

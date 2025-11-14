@@ -201,7 +201,9 @@
       "updateDriver": "Update Driver",
       "updatingDriver": "Updating Driver...",
       "delete": "Delete",
-      "deleteDocument": "Delete document"
+      "deleteDocument": "Delete document",
+      "view": "View",
+      "viewDocument": "View document"
     },
     "selectCompany": "Select a company",
     "selectLicenseType": "Select License Type",

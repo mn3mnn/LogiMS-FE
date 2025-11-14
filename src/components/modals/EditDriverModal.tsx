@@ -589,9 +589,29 @@ interface EditDriverModalProps {
     // Helper function to get filename from file path or File object
     const getFileName = (file: string | File): string => {
       if (typeof file === 'string') {
-        return file.split('/').pop() || t('editDriver.fileLabels.uploadedFile');
+        // Extract filename from URL, handling R2 storage URLs
+        const urlParts = file.split('/');
+        const lastPart = urlParts[urlParts.length - 1];
+        // Remove query parameters if present
+        const filename = lastPart.split('?')[0];
+        // Decode URL encoding
+        return decodeURIComponent(filename) || t('editDriver.fileLabels.uploadedFile');
       }
       return file.name;
+    };
+
+    // Helper function to truncate filename for display
+    const truncateFileName = (filename: string, maxLength: number = 30): string => {
+      if (filename.length <= maxLength) return filename;
+      const extension = filename.split('.').pop() || '';
+      const nameWithoutExt = filename.substring(0, filename.lastIndexOf('.'));
+      const truncatedName = nameWithoutExt.substring(0, maxLength - extension.length - 4);
+      return `${truncatedName}...${extension}`;
+    };
+
+    // Helper to check if file is a URL string (existing file)
+    const isExistingFile = (file: string | File): boolean => {
+      return typeof file === 'string' && file.startsWith('http');
     };
 
     // Helper function to check if a file exists
@@ -928,6 +948,21 @@ interface EditDriverModalProps {
                         disabled={isFetchingDriver}
                         className="flex-1 border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-gray-600 dark:file:text-gray-300 disabled:opacity-50"
                       />
+                      {hasFile(contract.file) && isExistingFile(contract.file) && (
+                        <a
+                          href={typeof contract.file === 'string' ? contract.file : '#'}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm whitespace-nowrap flex items-center gap-1"
+                          title={t('editDriver.buttons.viewDocument')}
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                          {t('editDriver.buttons.view')}
+                        </a>
+                      )}
                       {hasFile(contract.file) && (
                         <button
                           type="button"
@@ -941,8 +976,12 @@ interface EditDriverModalProps {
                       )}
                     </div>
                     {hasFile(contract.file) && (
-                      <p className="text-xs text-green-600 mt-1">
-                        {t('editDriver.fileLabels.currentFile')}: {getFileName(contract.file)}
+                      <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 flex items-center gap-1" title={getFileName(contract.file)}>
+                        <svg className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <span className="font-medium">{t('editDriver.fileLabels.currentFile')}:</span>
+                        <span className="truncate">{truncateFileName(getFileName(contract.file), 40)}</span>
                       </p>
                     )}
                     <p className="text-xs text-gray-500 mt-1">{t('editDriver.hints.contractDocument')}</p>
@@ -1026,6 +1065,21 @@ interface EditDriverModalProps {
                       disabled={isFetchingDriver}
                       className="flex-1 border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-gray-600 dark:file:text-gray-300 disabled:opacity-50"
                     />
+                    {hasFile(licenseData.file) && isExistingFile(licenseData.file) && (
+                      <a
+                        href={typeof licenseData.file === 'string' ? licenseData.file : '#'}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm whitespace-nowrap flex items-center gap-1"
+                        title={t('editDriver.buttons.viewDocument')}
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        {t('editDriver.buttons.view')}
+                      </a>
+                    )}
                     {hasFile(licenseData.file) && (
                       <button
                         type="button"
@@ -1039,8 +1093,12 @@ interface EditDriverModalProps {
                     )}
                   </div>
                   {hasFile(licenseData.file) && (
-                    <p className="text-xs text-green-600 mt-1">
-                      {t('editDriver.fileLabels.currentFile')}: {getFileName(licenseData.file)}
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 flex items-center gap-1" title={getFileName(licenseData.file)}>
+                      <svg className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      <span className="font-medium">{t('editDriver.fileLabels.currentFile')}:</span>
+                      <span className="truncate">{truncateFileName(getFileName(licenseData.file), 40)}</span>
                     </p>
                   )}
                   <p className="text-xs text-gray-500 mt-1">{t('editDriver.hints.licenseDocument')}</p>
@@ -1106,6 +1164,21 @@ interface EditDriverModalProps {
                       disabled={isFetchingDriver}
                       className="flex-1 border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-gray-600 dark:file:text-gray-300 disabled:opacity-50"
                     />
+                    {hasFile(nationalIdData.file) && isExistingFile(nationalIdData.file) && (
+                      <a
+                        href={typeof nationalIdData.file === 'string' ? nationalIdData.file : '#'}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm whitespace-nowrap flex items-center gap-1"
+                        title={t('editDriver.buttons.viewDocument')}
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        {t('editDriver.buttons.view')}
+                      </a>
+                    )}
                     {hasFile(nationalIdData.file) && (
                       <button
                         type="button"
@@ -1119,8 +1192,12 @@ interface EditDriverModalProps {
                     )}
                   </div>
                   {hasFile(nationalIdData.file) && (
-                    <p className="text-xs text-green-600 mt-1">
-                      {t('editDriver.fileLabels.currentFile')}: {getFileName(nationalIdData.file)}
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 flex items-center gap-1" title={getFileName(nationalIdData.file)}>
+                      <svg className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      <span className="font-medium">{t('editDriver.fileLabels.currentFile')}:</span>
+                      <span className="truncate">{truncateFileName(getFileName(nationalIdData.file), 40)}</span>
                     </p>
                   )}
                   <p className="text-xs text-gray-500 mt-1">{t('editDriver.hints.nationalIdDocument')}</p>
@@ -1250,6 +1327,21 @@ interface EditDriverModalProps {
                       disabled={isFetchingDriver}
                       className="flex-1 border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-gray-600 dark:file:text-gray-300 disabled:opacity-50"
                     />
+                    {hasFile(vehicleLicenseData.file) && isExistingFile(vehicleLicenseData.file) && (
+                      <a
+                        href={typeof vehicleLicenseData.file === 'string' ? vehicleLicenseData.file : '#'}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm whitespace-nowrap flex items-center gap-1"
+                        title={t('editDriver.buttons.viewDocument')}
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        {t('editDriver.buttons.view')}
+                      </a>
+                    )}
                     {hasFile(vehicleLicenseData.file) && (
                       <button
                         type="button"
@@ -1263,8 +1355,12 @@ interface EditDriverModalProps {
                     )}
                   </div>
                   {hasFile(vehicleLicenseData.file) && (
-                    <p className="text-xs text-green-600 mt-1">
-                      {t('editDriver.fileLabels.currentFile')}: {getFileName(vehicleLicenseData.file)}
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 flex items-center gap-1" title={getFileName(vehicleLicenseData.file)}>
+                      <svg className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      <span className="font-medium">{t('editDriver.fileLabels.currentFile')}:</span>
+                      <span className="truncate">{truncateFileName(getFileName(vehicleLicenseData.file), 40)}</span>
                     </p>
                   )}
                   <p className="text-xs text-gray-500 mt-1">{t('editDriver.hints.vehicleLicenseDocument')}</p>
