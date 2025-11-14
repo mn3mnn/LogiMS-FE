@@ -348,14 +348,13 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    {t('addDriver.fields.email')} <span className="text-red-500">*</span>
+                    {t('addDriver.fields.email')}
                   </label>
                   <input
                     type="email"
                     name="email"
                     value={driverData.email}
                     onChange={handleDriverChange}
-                    required
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
                 </div>
