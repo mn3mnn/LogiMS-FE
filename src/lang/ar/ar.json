@@ -392,8 +392,8 @@
     },
     "dashboard": {
       "title": "نظرة عامة على لوحة التحكم",
-      "pageTitle": "لوحة تحكم React.js للتجارة الإلكترونية | TailAdmin - قالب لوحة تحكم React.js",
-      "pageDescription": "هذه هي صفحة لوحة تحكم React.js للتجارة الإلكترونية لـ TailAdmin - قالب لوحة تحكم React.js Tailwind CSS",
+      "pageTitle": "لوحة التحكم | Kresh GmbH MS",
+      "pageDescription": "نظام إدارة Kresh GmbH - لوحة تحكم الخدمات اللوجستية وإدارة السائقين",
       "company": "الشركة",
       "allCompanies": "جميع الشركات",
       "period": "الفترة",

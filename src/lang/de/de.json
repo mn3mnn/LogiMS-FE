@@ -391,8 +391,8 @@
   },
   "dashboard": {
     "title": "Dashboard Übersicht",
-    "pageTitle": "React.js E-Commerce Dashboard | TailAdmin - React.js Admin Dashboard Template",
-    "pageDescription": "Dies ist die React.js E-Commerce Dashboard-Seite für TailAdmin - React.js Tailwind CSS Admin Dashboard Template",
+    "pageTitle": "Dashboard | Kresh GmbH MS",
+    "pageDescription": "Kresh GmbH Management System - Logistik- und Fahrerverwaltungs-Dashboard",
     "company": "Unternehmen",
     "allCompanies": "Alle Unternehmen",
     "period": "Zeitraum",
