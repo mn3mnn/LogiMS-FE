@@ -484,6 +484,20 @@ export default function BasicTableOne() {
                           : status === 'expired'
                             ? { label: 'Expired', cls: 'text-red-600' }
                             : { label: 'Valid', cls: 'text-green-600' };
+                        const fileUrl = doc?.file;
+                        if (fileUrl) {
+                          return (
+                            <a
+                              href={fileUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={`${cls} hover:underline cursor-pointer`}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              {label}
+                            </a>
+                          );
+                        }
                         return <span className={cls}>{label}</span>;
                       })()}
                     </TableCell>
@@ -496,6 +510,20 @@ export default function BasicTableOne() {
                           : status === 'expired'
                             ? { label: 'Expired', cls: 'text-red-600' }
                             : { label: 'Valid', cls: 'text-green-600' };
+                        const fileUrl = doc?.file;
+                        if (fileUrl) {
+                          return (
+                            <a
+                              href={fileUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={`${cls} hover:underline cursor-pointer`}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              {label}
+                            </a>
+                          );
+                        }
                         return <span className={cls}>{label}</span>;
                       })()}
                     </TableCell>
@@ -508,18 +536,47 @@ export default function BasicTableOne() {
                           : status === 'expired'
                             ? { label: 'Expired', cls: 'text-red-600' }
                             : { label: 'Valid', cls: 'text-green-600' };
+                        const fileUrl = doc?.file;
+                        if (fileUrl) {
+                          return (
+                            <a
+                              href={fileUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={`${cls} hover:underline cursor-pointer`}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              {label}
+                            </a>
+                          );
+                        }
                         return <span className={cls}>{label}</span>;
                       })()}
                     </TableCell>
                     <TableCell className="px-3 py-2 text-sm">
                       {(() => {
-                        const contracts = (driver.contracts || []) as Array<{ status?: 'valid' | 'expired' }>;
+                        const contracts = (driver.contracts || []) as Array<{ status?: 'valid' | 'expired', file?: string }>;
                         if (!contracts.length) {
                           return <span className="text-red-600">{t('drivers.noDocument')}</span>;
                         }
                         const hasExpired = contracts.some(c => c?.status === 'expired');
                         const label = hasExpired ? 'Expired' : 'Valid';
                         const cls = hasExpired ? 'text-red-600' : 'text-green-600';
+                        // Use the first contract's file if available
+                        const fileUrl = contracts[0]?.file;
+                        if (fileUrl) {
+                          return (
+                            <a
+                              href={fileUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={`${cls} hover:underline cursor-pointer`}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              {label}
+                            </a>
+                          );
+                        }
                         return <span className={cls}>{label}</span>;
                       })()}
                     </TableCell>
