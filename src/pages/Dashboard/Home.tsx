@@ -78,24 +78,24 @@ export default function Home() {
   return (
     <>
       <PageMeta
-        title="React.js Ecommerce Dashboard | TailAdmin - React.js Admin Dashboard Template"
-        description="This is React.js Ecommerce Dashboard page for TailAdmin - React.js Tailwind CSS Admin Dashboard Template"
+        title={t('dashboard.pageTitle')}
+        description={t('dashboard.pageDescription')}
       />
       <div className="grid grid-cols-12 gap-4 md:gap-6">
         <div className="col-span-12 space-y-6">
 
           {/* Dashboard filters */}
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h1 className="text-lg font-semibold text-gray-900">Dashboard Overview</h1>
+            <h1 className="text-lg font-semibold text-gray-900">{t('dashboard.title')}</h1>
             <div className="flex flex-wrap items-center gap-3">
               <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-500">Company</span>
+                <span className="text-xs text-gray-500">{t('dashboard.company')}</span>
                 <select
                   value={selectedCompany}
                   onChange={(e) => setSelectedCompany(e.target.value as string | "all")}
                   className="h-8 rounded-md border border-gray-300 bg-white px-2 text-xs text-gray-700 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 >
-                  <option value="all">All companies</option>
+                  <option value="all">{t('dashboard.allCompanies')}</option>
                   {companies.map((c) => (
                     <option key={c.code} value={c.code}>
                       {c.name}
@@ -104,16 +104,16 @@ export default function Home() {
                 </select>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-500">Period</span>
+                <span className="text-xs text-gray-500">{t('dashboard.period')}</span>
                 <select
                   value={dateRange}
                   onChange={(e) => setDateRange(e.target.value as DateRangeKey)}
                   className="h-8 rounded-md border border-gray-300 bg-white px-2 text-xs text-gray-700 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 >
-                  <option value="all">All time</option>
-                  <option value="30d">Last 30 days</option>
-                  <option value="90d">Last 90 days</option>
-                  <option value="year">This year</option>
+                  <option value="all">{t('dashboard.allTime')}</option>
+                  <option value="30d">{t('dashboard.last30Days')}</option>
+                  <option value="90d">{t('dashboard.last90Days')}</option>
+                  <option value="year">{t('dashboard.thisYear')}</option>
                 </select>
               </div>
             </div>
@@ -126,7 +126,7 @@ export default function Home() {
               const total = tripsStatusPieData.reduce((sum: number, item: { value: number }) => sum + item.value, 0);
               return (
                 <div className="lg:col-span-1 rounded-xl border p-4 bg-white shadow-sm">
-                  <div className="text-sm font-medium mb-4">{t('dashboard.tripsByStatus')} - Details</div>
+                  <div className="text-sm font-medium mb-4">{t('dashboard.tripsByStatus')} - {t('dashboard.details')}</div>
                   <div className="space-y-2 max-h-[400px] overflow-y-auto">
                     {tripsStatusPieData
                       .sort((a: { value: number }, b: { value: number }) => b.value - a.value)
@@ -204,7 +204,7 @@ export default function Home() {
                   </div>
                   <div className="mt-4 pt-4 border-t border-gray-200">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-semibold text-gray-700">Total</span>
+                      <span className="text-sm font-semibold text-gray-700">{t('dashboard.total')}</span>
                       <span className="text-base font-bold text-gray-900 tabular-nums">
                         {total.toLocaleString()}
                       </span>
@@ -217,19 +217,19 @@ export default function Home() {
             {/* Payment Summary (wider) */}
             <div className="lg:col-span-2 rounded-xl border p-4 bg-white shadow-sm">
               <div className="flex items-center justify-between mb-4">
-                <div className="text-sm font-medium">Payment Summary</div>
+                <div className="text-sm font-medium">{t('dashboard.paymentSummary')}</div>
                 <button
                   type="button"
                   onClick={handleOpenPaymentRecords}
                   className="text-xs font-medium text-blue-600 hover:text-blue-800 hover:underline"
                 >
-                  View payment records
+                  {t('dashboard.viewPaymentRecords')}
                 </button>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Gross revenue */}
                 <div className="p-5 bg-gray-50 rounded-lg shadow-sm">
-                  <div className="text-sm text-gray-500 mb-2">Gross Revenue</div>
+                  <div className="text-sm text-gray-500 mb-2">{t('dashboard.grossRevenue')}</div>
                   <div className="text-2xl font-bold text-gray-900 tabular-nums">
                     {paySummary?.total_revenue != null
                       ? `€${Number(paySummary.total_revenue).toLocaleString('en-US', {
@@ -238,12 +238,12 @@ export default function Home() {
                         })}`
                       : '-'}
                   </div>
-                  <div className="text-xs text-gray-400 mt-1">Total revenue in selected period</div>
+                  <div className="text-xs text-gray-400 mt-1">{t('dashboard.totalRevenueInPeriod')}</div>
                 </div>
 
                 {/* Agency profit: agency share deducted from drivers */}
                 <div className="p-5 bg-gray-50 rounded-lg shadow-sm">
-                  <div className="text-sm text-gray-500 mb-2">Agency Profit</div>
+                  <div className="text-sm text-gray-500 mb-2">{t('dashboard.agencyProfit')}</div>
                   <div className="text-2xl font-bold text-gray-900 tabular-nums">
                     {paySummary?.agency_profit != null
                       ? `€${Number(paySummary.agency_profit).toLocaleString('en-US', {
@@ -252,12 +252,12 @@ export default function Home() {
                         })}`
                       : '-'}
                   </div>
-                  <div className="text-xs text-gray-400 mt-1">Total agency share deducted from drivers</div>
+                  <div className="text-xs text-gray-400 mt-1">{t('dashboard.totalAgencyShareDeducted')}</div>
                 </div>
 
                 {/* Tax + insurance deductions */}
                 <div className="p-5 bg-gray-50 rounded-lg shadow-sm">
-                  <div className="text-sm text-gray-500 mb-2">Tax + Insurance Deductions</div>
+                  <div className="text-sm text-gray-500 mb-2">{t('dashboard.taxInsuranceDeductions')}</div>
                   <div className="text-2xl font-bold text-gray-900 tabular-nums">
                     {paySummary?.total_tax_and_insurance != null
                       ? `€${Number(paySummary.total_tax_and_insurance).toLocaleString('en-US', {
@@ -266,12 +266,12 @@ export default function Home() {
                         })}`
                       : '-'}
                   </div>
-                  <div className="text-xs text-gray-400 mt-1">Total tax and insurance withheld</div>
+                  <div className="text-xs text-gray-400 mt-1">{t('dashboard.totalTaxInsuranceWithheld')}</div>
                 </div>
 
                 {/* Driver net earnings */}
                 <div className="p-5 bg-gray-50 rounded-lg shadow-sm">
-                  <div className="text-sm text-gray-500 mb-2">Driver Net Earnings</div>
+                  <div className="text-sm text-gray-500 mb-2">{t('dashboard.driverNetEarnings')}</div>
                   <div className="text-2xl font-bold text-gray-900 tabular-nums">
                     {paySummary?.total_net_earnings != null
                       ? `€${Number(paySummary.total_net_earnings).toLocaleString('en-US', {
@@ -280,7 +280,7 @@ export default function Home() {
                         })}`
                       : '-'}
                   </div>
-                  <div className="text-xs text-gray-400 mt-1">Paid to drivers (after all deductions)</div>
+                  <div className="text-xs text-gray-400 mt-1">{t('dashboard.paidToDrivers')}</div>
                 </div>
               </div>
             </div>
@@ -332,11 +332,11 @@ export default function Home() {
                         </div>
                         <div className="grid grid-cols-2 gap-3 pt-3 border-t border-gray-100">
                           <div>
-                            <div className="text-xs text-gray-500 mb-1">Total Fare</div>
+                            <div className="text-xs text-gray-500 mb-1">{t('dashboard.totalFare')}</div>
                             <div className="text-lg font-bold tabular-nums text-gray-900">€{fareNum.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                           </div>
                           <div>
-                            <div className="text-xs text-gray-500 mb-1">Total Trips</div>
+                            <div className="text-xs text-gray-500 mb-1">{t('dashboard.totalTrips')}</div>
                             <div className="text-lg font-bold tabular-nums text-gray-900">{Number(d.trips || 0).toLocaleString()} {t('dashboard.trips')}</div>
                           </div>
                         </div>
