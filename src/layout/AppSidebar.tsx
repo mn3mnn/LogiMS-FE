@@ -1,13 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router";
 import { useTranslation } from "react-i18next";
+import { 
+  HiOutlineHome, 
+  HiOutlineUsers, 
+  HiOutlineCloudUpload, 
+  HiOutlineCurrencyDollar,
+  HiOutlineMap
+} from "react-icons/hi";
 
 import {
   ChevronDownIcon,
-  GridIcon,
   HorizontaLDots,
-  ListIcon,
-  TableIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
 
@@ -27,28 +31,28 @@ const AppSidebar: React.FC = () => {
 
   const navItems: NavItem[] = [
     {
-      icon: <GridIcon />,
+      icon: <HiOutlineHome className="w-5 h-5" />,
       nameKey: "sidebar.dashboard",
       path: "/",
     },
     {
       nameKey: "sidebar.drivers",
-      icon: <ListIcon />,
+      icon: <HiOutlineUsers className="w-5 h-5" />,
       path: "/basic-tables",
     },
     {
       nameKey: "sidebar.fileUploads",
-      icon: <TableIcon />,
+      icon: <HiOutlineCloudUpload className="w-5 h-5" />,
       path: "/uploads",
     },
     {
       nameKey: "sidebar.payroll",
-      icon: <TableIcon />,
+      icon: <HiOutlineCurrencyDollar className="w-5 h-5" />,
       path: "/payroll/records",
     },
     {
       nameKey: "sidebar.trips",
-      icon: <TableIcon />,
+      icon: <HiOutlineMap className="w-5 h-5" />,
       path: "/trips/records",
     },
   ];
