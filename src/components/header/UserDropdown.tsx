@@ -59,12 +59,10 @@ export default function UserDropdown() {
       >
         <div>
           <span className="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
-            {user?.first_name && user?.last_name 
-              ? `${user.first_name} ${user.last_name}` 
-              : user?.username || t('userDropdown.userFullName')}
+            {user?.name || user?.username || t('userDropdown.userFullName')}
           </span>
           <span className="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
-            {user?.email || t('userDropdown.userEmail')}
+            {user?.email || user?.username || t('userDropdown.userEmail')}
           </span>
         </div>
 

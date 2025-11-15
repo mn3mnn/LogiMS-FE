@@ -6,9 +6,9 @@ import config from '../config/env';
 export interface CurrentUser {
   id: number;
   username: string;
+  name?: string;
   email?: string;
-  first_name?: string;
-  last_name?: string;
+  url?: string;
 }
 
 const fetchCurrentUser = async (token: string): Promise<CurrentUser> => {
