@@ -19,11 +19,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const isLoggingOutRef = useRef(false);
 
   useEffect(() => {
-    const initializeAuth = () => {
+    const initializeAuth = async () => {
       const savedToken = localStorage.getItem("token");
       
       if (savedToken) {
-        setToken(savedToken);
+        // Validate token by making a lightweight API call
+        try {
+          await axios.get(`${config.API_BASE_URL}/v1/users/me/`, {
+            headers: {
+              Authorization: `Token ${savedToken}`,
+              'Content-Type': 'application/json',
+            },
+          });
+          // Token is valid, set it
+          setToken(savedToken);
+        } catch (error: any) {
+          // Token is invalid or expired (401/403)
+          // Clear the invalid token
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          setToken(null);
+        }
       }
       
       setIsLoading(false);
@@ -55,7 +71,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       setToken(null);
-      setUser(null);
       isLoggingOutRef.current = false;
     }
   };
@@ -77,6 +92,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             // Perform client-side logout without calling API again to prevent loops
             isLoggingOutRef.current = true;
             localStorage.removeItem('token');
+            localStorage.removeItem('user');
             setToken(null);
           }
         }
