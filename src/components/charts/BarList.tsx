@@ -14,7 +14,7 @@ interface BarListProps {
   colorClass?: string; // tailwind class for bar color
 }
 
-const BarList: React.FC<BarListProps> = ({ title, items, max, colorClass = 'bg-blue-500' }) => {
+const BarList: React.FC<BarListProps> = ({ title, items, max, colorClass = 'bg-[#ffb433]' }) => {
   const computedMax = max ?? Math.max(1, ...items.map(i => i.value || 0));
   return (
     <div className="rounded-xl border p-4">

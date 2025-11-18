@@ -30,7 +30,7 @@ export default function LanguageDropdown() {
   return (
     <div className="relative">
       <button
-        className="relative flex items-center justify-center gap-2 text-gray-500 transition-all duration-200 bg-white border border-gray-200 rounded-lg dropdown-toggle hover:text-gray-700 hover:bg-gray-50 hover:border-gray-300 h-11 px-3 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white dark:hover:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
+        className="relative flex items-center justify-center gap-2 text-gray-500 transition-all duration-200 bg-white border border-gray-200 rounded-lg dropdown-toggle hover:text-gray-700 hover:bg-gray-50 hover:border-gray-300 h-11 px-3 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white dark:hover:border-gray-700 focus:outline-none focus:ring-2 focus:ring-[#ffb433] focus:ring-offset-2 dark:focus:ring-offset-gray-900"
         onClick={toggleDropdown}
         title={`${t('userDropdown.menu.language')}: ${currentLanguage.name}`}
         aria-label={`${t('userDropdown.menu.language')}: ${currentLanguage.name}`}
@@ -76,7 +76,7 @@ export default function LanguageDropdown() {
               onClick={() => changeLanguage(language.code)}
               className={`flex items-center gap-3 w-full px-3 py-2.5 text-sm text-left rounded-lg transition-all duration-150 ${
                 currentLanguage.code === language.code
-                  ? "bg-blue-50 text-blue-700 font-medium dark:bg-blue-900/30 dark:text-blue-400"
+                  ? "bg-[#fff6ed] text-[#cc8c29] font-medium dark:bg-[#99641f]/30 dark:text-[#feb273]"
                   : "text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-white/5"
               }`}
               role="menuitem"
@@ -87,7 +87,7 @@ export default function LanguageDropdown() {
               <span className="text-xs text-gray-500 dark:text-gray-400 font-mono">{language.code.toUpperCase()}</span>
               {currentLanguage.code === language.code && (
                 <svg
-                  className="w-4 h-4 flex-shrink-0 fill-current text-blue-600 dark:text-blue-400"
+                  className="w-4 h-4 flex-shrink-0 fill-current text-[#ffb433] dark:text-[#feb273]"
                   viewBox="0 0 20 20"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"

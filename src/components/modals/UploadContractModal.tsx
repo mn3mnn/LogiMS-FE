@@ -189,7 +189,7 @@ export default function UploadContractModal({
                 accept=".pdf,.jpg,.jpeg,.png"
                 onChange={handleFileChange}
                 required
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-gray-600 dark:file:text-gray-300"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#fff6ed] file:text-[#cc8c29] hover:file:bg-[#ffead5] dark:file:bg-gray-600 dark:file:text-gray-300"
               />
               <p className="text-xs text-gray-500 mt-1">Upload contract document (PDF, JPG, PNG)</p>
             </div>
@@ -206,7 +206,7 @@ export default function UploadContractModal({
               <button
                 type="submit"
                 disabled={isLoading}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                className="px-4 py-2 bg-[#ffb433] text-white rounded-lg hover:bg-[#e6a02e] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
               >
                 {isLoading ? (
                   <>

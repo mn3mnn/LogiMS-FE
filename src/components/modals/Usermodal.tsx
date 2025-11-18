@@ -140,7 +140,7 @@ export default function UserModal({ isOpen, onClose, onSubmit, onUserAdded }: Us
             <button
               type="submit"
               disabled={isLoading}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+              className="px-4 py-2 bg-[#ffb433] text-white rounded-lg hover:bg-[#e6a02e] disabled:opacity-50"
             >
               {isLoading ? 'Adding Driver...' : 'Add Driver'}
             </button>

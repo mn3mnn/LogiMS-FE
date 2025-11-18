@@ -42,14 +42,14 @@ const SortableHeader = ({ field, label, currentOrderBy, currentDirection, onSort
         <span>{label}</span>
         <div className="flex flex-col">
           <svg 
-            className={`w-3 h-3 ${isActive && currentDirection === 'asc' ? 'text-blue-600' : 'text-gray-400'}`} 
+            className={`w-3 h-3 ${isActive && currentDirection === 'asc' ? 'text-[#ffb433]' : 'text-gray-400'}`} 
             fill="currentColor" 
             viewBox="0 0 20 20"
           >
             <path d="M5 10l5-5 5 5H5z" />
           </svg>
           <svg 
-            className={`w-3 h-3 -mt-1 ${isActive && currentDirection === 'desc' ? 'text-blue-600' : 'text-gray-400'}`} 
+            className={`w-3 h-3 -mt-1 ${isActive && currentDirection === 'desc' ? 'text-[#ffb433]' : 'text-gray-400'}`} 
             fill="currentColor" 
             viewBox="0 0 20 20"
           >
@@ -210,12 +210,12 @@ export default function TripRecordsPage() {
                 <TableRow key={r.id} className="transition-colors hover:bg-gray-50 dark:hover:bg-white/[0.02]">
                   <TableCell className="px-3 py-2 text-sm">{r.id}</TableCell>
                   <TableCell className="px-3 py-2 text-sm">
-                    <Link to={`/uploads?id=${r.file_upload}`} className="text-blue-600 hover:underline">{r.file_upload}</Link>
+                    <Link to={`/uploads?id=${r.file_upload}`} className="text-[#ffb433] hover:underline">{r.file_upload}</Link>
                   </TableCell>
                   <TableCell className="px-3 py-2 text-sm">{r.company_name}</TableCell>
                   <TableCell className="px-3 py-2 text-sm">
                     {r.driver_id ? (
-                      <Link to={`/drivers/${r.driver_id}`} className="text-blue-600 hover:underline" title={t('trips.viewDriverProfile')}>
+                      <Link to={`/drivers/${r.driver_id}`} className="text-[#ffb433] hover:underline" title={t('trips.viewDriverProfile')}>
                         {r.driver_name}
                       </Link>
                     ) : r.driver_name}
@@ -237,7 +237,7 @@ export default function TripRecordsPage() {
             <button
               disabled={page === 1}
               onClick={() => setPage(page - 1)}
-              className="px-3 py-1 rounded disabled:opacity-30 bg-blue-600 text-white transition-all duration-200 hover:bg-blue-700 disabled:hover:bg-blue-600 hover:scale-105 active:scale-95"
+              className="px-3 py-1 rounded disabled:opacity-30 bg-[#ffb433] text-white transition-all duration-200 hover:bg-[#e6a02e] disabled:hover:bg-[#ffb433] hover:scale-105 active:scale-95"
             >
               {t('common.previous')}
             </button>
@@ -256,7 +256,7 @@ export default function TripRecordsPage() {
                   onClick={() => setPage(pageNum)}
                   className={`px-3 py-1 rounded transition-all duration-200 hover:scale-105 active:scale-95 ${
                     page === pageNum
-                      ? "bg-blue-600 text-white"
+                      ? "bg-[#ffb433] text-white"
                       : "bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
                   }`}
                 >
@@ -268,7 +268,7 @@ export default function TripRecordsPage() {
             <button
               disabled={page === totalPages || totalPages === 0}
               onClick={() => setPage(page + 1)}
-              className="px-3 py-1 rounded disabled:opacity-30 bg-blue-600 text-white transition-all duration-200 hover:bg-blue-700 disabled:hover:bg-blue-600 hover:scale-105 active:scale-95"
+              className="px-3 py-1 rounded disabled:opacity-30 bg-[#ffb433] text-white transition-all duration-200 hover:bg-[#e6a02e] disabled:hover:bg-[#ffb433] hover:scale-105 active:scale-95"
             >
               {t('common.next')}
             </button>

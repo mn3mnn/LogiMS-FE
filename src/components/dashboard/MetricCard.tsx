@@ -32,7 +32,7 @@ export default function MetricCard({
   return (
     <div
       className={`rounded-xl border bg-white p-6 shadow-sm hover:shadow-md transition-all duration-200 ${
-        onClick ? "cursor-pointer hover:border-blue-300" : ""
+        onClick ? "cursor-pointer hover:border-[#feb273]" : ""
       } ${className}`}
       onClick={onClick}
     >

@@ -645,9 +645,9 @@ interface EditDriverModalProps {
 
           {/* Loading state when fetching driver data */}
           {isFetchingDriver && (
-            <div className="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded mb-4">
+            <div className="bg-[#fff6ed] border border-[#feb273] text-[#cc8c29] px-4 py-3 rounded mb-4">
               <div className="flex items-center gap-2">
-                <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-4 h-4 border-2 border-[#ffb433] border-t-transparent rounded-full animate-spin"></div>
                 {t('editDriver.loadingDriverData')}
               </div>
             </div>
@@ -844,7 +844,7 @@ interface EditDriverModalProps {
                     checked={driverData.is_active}
                     onChange={handleDriverChange}
                     disabled={isFetchingDriver}
-                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 disabled:opacity-50"
+                    className="w-4 h-4 text-[#ffb433] bg-gray-100 border-gray-300 rounded focus:ring-[#ffb433] dark:focus:ring-[#ffb433] dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 disabled:opacity-50"
                   />
                   <label className="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                     {t('editDriver.fields.activeDriver')}
@@ -945,14 +945,14 @@ interface EditDriverModalProps {
                         accept=".pdf,.jpg,.jpeg,.png"
                         onChange={(e) => handleFileChange('contracts', 'file', e.target.files?.[0] || null, index)}
                         disabled={isFetchingDriver}
-                        className="flex-1 border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-gray-600 dark:file:text-gray-300 disabled:opacity-50"
+                        className="flex-1 border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#fff6ed] file:text-[#cc8c29] hover:file:bg-[#ffead5] dark:file:bg-gray-600 dark:file:text-gray-300 disabled:opacity-50"
                       />
                       {hasFile(contract.file) && isExistingFile(contract.file) && (
                         <a
                           href={typeof contract.file === 'string' ? contract.file : '#'}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm whitespace-nowrap flex items-center gap-1"
+                          className="px-3 py-2 bg-[#ffb433] text-white rounded-lg hover:bg-[#e6a02e] transition-colors text-sm whitespace-nowrap flex items-center gap-1"
                           title={t('editDriver.buttons.viewDocument')}
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1062,14 +1062,14 @@ interface EditDriverModalProps {
                       accept=".pdf,.jpg,.jpeg,.png"
                       onChange={(e) => handleFileChange('license', 'file', e.target.files?.[0] || null)}
                       disabled={isFetchingDriver}
-                      className="flex-1 border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-gray-600 dark:file:text-gray-300 disabled:opacity-50"
+                      className="flex-1 border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#fff6ed] file:text-[#cc8c29] hover:file:bg-[#ffead5] dark:file:bg-gray-600 dark:file:text-gray-300 disabled:opacity-50"
                     />
                     {hasFile(licenseData.file) && isExistingFile(licenseData.file) && (
                       <a
                         href={typeof licenseData.file === 'string' ? licenseData.file : '#'}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm whitespace-nowrap flex items-center gap-1"
+                        className="px-3 py-2 bg-[#ffb433] text-white rounded-lg hover:bg-[#e6a02e] transition-colors text-sm whitespace-nowrap flex items-center gap-1"
                         title={t('editDriver.buttons.viewDocument')}
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1161,14 +1161,14 @@ interface EditDriverModalProps {
                       accept=".pdf,.jpg,.jpeg,.png"
                       onChange={(e) => handleFileChange('nationalId', 'file', e.target.files?.[0] || null)}
                       disabled={isFetchingDriver}
-                      className="flex-1 border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-gray-600 dark:file:text-gray-300 disabled:opacity-50"
+                      className="flex-1 border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#fff6ed] file:text-[#cc8c29] hover:file:bg-[#ffead5] dark:file:bg-gray-600 dark:file:text-gray-300 disabled:opacity-50"
                     />
                     {hasFile(nationalIdData.file) && isExistingFile(nationalIdData.file) && (
                       <a
                         href={typeof nationalIdData.file === 'string' ? nationalIdData.file : '#'}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm whitespace-nowrap flex items-center gap-1"
+                        className="px-3 py-2 bg-[#ffb433] text-white rounded-lg hover:bg-[#e6a02e] transition-colors text-sm whitespace-nowrap flex items-center gap-1"
                         title={t('editDriver.buttons.viewDocument')}
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1324,14 +1324,14 @@ interface EditDriverModalProps {
                       accept=".pdf,.jpg,.jpeg,.png"
                       onChange={(e) => handleFileChange('vehicleLicense', 'file', e.target.files?.[0] || null)}
                       disabled={isFetchingDriver}
-                      className="flex-1 border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-gray-600 dark:file:text-gray-300 disabled:opacity-50"
+                      className="flex-1 border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#fff6ed] file:text-[#cc8c29] hover:file:bg-[#ffead5] dark:file:bg-gray-600 dark:file:text-gray-300 disabled:opacity-50"
                     />
                     {hasFile(vehicleLicenseData.file) && isExistingFile(vehicleLicenseData.file) && (
                       <a
                         href={typeof vehicleLicenseData.file === 'string' ? vehicleLicenseData.file : '#'}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm whitespace-nowrap flex items-center gap-1"
+                        className="px-3 py-2 bg-[#ffb433] text-white rounded-lg hover:bg-[#e6a02e] transition-colors text-sm whitespace-nowrap flex items-center gap-1"
                         title={t('editDriver.buttons.viewDocument')}
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1393,7 +1393,7 @@ interface EditDriverModalProps {
               <button
                 type="submit"
                 disabled={isLoading || isFetchingDriver}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                className="px-4 py-2 bg-[#ffb433] text-white rounded-lg hover:bg-[#e6a02e] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
               >
                 {isLoading ? (
                   <>

@@ -160,7 +160,7 @@ export default function TripFilesPage() {
             <button
               disabled={page === 1}
               onClick={() => setPage(page - 1)}
-              className="px-3 py-1 rounded disabled:opacity-30 bg-blue-600 text-white transition-all duration-200 hover:bg-blue-700 disabled:hover:bg-blue-600 hover:scale-105 active:scale-95"
+              className="px-3 py-1 rounded disabled:opacity-30 bg-[#ffb433] text-white transition-all duration-200 hover:bg-[#e6a02e] disabled:hover:bg-[#ffb433] hover:scale-105 active:scale-95"
             >
               {t('common.previous')}
             </button>
@@ -179,7 +179,7 @@ export default function TripFilesPage() {
                   onClick={() => setPage(pageNum)}
                   className={`px-3 py-1 rounded transition-all duration-200 hover:scale-105 active:scale-95 ${
                     page === pageNum
-                      ? "bg-blue-600 text-white"
+                      ? "bg-[#ffb433] text-white"
                       : "bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
                   }`}
                 >
@@ -191,7 +191,7 @@ export default function TripFilesPage() {
             <button
               disabled={page === totalPages || totalPages === 0}
               onClick={() => setPage(page + 1)}
-              className="px-3 py-1 rounded disabled:opacity-30 bg-blue-600 text-white transition-all duration-200 hover:bg-blue-700 disabled:hover:bg-blue-600 hover:scale-105 active:scale-95"
+              className="px-3 py-1 rounded disabled:opacity-30 bg-[#ffb433] text-white transition-all duration-200 hover:bg-[#e6a02e] disabled:hover:bg-[#ffb433] hover:scale-105 active:scale-95"
             >
               {t('common.next')}
             </button>
@@ -235,7 +235,7 @@ export default function TripFilesPage() {
             </div>
             <div className="flex justify-end gap-2 mt-6">
               <button className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50" onClick={() => setIsNewOpen(false)}>Cancel</button>
-              <button disabled={!canSubmit || createUpload.isLoading} onClick={handleCreate} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed">
+              <button disabled={!canSubmit || createUpload.isLoading} onClick={handleCreate} className="px-4 py-2 bg-[#ffb433] text-white rounded-lg hover:bg-[#e6a02e] disabled:opacity-50 disabled:cursor-not-allowed">
                 {createUpload.isLoading ? 'Uploading…' : 'Upload'}
               </button>
             </div>

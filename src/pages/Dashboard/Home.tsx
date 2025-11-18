@@ -93,7 +93,7 @@ export default function Home() {
                 <select
                   value={selectedCompany}
                   onChange={(e) => setSelectedCompany(e.target.value as string | "all")}
-                  className="h-8 rounded-md border border-gray-300 bg-white px-2 text-xs text-gray-700 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="h-8 rounded-md border border-gray-300 bg-white px-2 text-xs text-gray-700 shadow-sm focus:border-[#ffb433] focus:outline-none focus:ring-1 focus:ring-[#ffb433]"
                 >
                   <option value="all">{t('dashboard.allCompanies')}</option>
                   {companies.map((c) => (
@@ -108,7 +108,7 @@ export default function Home() {
                 <select
                   value={dateRange}
                   onChange={(e) => setDateRange(e.target.value as DateRangeKey)}
-                  className="h-8 rounded-md border border-gray-300 bg-white px-2 text-xs text-gray-700 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="h-8 rounded-md border border-gray-300 bg-white px-2 text-xs text-gray-700 shadow-sm focus:border-[#ffb433] focus:outline-none focus:ring-1 focus:ring-[#ffb433]"
                 >
                   <option value="all">{t('dashboard.allTime')}</option>
                   <option value="30d">{t('dashboard.last30Days')}</option>
@@ -221,7 +221,7 @@ export default function Home() {
                 <button
                   type="button"
                   onClick={handleOpenPaymentRecords}
-                  className="text-xs font-medium text-blue-600 hover:text-blue-800 hover:underline"
+                  className="text-xs font-medium text-[#ffb433] hover:text-[#cc8c29] hover:underline"
                 >
                   {t('dashboard.viewPaymentRecords')}
                 </button>
@@ -324,7 +324,7 @@ export default function Home() {
                               <span className={`absolute -bottom-1 -right-1 text-[10px] text-white px-1.5 py-0.5 rounded-full bg-gradient-to-r ${badgeClass}`}>#{idx + 1}</span>
                             </div>
                             <div className="min-w-0">
-                              <span className="font-medium truncate text-blue-700 hover:underline">
+                              <span className="font-medium truncate text-[#cc8c29] hover:underline">
                                 {d.driver_first_name} {d.driver_last_name}
                               </span>
                             </div>

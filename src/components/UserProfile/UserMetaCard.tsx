@@ -26,7 +26,7 @@ export default function UserMetaCard({ driverId = 1117 }: UserMetaCardProps) {
     return (
       <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
         <div className="flex items-center justify-center py-8">
-          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-8 h-8 border-4 border-[#ffb433] border-t-transparent rounded-full animate-spin"></div>
           <span className="ml-3 text-gray-600 dark:text-gray-400">{t('userMetaCard.loading')}</span>
         </div>
       </div>

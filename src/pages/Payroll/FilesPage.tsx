@@ -46,14 +46,14 @@ const SortableHeader = ({ field, label, currentOrderBy, currentDirection, onSort
         <span>{label}</span>
         <div className="flex flex-col">
           <svg 
-            className={`w-3 h-3 ${isActive && currentDirection === 'asc' ? 'text-blue-600' : 'text-gray-400'}`} 
+            className={`w-3 h-3 ${isActive && currentDirection === 'asc' ? 'text-[#ffb433]' : 'text-gray-400'}`} 
             fill="currentColor" 
             viewBox="0 0 20 20"
           >
             <path d="M5 10l5-5 5 5H5z" />
           </svg>
           <svg 
-            className={`w-3 h-3 -mt-1 ${isActive && currentDirection === 'desc' ? 'text-blue-600' : 'text-gray-400'}`} 
+            className={`w-3 h-3 -mt-1 ${isActive && currentDirection === 'desc' ? 'text-[#ffb433]' : 'text-gray-400'}`} 
             fill="currentColor" 
             viewBox="0 0 20 20"
           >
@@ -154,7 +154,7 @@ export default function FilesPage() {
     const base = 'inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium';
     const map: Record<string, string> = {
       pending: `${base} bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300`,
-      processing: `${base} bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300`,
+      processing: `${base} bg-[#fff6ed] text-[#cc8c29] dark:bg-[#99641f]/30 dark:text-[#feb273]`,
       completed: `${base} bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300`,
       failed: `${base} bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300`,
     };
@@ -225,7 +225,7 @@ export default function FilesPage() {
         
         <button
           onClick={() => setIsNewOpen(true)}
-          className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-2 whitespace-nowrap"
+          className="px-4 py-2 bg-[#ffb433] text-white text-sm font-medium rounded-lg hover:bg-[#e6a02e] shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-2 whitespace-nowrap"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -309,13 +309,13 @@ export default function FilesPage() {
                   <TableCell className="px-3 py-2 text-sm">
                     {u.file_name ? (
                       u.file_url ? (
-                        <a href={u.file_url} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">
+                        <a href={u.file_url} target="_blank" rel="noreferrer" className="text-[#ffb433] hover:underline">
                           {u.file_name}
                         </a>
                       ) : (
                         <button
                           onClick={() => handleOpenFile(u.id)}
-                          className="text-blue-600 hover:underline"
+                          className="text-[#ffb433] hover:underline"
                           title={t('payroll.openFile')}
                         >
                           {u.file_name}
@@ -349,7 +349,7 @@ export default function FilesPage() {
             <button
               disabled={page === 1}
               onClick={() => setPage(page - 1)}
-              className="px-3 py-1 rounded disabled:opacity-30 bg-blue-600 text-white transition-all duration-200 hover:bg-blue-700 disabled:hover:bg-blue-600 hover:scale-105 active:scale-95"
+              className="px-3 py-1 rounded disabled:opacity-30 bg-[#ffb433] text-white transition-all duration-200 hover:bg-[#e6a02e] disabled:hover:bg-[#ffb433] hover:scale-105 active:scale-95"
             >
               {t('common.previous')}
             </button>
@@ -368,7 +368,7 @@ export default function FilesPage() {
                   onClick={() => setPage(pageNum)}
                   className={`px-3 py-1 rounded transition-all duration-200 hover:scale-105 active:scale-95 ${
                     page === pageNum
-                      ? "bg-blue-600 text-white"
+                      ? "bg-[#ffb433] text-white"
                       : "bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
                   }`}
                 >
@@ -380,7 +380,7 @@ export default function FilesPage() {
             <button
               disabled={page === totalPages || totalPages === 0}
               onClick={() => setPage(page + 1)}
-              className="px-3 py-1 rounded disabled:opacity-30 bg-blue-600 text-white transition-all duration-200 hover:bg-blue-700 disabled:hover:bg-blue-600 hover:scale-105 active:scale-95"
+              className="px-3 py-1 rounded disabled:opacity-30 bg-[#ffb433] text-white transition-all duration-200 hover:bg-[#e6a02e] disabled:hover:bg-[#ffb433] hover:scale-105 active:scale-95"
             >
               {t('common.next')}
             </button>
@@ -452,7 +452,7 @@ export default function FilesPage() {
                 <button
                   disabled={!canSubmit || createUpload.isPending}
                 onClick={handleCreate}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                className="px-4 py-2 bg-[#ffb433] text-white rounded-lg hover:bg-[#e6a02e] disabled:opacity-50 disabled:cursor-not-allowed transition"
               >
                   {createUpload.isPending ? 'Uploading…' : 'Upload'}
               </button>

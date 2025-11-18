@@ -70,7 +70,7 @@ const DriverProfile = () => {
           <div className="text-red-600 text-lg mb-4">Error: {error}</div>
           <button 
             onClick={() => navigate(-1)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="px-4 py-2 bg-[#ffb433] text-white rounded-lg hover:bg-[#e6a02e]"
           >
             Go Back
           </button>
@@ -86,7 +86,7 @@ const DriverProfile = () => {
           <div className="text-gray-600 text-lg mb-4">Driver not found</div>
           <button 
             onClick={() => navigate(-1)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="px-4 py-2 bg-[#ffb433] text-white rounded-lg hover:bg-[#e6a02e]"
           >
             Go Back
           </button>
