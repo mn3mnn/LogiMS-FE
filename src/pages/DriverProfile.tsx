@@ -10,6 +10,8 @@ interface Driver {
   last_name: string;
   uuid: string;
   phone_number: string;
+  email: string;
+  reports_to?: string;
   is_active: boolean;
   company_code: string;
   company_name?: string;
@@ -68,7 +70,7 @@ const DriverProfile = () => {
           <div className="text-red-600 text-lg mb-4">Error: {error}</div>
           <button 
             onClick={() => navigate(-1)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="px-4 py-2 bg-[#ffb433] text-white rounded-lg hover:bg-[#e6a02e]"
           >
             Go Back
           </button>
@@ -84,7 +86,7 @@ const DriverProfile = () => {
           <div className="text-gray-600 text-lg mb-4">Driver not found</div>
           <button 
             onClick={() => navigate(-1)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="px-4 py-2 bg-[#ffb433] text-white rounded-lg hover:bg-[#e6a02e]"
           >
             Go Back
           </button>
@@ -148,6 +150,20 @@ const DriverProfile = () => {
                 </label>
                 <p className="text-gray-800 dark:text-white">{driver.phone_number}</p>
               </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
+                  Email
+                </label>
+                <p className="text-gray-800 dark:text-white">{driver.email}</p>
+              </div>
+              {driver.reports_to && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
+                    Reports To
+                  </label>
+                  <p className="text-gray-800 dark:text-white">{driver.reports_to}</p>
+                </div>
+              )}
               <div>
                 <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
                   Company

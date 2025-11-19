@@ -60,6 +60,8 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
     nid: '',
     uuid: '',
     phone_number: '',
+    email: '',
+    reports_to: '',
     is_active: true,
     company_code: 'talabat',
     agency_share: null,
@@ -110,6 +112,8 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
       nid: '',
       uuid: '',
       phone_number: '',
+      email: '',
+      reports_to: '',
       is_active: true,
       company_code: 'talabat',
       agency_share: null,
@@ -132,7 +136,8 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
     if (
       !driverData.first_name.trim() ||
       !driverData.last_name.trim() ||
-      !driverData.phone_number.trim()
+      !driverData.phone_number.trim() ||
+      !driverData.email.trim()
     ) {
       setValidationError(t('addDriver.validation.requiredFields'));
       return;
@@ -343,6 +348,32 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                    {t('addDriver.fields.email')}
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={driverData.email}
+                    onChange={handleDriverChange}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                    {t('addDriver.fields.reportsTo')}
+                  </label>
+                  <input
+                    type="text"
+                    name="reports_to"
+                    value={driverData.reports_to || ''}
+                    onChange={handleDriverChange}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
                     {t('addDriver.fields.company')} <span className="text-red-500">*</span>
                   </label>
                   <select
@@ -434,7 +465,7 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                     name="is_active"
                     checked={driverData.is_active}
                     onChange={handleDriverChange}
-                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    className="w-4 h-4 text-[#ffb433] bg-gray-100 border-gray-300 rounded focus:ring-[#ffb433] dark:focus:ring-[#ffb433] dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                   />
                   <label className="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                     {t('addDriver.fields.activeDriver')}
@@ -527,7 +558,7 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                       type="file"
                       accept=".pdf,.jpg,.jpeg,.png"
                       onChange={(e) => handleFileChange('contracts', 'file', e.target.files?.[0] || null, index)}
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-gray-600 dark:file:text-gray-300"
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#fff6ed] file:text-[#cc8c29] hover:file:bg-[#ffead5] dark:file:bg-gray-600 dark:file:text-gray-300"
                     />
                     <p className="text-xs text-gray-500 mt-1">{t('addDriver.hints.contractDocument')}</p>
                   </div>
@@ -602,7 +633,7 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                     type="file"
                     accept=".pdf,.jpg,.jpeg,.png"
                     onChange={(e) => handleFileChange('license', 'file', e.target.files?.[0] || null)}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-gray-600 dark:file:text-gray-300"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#fff6ed] file:text-[#cc8c29] hover:file:bg-[#ffead5] dark:file:bg-gray-600 dark:file:text-gray-300"
                   />
                   <p className="text-xs text-gray-500 mt-1">{t('addDriver.hints.licenseDocument')}</p>
                 </div>
@@ -660,7 +691,7 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                     type="file"
                     accept=".pdf,.jpg,.jpeg,.png"
                     onChange={(e) => handleFileChange('nationalId', 'file', e.target.files?.[0] || null)}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-gray-600 dark:file:text-gray-300"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#fff6ed] file:text-[#cc8c29] hover:file:bg-[#ffead5] dark:file:bg-gray-600 dark:file:text-gray-300"
                   />
                   <p className="text-xs text-gray-500 mt-1">{t('addDriver.hints.nationalIdDocument')}</p>
                 </div>
@@ -778,7 +809,7 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
                     type="file"
                     accept=".pdf,.jpg,.jpeg,.png"
                     onChange={(e) => handleFileChange('vehicleLicense', 'file', e.target.files?.[0] || null)}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-gray-600 dark:file:text-gray-300"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#fff6ed] file:text-[#cc8c29] hover:file:bg-[#ffead5] dark:file:bg-gray-600 dark:file:text-gray-300"
                   />
                   <p className="text-xs text-gray-500 mt-1">{t('addDriver.hints.vehicleLicenseDocument')}</p>
                 </div>
@@ -810,7 +841,7 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
               <button
                 type="submit"
                 disabled={isLoading}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                className="px-4 py-2 bg-[#ffb433] text-white rounded-lg hover:bg-[#e6a02e] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
               >
                 {isLoading ? (
                   <>

@@ -29,9 +29,6 @@ export default function UserProfiles() { // Remove the id parameter
       />
       <PageBreadcrumb pageTitle="Driver Profile" />
       <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] lg:p-6">
-        <h3 className="mb-5 text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-7">
-          Driver Profile
-        </h3>
         <div className="space-y-6">
           <UserMetaCard driverId={driverId} />
           <UserInfoCard 
@@ -41,6 +38,7 @@ export default function UserProfiles() { // Remove the id parameter
             phone={driver?.phone_number} 
             nid={driver?.nid} 
             uuid={driver?.uuid} 
+            reports_to={driver?.reports_to}
             insurance={driver?.insurance}
             agency_share={driver?.agency_share}
           />

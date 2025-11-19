@@ -8,6 +8,62 @@ import config from '../../config/env';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { generatePaginationPages } from '../../utils/pagination';
+import PageBreadcrumb from '../../components/common/PageBreadCrumb';
+
+// Loading spinner component
+const LoadingSpinner = ({ size = "small" }: { size?: "small" | "medium" | "large" }) => {
+  const sizeClasses = {
+    small: "w-4 h-4",
+    medium: "w-6 h-6",
+    large: "w-8 h-8"
+  };
+
+  return (
+    <div className={`${sizeClasses[size]} border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin`}></div>
+  );
+};
+
+// Sortable header component
+interface SortableHeaderProps {
+  field: string;
+  label: string;
+  currentOrderBy: string;
+  currentDirection: "asc" | "desc";
+  onSort: (field: string) => void;
+}
+
+const SortableHeader = ({ field, label, currentOrderBy, currentDirection, onSort }: SortableHeaderProps) => {
+  const isActive = currentOrderBy === field;
+  
+  return (
+    <TableCell 
+      isHeader 
+      className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500 cursor-pointer hover:bg-gray-50 dark:hover:bg-white/[0.05] transition-colors select-none"
+      onClick={() => onSort(field)}
+    >
+      <div className="flex items-center gap-1">
+        <span>{label}</span>
+        <div className="flex flex-col">
+          <svg 
+            className={`w-3 h-3 ${isActive && currentDirection === 'asc' ? 'text-[#ffb433]' : 'text-gray-400'}`} 
+            fill="currentColor" 
+            viewBox="0 0 20 20"
+          >
+            <path d="M5 10l5-5 5 5H5z" />
+          </svg>
+          <svg 
+            className={`w-3 h-3 -mt-1 ${isActive && currentDirection === 'desc' ? 'text-[#ffb433]' : 'text-gray-400'}`} 
+            fill="currentColor" 
+            viewBox="0 0 20 20"
+          >
+            <path d="M15 10l-5 5-5-5h10z" />
+          </svg>
+        </div>
+      </div>
+    </TableCell>
+  );
+};
 
 export default function FilesPage() {
   const { t } = useTranslation();
@@ -23,11 +79,16 @@ export default function FilesPage() {
   const [fileType, setFileType] = useState<'payments' | 'trips' | ''>('');
   const [status, setStatus] = useState<'pending' | 'processing' | 'completed' | 'failed' | ''>('');
   const [isNewOpen, setIsNewOpen] = useState(false);
+  const [orderBy, setOrderBy] = useState("");
+  const [orderDirection, setOrderDirection] = useState<"asc" | "desc">("asc");
 
   const location = useLocation();
   const navigate = useNavigate();
   const query = new URLSearchParams(location.search);
   const uploadIdFromUrl = query.get('id');
+
+  // Build ordering string
+  const ordering = orderBy ? (orderDirection === "desc" ? `-${orderBy}` : orderBy) : "";
 
   const { data, isLoading, isFetching, error } = useFileUploads({
     page,
@@ -39,9 +100,10 @@ export default function FilesPage() {
     fileType: fileType || undefined,
     status: status || undefined,
     uploadId: uploadIdFromUrl ? Number(uploadIdFromUrl) : undefined,
+    ordering,
   });
 
-  const { mutateAsync: deleteUpload, isLoading: isDeleting } = useDeleteFileUpload();
+  const { mutateAsync: deleteUpload, isPending: isDeleting } = useDeleteFileUpload();
 
   const total = data?.count ?? 0;
   const results = data?.results ?? [];
@@ -51,6 +113,20 @@ export default function FilesPage() {
     const tId = setTimeout(() => setDebouncedSearch(search), 500);
     return () => clearTimeout(tId);
   }, [search]);
+
+  // Handle sorting
+  const handleSort = (field: string) => {
+    if (orderBy === field) {
+      // Toggle direction if clicking the same field
+      setOrderDirection(orderDirection === "asc" ? "desc" : "asc");
+    } else {
+      // Set new field and default to ascending
+      setOrderBy(field);
+      setOrderDirection("asc");
+    }
+    // Reset to first page when sorting changes
+    setPage(1);
+  };
 
   const handleDelete = async (id: number) => {
     if (!confirm('Delete this upload?')) return;
@@ -78,7 +154,7 @@ export default function FilesPage() {
     const base = 'inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium';
     const map: Record<string, string> = {
       pending: `${base} bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300`,
-      processing: `${base} bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300`,
+      processing: `${base} bg-[#fff6ed] text-[#cc8c29] dark:bg-[#99641f]/30 dark:text-[#feb273]`,
       completed: `${base} bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300`,
       failed: `${base} bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300`,
     };
@@ -104,7 +180,7 @@ export default function FilesPage() {
       from_date: newFrom,
       to_date: newTo,
       file,
-      file_type: 'payments',
+      file_type: fileType || 'payments',
     });
     setIsNewOpen(false);
     setNewCompany('');
@@ -114,48 +190,74 @@ export default function FilesPage() {
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
-  return (
-    <div className="p-6 space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">File Uploads</h2>
-        <Button onClick={() => setIsNewOpen(true)} size="sm" className="!px-4 !py-2 text-sm">+ New Upload</Button>
-      </div>
+  // Helpers for filename inference
+  const normalize = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const inferFromFilename = (filename: string) => {
+    const base = filename.split('\\').pop()!.split('/').pop()!; // handle paths
+    const match = base.match(/^(\d{8})-(\d{8})-([a-zA-Z_]+)-(.+)\.[A-Za-z0-9]+$/);
+    if (!match) return;
+    const [, fromRaw, toRaw, kindRaw] = match;
+    const toIso = (d: string) => `${d.slice(0,4)}-${d.slice(4,6)}-${d.slice(6,8)}`;
+    setNewFrom(toIso(fromRaw));
+    setNewTo(toIso(toRaw));
 
-      {/* Search bar above filters */}
-      <div className="w-full md:w-[430px]">
-        <label className="block text-sm mb-1 text-gray-600 dark:text-gray-300">Search</label>
-        <input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search by file name"
-          className="h-11 w-full rounded-lg border border-gray-200 bg-transparent px-3 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-        />
+    const kind = kindRaw.toLowerCase();
+    if (kind.includes('trip')) setFileType('trips');
+    else if (kind.includes('pay')) setFileType('payments');
+  };
+
+  return (
+    <>
+      <PageBreadcrumb pageTitle="File Uploads" />
+      <div className="space-y-4">
+
+      {/* Search bar and New Upload button */}
+      <div className="flex items-center justify-between gap-4">
+        <div className="w-full md:w-[430px]">
+          <label className="block text-sm mb-1 text-gray-600 dark:text-gray-300">{t('payroll.search')}</label>
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder={t('payroll.searchPlaceholder')}
+            className="h-11 w-full rounded-lg border border-gray-200 bg-transparent px-3 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+          />
+        </div>
+        
+        <button
+          onClick={() => setIsNewOpen(true)}
+          className="px-4 py-2 bg-[#ffb433] text-white text-sm font-medium rounded-lg hover:bg-[#e6a02e] shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-2 whitespace-nowrap"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          </svg>
+          {t('payroll.newUpload')}
+        </button>
       </div>
 
       <div className="flex flex-wrap gap-3 items-end mt-2">
         <div>
-          <label className="block text-sm mb-1">Company</label>
+          <label className="block text-sm mb-1">{t('payroll.company')}</label>
           <select
             value={companyCode}
             onChange={(e) => { setCompanyCode(e.target.value as any); setPage(1); }}
             className="border rounded-lg px-3 py-2 dark:bg-gray-800 dark:text-white"
           >
-            <option value="All">All</option>
+            <option value="All">{t('payroll.all')}</option>
             {companies.filter(c => c.is_active).map(c => (
               <option key={c.code} value={c.code}>{c.name}</option>
             ))}
           </select>
         </div>
         <div>
-          <label className="block text-sm mb-1">From</label>
+          <label className="block text-sm mb-1">{t('payroll.from')}</label>
           <input type="date" value={fromDate} onChange={(e) => { setFromDate(e.target.value); setPage(1); }} className="border rounded-lg px-3 py-2 dark:bg-gray-800 dark:text-white" />
         </div>
         <div>
-          <label className="block text-sm mb-1">To</label>
+          <label className="block text-sm mb-1">{t('payroll.to')}</label>
           <input type="date" value={toDate} onChange={(e) => { setToDate(e.target.value); setPage(1); }} className="border rounded-lg px-3 py-2 dark:bg-gray-800 dark:text-white" />
         </div>
         <div>
-          <label className="block text-sm mb-1">File Type</label>
+          <label className="block text-sm mb-1">{t('payroll.fileType')}</label>
           <select value={fileType} onChange={(e) => { setFileType(e.target.value as any); setPage(1); }} className="border rounded-lg px-3 py-2 dark:bg-gray-800 dark:text-white">
             <option value="">All</option>
             <option value="payments">Payments</option>
@@ -163,9 +265,9 @@ export default function FilesPage() {
           </select>
         </div>
         <div>
-          <label className="block text-sm mb-1">Status</label>
+          <label className="block text-sm mb-1">{t('payroll.status')}</label>
           <select value={status} onChange={(e) => { setStatus(e.target.value as any); setPage(1); }} className="border rounded-lg px-3 py-2 dark:bg-gray-800 dark:text-white">
-            <option value="">All</option>
+            <option value="">{t('payroll.all')}</option>
             <option value="pending">Pending</option>
             <option value="processing">Processing</option>
             <option value="completed">Completed</option>
@@ -179,15 +281,15 @@ export default function FilesPage() {
           <Table>
             <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
               <TableRow>
-                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">ID</TableCell>
-                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">Company</TableCell>
-                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">File</TableCell>
-                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">From</TableCell>
-                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">To</TableCell>
-                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">Status</TableCell>
-                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">Error</TableCell>
-                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">Created</TableCell>
-                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">Actions</TableCell>
+                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('payroll.tableHeaders.id')}</TableCell>
+                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('payroll.tableHeaders.company')}</TableCell>
+                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('payroll.tableHeaders.file')}</TableCell>
+                <SortableHeader field="from_date" label={t('payroll.tableHeaders.from')} currentOrderBy={orderBy} currentDirection={orderDirection} onSort={handleSort} />
+                <SortableHeader field="to_date" label={t('payroll.tableHeaders.to')} currentOrderBy={orderBy} currentDirection={orderDirection} onSort={handleSort} />
+                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('payroll.tableHeaders.status')}</TableCell>
+                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('payroll.tableHeaders.error')}</TableCell>
+                <SortableHeader field="created_at" label={t('payroll.tableHeaders.created')} currentOrderBy={orderBy} currentDirection={orderDirection} onSort={handleSort} />
+                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('payroll.tableHeaders.actions')}</TableCell>
               </TableRow>
             </TableHeader>
             <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
@@ -195,10 +297,10 @@ export default function FilesPage() {
                 <TableRow><TableCell colSpan={9} className="px-3 py-3 text-red-600 text-sm">{String((error as any)?.message || error)}</TableCell></TableRow>
               )}
               {isLoading && (
-                <TableRow><TableCell colSpan={9} className="px-3 py-5 text-sm">Loading...</TableCell></TableRow>
+                <TableRow><TableCell colSpan={9} className="px-3 py-5 text-sm">{t('payroll.loading')}</TableCell></TableRow>
               )}
               {!isLoading && results.length === 0 && (
-                <TableRow><TableCell colSpan={9} className="px-3 py-5 text-sm">No uploads found</TableCell></TableRow>
+                <TableRow><TableCell colSpan={9} className="px-3 py-5 text-sm">{t('payroll.noUploadsFound')}</TableCell></TableRow>
               )}
               {results.map((u) => (
                 <TableRow key={u.id} className="transition-colors hover:bg-gray-50 dark:hover:bg-white/[0.02]">
@@ -207,14 +309,14 @@ export default function FilesPage() {
                   <TableCell className="px-3 py-2 text-sm">
                     {u.file_name ? (
                       u.file_url ? (
-                        <a href={u.file_url} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">
+                        <a href={u.file_url} target="_blank" rel="noreferrer" className="text-[#ffb433] hover:underline">
                           {u.file_name}
                         </a>
                       ) : (
                         <button
                           onClick={() => handleOpenFile(u.id)}
-                          className="text-blue-600 hover:underline"
-                          title="Open file"
+                          className="text-[#ffb433] hover:underline"
+                          title={t('payroll.openFile')}
                         >
                           {u.file_name}
                         </button>
@@ -232,7 +334,7 @@ export default function FilesPage() {
                       onClick={() => handleDelete(u.id)}
                       disabled={isDeleting}
                     >
-                      Delete
+{t('common.delete')}
                     </button>
                   </TableCell>
                 </TableRow>
@@ -241,23 +343,88 @@ export default function FilesPage() {
           </Table>
         </div>
 
+        {/* Pagination Section */}
         <div className="flex items-center justify-between p-4 border-t border-gray-100 dark:border-white/[0.05]">
-          <div className="text-xs text-gray-600">{isFetching ? 'Updating…' : `Total: ${total}`}</div>
-          <div className="flex items-center gap-2">
-            <button className="px-2.5 py-1 rounded bg-blue-600 text-white text-sm disabled:opacity-30" disabled={page<=1} onClick={() => setPage((p) => p-1)}>Previous</button>
-            <span className="text-xs">{page} / {totalPages}</span>
-            <button className="px-2.5 py-1 rounded bg-blue-600 text-white text-sm disabled:opacity-30" disabled={page>=totalPages} onClick={() => setPage((p) => p+1)}>Next</button>
+          <div className="flex items-center justify-center gap-1 flex-1">
+            <button
+              disabled={page === 1}
+              onClick={() => setPage(page - 1)}
+              className="px-3 py-1 rounded disabled:opacity-30 bg-[#ffb433] text-white transition-all duration-200 hover:bg-[#e6a02e] disabled:hover:bg-[#ffb433] hover:scale-105 active:scale-95"
+            >
+              {t('common.previous')}
+            </button>
+
+            {totalPages > 0 && generatePaginationPages(page, totalPages).map((pageNum, index) => {
+              if (pageNum === 'ellipsis') {
+                return (
+                  <span key={`ellipsis-${index}`} className="px-2 text-gray-500 dark:text-gray-400">
+                    ...
+                  </span>
+                );
+              }
+              return (
+                <button
+                  key={pageNum}
+                  onClick={() => setPage(pageNum)}
+                  className={`px-3 py-1 rounded transition-all duration-200 hover:scale-105 active:scale-95 ${
+                    page === pageNum
+                      ? "bg-[#ffb433] text-white"
+                      : "bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                  }`}
+                >
+                  {pageNum}
+                </button>
+              );
+            })}
+
+            <button
+              disabled={page === totalPages || totalPages === 0}
+              onClick={() => setPage(page + 1)}
+              className="px-3 py-1 rounded disabled:opacity-30 bg-[#ffb433] text-white transition-all duration-200 hover:bg-[#e6a02e] disabled:hover:bg-[#ffb433] hover:scale-105 active:scale-95"
+            >
+              {t('common.next')}
+            </button>
+          </div>
+
+          <div className="flex justify-end">
+            <div className="text-gray-700 text-sm flex items-center gap-2">
+              {t('payroll.totalFiles', { count: total })}
+              {isFetching && <LoadingSpinner size="small" />}
+            </div>
           </div>
         </div>
+      </div>
       </div>
 
       {isNewOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setIsNewOpen(false)}>
           <div className="bg-white dark:bg-gray-800 rounded-xl w-full max-w-2xl p-6" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-xl font-semibold mb-4">New Upload</h3>
+            <h3 className="text-xl font-semibold mb-4">{t('payroll.newUpload')}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="md:col-span-2">
+                <label className="block text-sm mb-1">{t('payroll.fileUpload')}</label>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".csv,.xlsx,.xls"
+                  className="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:text-white"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0] || null;
+                    setUploadFile(f);
+                    if (f) inferFromFilename(f.name);
+                  }}
+                />
+                <p className="text-xs text-gray-500 mt-1">{t('payroll.autoFillNote')}</p>
+              </div>
               <div>
-                <label className="block text-sm mb-1">Company</label>
+                <label className="block text-sm mb-1">{t('payroll.type')}</label>
+                <select value={fileType || 'payments'} onChange={(e) => setFileType(e.target.value as any)} className="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:text-white">
+                  <option value="payments">Payments</option>
+                  <option value="trips">Trips</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm mb-1">{t('payroll.company')}</label>
                 <select value={newCompany} onChange={(e) => setNewCompany(e.target.value)} className="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:text-white">
                   <option value="">Select company</option>
                   {companies.filter(c => c.is_active).map(c => (
@@ -266,43 +433,34 @@ export default function FilesPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm mb-1">From date</label>
+                <label className="block text-sm mb-1">{t('payroll.fromDate')}</label>
                 <input type="date" value={newFrom} onChange={(e) => setNewFrom(e.target.value)} className="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:text-white" />
               </div>
               <div>
-                <label className="block text-sm mb-1">To date</label>
+                <label className="block text-sm mb-1">{t('payroll.toDate')}</label>
                 <input type="date" value={newTo} onChange={(e) => setNewTo(e.target.value)} className="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:text-white" />
               </div>
-              <div>
-                <label className="block text-sm mb-1">File (.csv, .xlsx)</label>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept=".csv,.xlsx,.xls"
-                  className="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:text-white"
-                  onChange={(e) => setUploadFile(e.target.files?.[0] || null)}
-                />
-              </div>
+              
             </div>
             <div className="flex justify-end gap-2 mt-6">
               <button
                 className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700 transition"
                 onClick={() => setIsNewOpen(false)}
               >
-                Cancel
+{t('payroll.cancel')}
               </button>
-              <button
-                disabled={!canSubmit || createUpload.isLoading}
+                <button
+                  disabled={!canSubmit || createUpload.isPending}
                 onClick={handleCreate}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                className="px-4 py-2 bg-[#ffb433] text-white rounded-lg hover:bg-[#e6a02e] disabled:opacity-50 disabled:cursor-not-allowed transition"
               >
-                {createUpload.isLoading ? 'Uploading…' : 'Upload'}
+                  {createUpload.isPending ? 'Uploading…' : 'Upload'}
               </button>
             </div>
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }
 

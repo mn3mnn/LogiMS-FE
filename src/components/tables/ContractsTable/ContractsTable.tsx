@@ -8,6 +8,7 @@ import {
 } from "../../ui/table";
 import { useContracts } from "../../../hooks/useContracts";
 import UploadContractModal from "../../modals/UploadContractModal";
+import { generatePaginationPages } from "../../../utils/pagination";
 
 export default function ContractsTable() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -209,7 +210,7 @@ export default function ContractsTable() {
                   href={contract.file}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+                  className="text-[#ffb433] hover:text-[#cc8c29] dark:text-[#feb273] dark:hover:text-[#feb273] transition-colors"
                 >
                   View File
                 </a>
@@ -229,29 +230,38 @@ export default function ContractsTable() {
           <button
             disabled={currentPage === 1}
             onClick={() => handlePageChange(currentPage - 1)}
-            className="px-3 py-1 rounded disabled:opacity-30 bg-blue-600 text-white"
+            className="px-3 py-1 rounded disabled:opacity-30 bg-[#ffb433] text-white"
           >
             Prev
           </button>
 
-          {totalPages > 0 && [...Array(totalPages)].map((_, index) => (
-            <button
-              key={index + 1}
-              onClick={() => handlePageChange(index + 1)}
-              className={`px-3 py-1 rounded ${
-                currentPage === index + 1
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
-            >
-              {index + 1}
-            </button>
-          ))}
+          {totalPages > 0 && generatePaginationPages(currentPage, totalPages).map((pageNum, index) => {
+            if (pageNum === 'ellipsis') {
+              return (
+                <span key={`ellipsis-${index}`} className="px-2 text-gray-500 dark:text-gray-400">
+                  ...
+                </span>
+              );
+            }
+            return (
+              <button
+                key={pageNum}
+                onClick={() => handlePageChange(pageNum)}
+                className={`px-3 py-1 rounded transition-all duration-200 hover:scale-105 active:scale-95 ${
+                  currentPage === pageNum
+                    ? "bg-[#ffb433] text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                }`}
+              >
+                {pageNum}
+              </button>
+            );
+          })}
 
           <button
             disabled={currentPage === totalPages || totalPages === 0}
             onClick={() => handlePageChange(currentPage + 1)}
-            className="px-3 py-1 rounded disabled:opacity-30 bg-blue-600 text-white"
+            className="px-3 py-1 rounded disabled:opacity-30 bg-[#ffb433] text-white"
           >
             Next
           </button>
@@ -259,7 +269,7 @@ export default function ContractsTable() {
 
         <div className="flex justify-end">
           <button
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="px-4 py-2 bg-[#ffb433] text-white rounded-lg hover:bg-[#e6a02e]"
           >
             Export
           </button>

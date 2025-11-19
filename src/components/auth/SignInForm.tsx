@@ -213,7 +213,7 @@ export default function SignInForm() {
                             onClick={() => changeLanguage(language.code)}
                             className={`flex items-center gap-3 w-full px-4 py-2 text-sm text-left hover:bg-gray-100 dark:hover:bg-white/5 ${
                               currentLanguage.code === language.code
-                                ? "bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400"
+                                ? "bg-[#fff6ed] text-[#ffb433] dark:bg-[#99641f]/20 dark:text-[#feb273]"
                                 : "text-gray-700 dark:text-gray-300"
                             }`}
                           >
@@ -221,7 +221,7 @@ export default function SignInForm() {
                             <span>{language.name}</span>
                             {currentLanguage.code === language.code && (
                               <svg
-                                className="w-4 h-4 ml-auto fill-current text-blue-600 dark:text-blue-400"
+                                className="w-4 h-4 ml-auto fill-current text-[#ffb433] dark:text-[#feb273]"
                                 viewBox="0 0 20 20"
                                 fill="none"
                                 xmlns="http://www.w3.org/2000/svg"

@@ -54,6 +54,8 @@ interface DriverProfile {
   nid: string | null;
   uuid: string;
   phone_number: string;
+  email: string;
+  reports_to?: string;
   is_active: boolean;
   company_code: string;
   company_name: string;

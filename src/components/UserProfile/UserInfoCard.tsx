@@ -10,6 +10,7 @@ interface UserInfoCardProps {
   phone: string;
   nid: string;
   uuid: string;
+  reports_to?: string;
   agency_share?: number | null;
   insurance?: number | null;
 }
@@ -21,6 +22,7 @@ export default function UserInfoCard({
   phone, 
   nid, 
   uuid,
+  reports_to,
   agency_share,
   insurance
 }: UserInfoCardProps) {
@@ -56,16 +58,16 @@ export default function UserInfoCard({
 
   // Format currency for insurance amount
   const formatCurrency = (amount: number | null | undefined) => {
-    if (amount === null || amount === undefined) return t('userInfoCard.notSet');
+    if (amount === null || amount === undefined) return '-';
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'USD'
+      currency: 'EUR'
     }).format(amount);
   };
 
   // Format percentage for agency share
   const formatPercentage = (percentage: number | null | undefined) => {
-    if (percentage === null || percentage === undefined) return t('userInfoCard.notSet');
+    if (percentage === null || percentage === undefined) return '-';
     return `${percentage}%`;
   };
 
@@ -83,7 +85,7 @@ export default function UserInfoCard({
                 {t('userInfoCard.fields.firstName')}
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {name}
+                {name || '-'}
               </p>
             </div>
 
@@ -92,7 +94,7 @@ export default function UserInfoCard({
                 {t('userInfoCard.fields.lastName')}
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {lastName}
+                {lastName || '-'}
               </p>
             </div>
 
@@ -101,7 +103,16 @@ export default function UserInfoCard({
                 {t('userInfoCard.fields.email')}
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {email}
+                {email || '-'}
+              </p>
+            </div>
+
+            <div>
+              <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                {t('userInfoCard.fields.reportsTo')}
+              </p>
+              <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                {reports_to || '-'}
               </p>
             </div>
 
@@ -110,7 +121,7 @@ export default function UserInfoCard({
                 {t('userInfoCard.fields.phone')}
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {phone}
+                {phone || '-'}
               </p>
             </div>
 
@@ -119,7 +130,7 @@ export default function UserInfoCard({
                 {t('userInfoCard.fields.nationalId')}
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {nid}
+                {nid || '-'}
               </p>
             </div>
 
@@ -128,7 +139,7 @@ export default function UserInfoCard({
                 {t('userInfoCard.fields.uuid')}
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {uuid}
+                {uuid || '-'}
               </p>
             </div>
 

@@ -1,48 +1,61 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router";
+import { useTranslation } from "react-i18next";
+import { 
+  HiOutlineHome, 
+  HiOutlineUsers, 
+  HiOutlineCloudUpload, 
+  HiOutlineCurrencyDollar,
+  HiOutlineMap
+} from "react-icons/hi";
 
 import {
   ChevronDownIcon,
-  GridIcon,
   HorizontaLDots,
-  ListIcon,
-  TableIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
 
 type NavItem = {
-  name: string;
+  nameKey: string;
   icon: React.ReactNode;
   path?: string;
   pro?: boolean;
   new?: boolean;
-  children?: { name: string; path: string }[];
+  children?: { nameKey: string; path: string }[];
 };
 
-const navItems: NavItem[] = [
-  {
-    icon: <GridIcon />,
-    name: "Dashboard",
-    path: "/",
-  },
-  {
-    name: "Drivers",
-    icon: <ListIcon />,
-    path: "/basic-tables",
-  },
-  {
-    name: "Payroll",
-    icon: <TableIcon />,
-    children: [
-      { name: "File Uploads", path: "/payroll/uploads" },
-      { name: "Payroll Records", path: "/payroll/records" },
-    ],
-  },
-];
-
 const AppSidebar: React.FC = () => {
+  const { t } = useTranslation();
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const location = useLocation();
+
+  const navItems: NavItem[] = [
+    {
+      icon: <HiOutlineHome className="w-5 h-5" />,
+      nameKey: "sidebar.dashboard",
+      path: "/",
+    },
+    {
+      nameKey: "sidebar.drivers",
+      icon: <HiOutlineUsers className="w-5 h-5" />,
+      path: "/basic-tables",
+    },
+    {
+      nameKey: "sidebar.fileUploads",
+      icon: <HiOutlineCloudUpload className="w-5 h-5" />,
+      path: "/uploads",
+    },
+    {
+      nameKey: "sidebar.payroll",
+      icon: <HiOutlineCurrencyDollar className="w-5 h-5" />,
+      path: "/payroll/records",
+    },
+    {
+      nameKey: "sidebar.trips",
+      icon: <HiOutlineMap className="w-5 h-5" />,
+      path: "/trips/records",
+    },
+  ];
 
   const [openSubmenu, setOpenSubmenu] = useState<{
     type: "main";
@@ -86,7 +99,7 @@ const AppSidebar: React.FC = () => {
   const renderMenuItems = (items: NavItem[], menuType: "main") => (
     <ul className="flex flex-col gap-4">
       {items.map((nav, index) => (
-        <li key={nav.name}>
+        <li key={nav.nameKey}>
           {nav.children ? (
             <>
               <button
@@ -102,7 +115,7 @@ const AppSidebar: React.FC = () => {
                 </span>
                 {(isExpanded || isHovered || isMobileOpen) && (
                   <span className="menu-item-text flex items-center gap-2">
-                    {nav.name}
+                    {t(nav.nameKey)}
                     <ChevronDownIcon
                       className={`ml-auto transition-transform ${
                         openSubmenu?.type === menuType && openSubmenu?.index === index
@@ -129,7 +142,7 @@ const AppSidebar: React.FC = () => {
               >
                 <ul className="mt-2 ml-12 flex flex-col gap-2">
                   {nav.children.map((child) => (
-                    <li key={child.name}>
+                    <li key={child.nameKey}>
                       <Link
                         to={child.path}
                         className={`menu-item group ${
@@ -138,7 +151,7 @@ const AppSidebar: React.FC = () => {
                             : "menu-item-inactive"
                         }`}
                       >
-                        <span className="menu-item-text">{child.name}</span>
+                        <span className="menu-item-text">{t(child.nameKey)}</span>
                       </Link>
                     </li>
                   ))}
@@ -163,7 +176,7 @@ const AppSidebar: React.FC = () => {
               </span>
               {(isExpanded || isHovered || isMobileOpen) && (
                 <span className="menu-item-text flex items-center gap-2">
-                  {nav.name}
+                  {t(nav.nameKey)}
                   {nav.new && (
                     <span
                       className={`ml-auto ${
@@ -220,23 +233,23 @@ const AppSidebar: React.FC = () => {
             <>
               <img
                 className="dark:hidden"
-                src="/images/logo/logo.svg"
-                alt="Logo"
+                src="/images/logo/kresh-logo.png"
+                alt="Kresh GmbH MS"
                 width={150}
                 height={40}
               />
               <img
                 className="hidden dark:block"
-                src="/images/logo/logo-dark.svg"
-                alt="Logo"
+                src="/images/logo/kresh-logo.png"
+                alt="Kresh GmbH MS"
                 width={150}
                 height={40}
               />
             </>
           ) : (
             <img
-              src="/images/logo/logo-icon.svg"
-              alt="Logo"
+              src="/images/logo/kresh-logo-icon.png"
+              alt="Kresh GmbH MS"
               width={32}
               height={32}
             />
@@ -255,7 +268,7 @@ const AppSidebar: React.FC = () => {
                 }`}
               >
                 {isExpanded || isHovered || isMobileOpen ? (
-                  "Menu"
+                  t("sidebar.menu")
                 ) : (
                   <HorizontaLDots className="size-6" />
                 )}

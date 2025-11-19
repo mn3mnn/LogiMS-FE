@@ -26,7 +26,7 @@ export default function UserMetaCard({ driverId = 1117 }: UserMetaCardProps) {
     return (
       <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
         <div className="flex items-center justify-center py-8">
-          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-8 h-8 border-4 border-[#ffb433] border-t-transparent rounded-full animate-spin"></div>
           <span className="ml-3 text-gray-600 dark:text-gray-400">{t('userMetaCard.loading')}</span>
         </div>
       </div>
@@ -45,13 +45,15 @@ export default function UserMetaCard({ driverId = 1117 }: UserMetaCardProps) {
 
   // Type assertion to ensure driverData has the correct type
   const driver = driverData as any;
+  const initials = `${(driver.first_name || '?')[0] || ''}${(driver.last_name || '?')[0] || ''}`.toUpperCase();
+  
   return (
     <>
       <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
         <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
           <div className="flex flex-col items-center w-full gap-6 xl:flex-row">
-            <div className="w-20 h-20 overflow-hidden border border-gray-200 rounded-full dark:border-gray-800">
-              <img src="/images/user/owner.jpg" alt="user" />
+            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-indigo-50 to-indigo-100 text-indigo-700 text-xl font-semibold border border-gray-200 dark:border-gray-800">
+              {initials}
             </div>
             <div className="order-3 xl:order-2">
               <h4 className="mb-2 text-lg font-semibold text-center text-gray-800 dark:text-white/90 xl:text-left">

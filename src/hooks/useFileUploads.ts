@@ -36,6 +36,7 @@ export interface FileUploadsFilters {
   fileType?: 'payments' | 'trips';
   status?: 'pending' | 'processing' | 'completed' | 'failed';
   uploadId?: number;
+  ordering?: string; // Field to sort by (prefix with - for descending)
 }
 
 const buildAuthHeaders = (token: string | null) => ({
@@ -53,7 +54,7 @@ export const useFileUploads = (filters: FileUploadsFilters) => {
       const params: Record<string, any> = {
         page: filters.page ?? 1,
         page_size: filters.pageSize ?? 10,
-        ordering: '-created_at',
+        ordering: filters.ordering || '-created_at',
       };
 
       if (filters.search) params.search = filters.search;

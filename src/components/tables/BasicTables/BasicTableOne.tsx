@@ -8,9 +8,11 @@ import {
   TableRow,
 } from "../../ui/table";
 import { useDrivers } from "../../../hooks/useDrivers";
+import { generatePaginationPages } from "../../../utils/pagination";
 import { useDeleteDriver } from '../../../hooks/useDeleteDriver';
 import { useExportDrivers } from '../../../hooks/useExportDrivers';
 import DeleteConfirmationModal from '../../modals/DeleteConfirmationModal';
+import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai';
 import AddDriverModal from '../../modals/AddDriverModal';
 import EditDriverModal from '../../modals/EditDriverModal';
 import { Link } from "react-router-dom";
@@ -23,43 +25,49 @@ const TableSkeleton = () => {
     <div className="animate-pulse">
       {[...Array(5)].map((_, index) => (
         <TableRow key={index} className="border-b border-gray-100 dark:border-white/[0.05]">
-          <TableCell className="px-5 py-4">
+          <TableCell className="px-3 py-2">
             <div className="h-4 bg-gray-200 rounded dark:bg-gray-700 w-1/4"></div>
           </TableCell>
-          <TableCell className="px-5 py-4">
+          <TableCell className="px-3 py-2">
             <div className="h-4 bg-gray-200 rounded dark:bg-gray-700 w-3/4"></div>
           </TableCell>
-          <TableCell className="px-5 py-4">
+          <TableCell className="px-3 py-2">
             <div className="h-4 bg-gray-200 rounded dark:bg-gray-700 w-1/2"></div>
           </TableCell>
-          <TableCell className="px-5 py-4">
+          <TableCell className="px-3 py-2">
             <div className="h-4 bg-gray-200 rounded dark:bg-gray-700 w-1/3"></div>
           </TableCell>
-          <TableCell className="px-5 py-4">
-            <div className="h-6 bg-gray-200 rounded-full dark:bg-gray-700 w-16"></div>
+          <TableCell className="px-3 py-2">
+            <div className="h-4 bg-gray-200 rounded-full dark:bg-gray-700 w-16"></div>
           </TableCell>
-          <TableCell className="px-5 py-4">
+          <TableCell className="px-3 py-2">
             <div className="h-4 bg-gray-200 rounded dark:bg-gray-700 w-20"></div>
           </TableCell>
-          <TableCell className="px-5 py-4">
+          <TableCell className="px-3 py-2">
             <div className="h-4 bg-gray-200 rounded dark:bg-gray-700 w-20"></div>
           </TableCell>
-          <TableCell className="px-5 py-4">
+          <TableCell className="px-3 py-2">
             <div className="h-4 bg-gray-200 rounded dark:bg-gray-700 w-20"></div>
           </TableCell>
-          <TableCell className="px-5 py-4">
+          <TableCell className="px-3 py-2">
             <div className="h-4 bg-gray-200 rounded dark:bg-gray-700 w-20"></div>
           </TableCell>
-          <TableCell className="px-5 py-4">
+          <TableCell className="px-3 py-2">
             <div className="h-4 bg-gray-200 rounded dark:bg-gray-700 w-20"></div>
           </TableCell>
-          <TableCell className="px-5 py-4">
+          <TableCell className="px-3 py-2">
             <div className="h-4 bg-gray-200 rounded dark:bg-gray-700 w-20"></div>
           </TableCell>
-          <TableCell className="px-5 py-4">
+          <TableCell className="px-3 py-2">
+            <div className="h-4 bg-gray-200 rounded dark:bg-gray-700 w-20"></div>
+          </TableCell>
+          <TableCell className="px-3 py-2">
+            <div className="h-4 bg-gray-200 rounded dark:bg-gray-700 w-24"></div>
+          </TableCell>
+          <TableCell className="px-3 py-2">
             <div className="flex gap-2">
-              <div className="h-6 w-6 bg-gray-200 rounded dark:bg-gray-700"></div>
-              <div className="h-6 w-6 bg-gray-200 rounded dark:bg-gray-700"></div>
+              <div className="h-5 w-5 bg-gray-200 rounded dark:bg-gray-700"></div>
+              <div className="h-5 w-5 bg-gray-200 rounded dark:bg-gray-700"></div>
             </div>
           </TableCell>
         </TableRow>
@@ -69,7 +77,7 @@ const TableSkeleton = () => {
 };
 
 // Loading spinner component
-const LoadingSpinner = ({ size = "small" }) => {
+const LoadingSpinner = ({ size = "small" }: { size?: "small" | "medium" | "large" }) => {
   const sizeClasses = {
     small: "w-4 h-4",
     medium: "w-6 h-6",
@@ -78,6 +86,47 @@ const LoadingSpinner = ({ size = "small" }) => {
 
   return (
     <div className={`${sizeClasses[size]} border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin`}></div>
+  );
+};
+
+// Sortable header component
+interface SortableHeaderProps {
+  field: string;
+  label: string;
+  currentOrderBy: string;
+  currentDirection: "asc" | "desc";
+  onSort: (field: string) => void;
+}
+
+const SortableHeader = ({ field, label, currentOrderBy, currentDirection, onSort }: SortableHeaderProps) => {
+  const isActive = currentOrderBy === field;
+  
+  return (
+    <TableCell 
+      isHeader 
+      className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500 cursor-pointer hover:bg-gray-50 dark:hover:bg-white/[0.05] transition-colors select-none"
+      onClick={() => onSort(field)}
+    >
+      <div className="flex items-center gap-1">
+        <span>{label}</span>
+        <div className="flex flex-col">
+          <svg 
+            className={`w-3 h-3 ${isActive && currentDirection === 'asc' ? 'text-[#ffb433]' : 'text-gray-400'}`} 
+            fill="currentColor" 
+            viewBox="0 0 20 20"
+          >
+            <path d="M5 10l5-5 5 5H5z" />
+          </svg>
+          <svg 
+            className={`w-3 h-3 -mt-1 ${isActive && currentDirection === 'desc' ? 'text-[#ffb433]' : 'text-gray-400'}`} 
+            fill="currentColor" 
+            viewBox="0 0 20 20"
+          >
+            <path d="M15 10l-5 5-5-5h10z" />
+          </svg>
+        </div>
+      </div>
+    </TableCell>
   );
 };
 
@@ -92,10 +141,15 @@ export default function BasicTableOne() {
   const [refreshKey, setRefreshKey] = useState(0);
   const [companyFilter, setCompanyFilter] = useState("All");
   const [isSearching, setIsSearching] = useState(false);
+  const [orderBy, setOrderBy] = useState("");
+  const [orderDirection, setOrderDirection] = useState<"asc" | "desc">("asc");
 
   const { companies, isLoading: companiesLoading, error: companiesError } = useCompanies();
   
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Build ordering string
+  const ordering = orderBy ? (orderDirection === "desc" ? `-${orderBy}` : orderBy) : "";
 
   // Use debouncedSearchTerm in the API call
   const { data, isLoading: driversLoading, error: driversError, isFetching } = useDrivers(
@@ -103,7 +157,8 @@ export default function BasicTableOne() {
     currentPage, 
     refreshKey,
     docStatusFilter,
-    debouncedSearchTerm
+    debouncedSearchTerm,
+    ordering
   );
   
   // Debounce effect - 0.5 second delay
@@ -115,7 +170,7 @@ export default function BasicTableOne() {
         setDebouncedSearchTerm(searchTerm);
         setCurrentPage(1);
         setIsSearching(false);
-      }, 700);
+      }, 500);
 
       return () => {
         clearTimeout(timer);
@@ -141,51 +196,37 @@ export default function BasicTableOne() {
 
   const [isExporting, setIsExporting] = useState(false);
 
-  // Show loading skeleton on initial load
-  if (driversLoading && drivers.length === 0) {
-    return (
-      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
-        <div className="p-4">
-          <div className="flex justify-between items-center mb-4">
-            <div className="h-8 bg-gray-200 rounded dark:bg-gray-700 w-64 animate-pulse"></div>
-            <div className="h-10 bg-gray-200 rounded dark:bg-gray-700 w-32 animate-pulse"></div>
-          </div>
-          <div className="max-w-full overflow-x-auto">
-            <Table>
-              <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
-                <TableRow>
-                  {[...Array(11)].map((_, index) => (
-                    <TableCell key={index} isHeader className="px-5 py-3">
-                      <div className="h-4 bg-gray-200 rounded dark:bg-gray-700 w-20 animate-pulse"></div>
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableSkeleton />
-              </TableBody>
-            </Table>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // Handle sorting
+  const handleSort = (field: string) => {
+    if (orderBy === field) {
+      // Toggle direction if clicking the same field
+      setOrderDirection(orderDirection === "asc" ? "desc" : "asc");
+    } else {
+      // Set new field and default to ascending
+      setOrderBy(field);
+      setOrderDirection("asc");
+    }
+    // Reset to first page when sorting changes
+    setCurrentPage(1);
+  };
 
   if (driversError) return (
-    <div className="rounded-xl border border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20 p-6 text-center">
-      <div className="text-red-600 dark:text-red-400 mb-2">
-        <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
-        </svg>
+    <div className="p-6">
+      <div className="rounded-xl border border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20 p-6 text-center">
+        <div className="text-red-600 dark:text-red-400 mb-2">
+          <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+          </svg>
+        </div>
+        <h3 className="text-lg font-medium text-red-800 dark:text-red-300 mb-2">{t('drivers.loadingError')}</h3>
+        <p className="text-red-600 dark:text-red-400 text-sm">{driversError.message}</p>
+        <button 
+          onClick={() => window.location.reload()} 
+          className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+        >
+          {t('common.retry')}
+        </button>
       </div>
-      <h3 className="text-lg font-medium text-red-800 dark:text-red-300 mb-2">{t('drivers.loadingError')}</h3>
-      <p className="text-red-600 dark:text-red-400 text-sm">{driversError.message}</p>
-      <button 
-        onClick={() => window.location.reload()} 
-        className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-      >
-        {t('common.retry')}
-      </button>
     </div>
   );
 
@@ -284,97 +325,55 @@ export default function BasicTableOne() {
     return `${share}%`;
   };
 
-  // Helper function to display insurance status
-  const getInsuranceStatus = (insurance: any) => {
-    if (!insurance || insurance === null || insurance === undefined) return t('drivers.noInsurance');
-    
-    // If insurance is a number (percentage), show the amount
-    if (typeof insurance === 'number') {
-      return `${insurance}`;
-    }
-    
-    // If insurance is an object with a file property
-    if (insurance.file) return t('drivers.uploaded');
-    
-    // If insurance is an object but no file
-    return t('drivers.noDocument');
-  };
-
   return (
-    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03] transition-all duration-300">
-      <div className="hidden lg:block my-2 mx-4">
-        <form onSubmit={(e) => e.preventDefault()}>
-          <div className="relative">
-            <span className="absolute -translate-y-1/2 pointer-events-none left-4 top-1/2">
-              <svg
-                className="fill-gray-500 dark:fill-gray-400"
-                width="20"
-                height="20"
-                viewBox="0 0 20 20"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fillRule="evenodd"
-                  clipRule="evenodd"
-                  d="M3.04175 9.37363C3.04175 5.87693 5.87711 3.04199 9.37508 3.04199C12.8731 3.04199 15.7084 5.87693 15.7084 9.37363C15.7084 12.8703 12.8731 15.7053 9.37508 15.7053C5.87711 15.7053 3.04175 12.8703 3.04175 9.37363ZM9.37508 1.54199C5.04902 1.54199 1.54175 5.04817 1.54175 9.37363C1.54175 13.6991 5.04902 17.2053 9.37508 17.2053C11.2674 17.2053 13.003 16.5344 14.357 15.4176L17.177 18.238C17.4699 18.5309 17.9448 18.5309 18.2377 18.238C18.5306 17.9451 18.5306 17.4703 18.2377 17.1774L15.418 14.3573C16.5365 13.0033 17.2084 11.2669 17.2084 9.37363C17.2084 5.04817 13.7011 1.54199 9.37508 1.54199Z"
-                  fill=""
-                />
-              </svg>
-            </span>
-            <input
-              ref={inputRef}
-              type="text"
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-              }}
-              placeholder={t('drivers.searchPlaceholder')}
-              className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-12 pr-14 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 xl:w-[430px] transition-all duration-200"
-            />
-            {/* Show loading indicator when searching */}
-            {(isSearching || (isFetching && debouncedSearchTerm)) && (
-              <span className="absolute -translate-y-1/2 pointer-events-none right-4 top-1/2">
-                <LoadingSpinner size="small" />
-              </span>
-            )}
-          </div>
-          {/* Show search status */}
-          {debouncedSearchTerm && (
-            <div className="mt-2 text-sm text-gray-500 flex items-center gap-2">
-              <span>{t('drivers.searchingFor', { term: debouncedSearchTerm })}</span>
-              {(isSearching || isFetching) && <LoadingSpinner size="small" />}
-            </div>
-          )}
-        </form>
+    <div className="space-y-4">
 
-        <div className="flex justify-end mr-4 mt-2">
-          <span className="text-gray-700 text-sm flex items-center gap-2">
-            {t('drivers.totalDrivers', { count: totalCount })}
-            {debouncedSearchTerm && ` (${t('drivers.filtered')})`}
-            {isFetching && <LoadingSpinner size="small" />}
-          </span>
+      {/* Search bar and Add button */}
+      <div className="flex items-center justify-between gap-4">
+        <div className="w-full md:w-[430px]">
+          <label className="block text-sm mb-1 text-gray-600 dark:text-gray-300">{t('drivers.search', { defaultValue: 'Search' })}</label>
+        <div className="relative">
+          <input
+            ref={inputRef}
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder={t('drivers.searchPlaceholder')}
+            className="h-11 w-full rounded-lg border border-gray-200 bg-transparent px-3 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+          />
+          {(isSearching || (isFetching && debouncedSearchTerm)) && (
+            <span className="absolute -translate-y-1/2 pointer-events-none right-4 top-1/2">
+              <LoadingSpinner size="small" />
+            </span>
+          )}
         </div>
+        </div>
+        
+        <button
+          onClick={() => setIsAddModalOpen(true)}
+          className="px-4 py-2 bg-[#ffb433] text-white text-sm font-medium rounded-lg hover:bg-[#e6a02e] shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-2 whitespace-nowrap"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          </svg>
+          {t('drivers.addDriver')}
+        </button>
       </div>
-      
-      {/* Filters Section */}
-      <div className="flex justify-between items-end m-4">
-        {/* Company Filter */}
-        <div className="p-2">
-          <label className="mr-2 font-medium text-gray-600 dark:text-gray-300">
-            {t('drivers.company')}:
-          </label>
+
+      {/* Filters */}
+      <div className="flex flex-wrap gap-3 items-end mt-2">
+        <div>
+          <label className="block text-sm mb-1">{t('drivers.company')}</label>
           <select
             value={companyFilter}
             onChange={(e) => {
               setCompanyFilter(e.target.value);
               handleFilterChange();
             }}
-            className="border rounded-lg px-3 py-1 text-sm dark:bg-gray-800 dark:text-white transition-colors duration-200"
+            className="border rounded-lg px-3 py-2 dark:bg-gray-800 dark:text-white"
             disabled={companiesLoading}
           >
             <option value="All">{t('drivers.allCompanies')}</option>
-            
             {companiesLoading ? (
               <option disabled>{t('drivers.loadingCompanies')}</option>
             ) : companiesError ? (
@@ -389,30 +388,17 @@ export default function BasicTableOne() {
                 ))
             )}
           </select>
-          
-          {companiesLoading && (
-            <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
-              <LoadingSpinner size="small" />
-              {t('drivers.loadingCompanies')}
-            </p>
-          )}
-          {companiesError && (
-            <p className="text-xs text-red-500 mt-1">{t('drivers.companiesError')}</p>
-          )}
         </div>
 
-        {/* Document Status Filter */}
-        <div className="p-2">
-          <label className="mr-2 font-medium text-gray-600 dark:text-gray-300">
-            {t('drivers.documentStatus')}:
-          </label>
+        <div>
+          <label className="block text-sm mb-1">{t('drivers.documentStatus')}</label>
           <select
             value={docStatusFilter}
             onChange={(e) => {
               setDocStatusFilter(e.target.value);
               handleFilterChange();
             }}
-            className="border rounded-lg px-3 py-1 text-sm dark:bg-gray-800 dark:text-white transition-colors duration-200"
+            className="border rounded-lg px-3 py-2 dark:bg-gray-800 dark:text-white"
           >
             <option value="all">{t('drivers.allDocuments')}</option>
             <option value="missing">{t('drivers.missingDocuments')}</option>
@@ -420,267 +406,278 @@ export default function BasicTableOne() {
             <option value="valid">{t('drivers.validDocuments')}</option>
           </select>
         </div>
-
-        {/* Action Buttons */}
-        <div>
-          <button
-            onClick={() => setIsAddModalOpen(true)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 hover:scale-105 active:scale-95"
-          >
-            + {t('drivers.addDriver')}
-          </button>
-          <input
-            type="file"
-            id="csvInput"
-            accept=".csv"
-            className="hidden"
-          />
-        </div>
       </div>
 
-      {/* Loading State for table data */}
-      {isFetching && drivers.length > 0 && (
-        <div className="p-4 text-center text-blue-600 flex items-center justify-center gap-2">
-          <LoadingSpinner size="small" />
-          {t('drivers.updatingDrivers')}
-        </div>
-      )}
-      
-      {/* Drivers Table */}
-      <div className="max-w-full overflow-x-auto transition-opacity duration-300">
-        <Table>
-          <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
-            <TableRow>
-              <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                {t('drivers.id')}
-              </TableCell>
-              <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                {t('drivers.user')}
-              </TableCell>
-              <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                {t('drivers.phone')}
-              </TableCell>
-              <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                {t('drivers.company')}
-              </TableCell>
-              <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                {t('drivers.agencyShare')}
-              </TableCell>
-              <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                {t('drivers.insurance')}
-              </TableCell>
-              <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                {t('drivers.nid')}
-              </TableCell>
-              <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                {t('drivers.license')}
-              </TableCell>
-              <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                {t('drivers.vehicleLicense')}
-              </TableCell>
-              <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                {t('drivers.contract')}
-              </TableCell>
-              <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                {t('drivers.actions')}
-              </TableCell>
-            </TableRow>
-          </TableHeader>
-
-          <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-            {drivers.length === 0 ? (
+      {/* Table */}
+      <div className="rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+        <div className="max-w-full overflow-x-auto">
+          <Table>
+            <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
               <TableRow>
-                <TableCell colSpan={11} className="px-5 py-8 text-center text-gray-500">
-                  <div className="flex flex-col items-center justify-center">
-                    <svg className="w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <h3 className="text-lg font-medium text-gray-600 dark:text-gray-400 mb-2">
-                      {debouncedSearchTerm ? t('drivers.noMatchingDrivers') : t('drivers.noDriversFound')}
-                    </h3>
-                    <p className="text-gray-500 dark:text-gray-500 text-sm">
-                      {debouncedSearchTerm ? t('drivers.adjustSearchTerms') : t('drivers.addFirstDriver')}
-                    </p>
-                  </div>
-                </TableCell>
+                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('drivers.id')}</TableCell>
+                <SortableHeader field="first_name" label={t('drivers.user')} currentOrderBy={orderBy} currentDirection={orderDirection} onSort={handleSort} />
+                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('drivers.phone')}</TableCell>
+                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('drivers.email')}</TableCell>
+                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('drivers.company')}</TableCell>
+                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('drivers.reportsTo')}</TableCell>
+                <SortableHeader field="agency_share" label={t('drivers.agencyShare')} currentOrderBy={orderBy} currentDirection={orderDirection} onSort={handleSort} />
+                <SortableHeader field="insurance" label={t('drivers.insurance')} currentOrderBy={orderBy} currentDirection={orderDirection} onSort={handleSort} />
+                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('drivers.nid')}</TableCell>
+                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('drivers.license')}</TableCell>
+                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('drivers.vehicleLicense')}</TableCell>
+                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('drivers.contract')}</TableCell>
+                <SortableHeader field="updated_at" label={t('drivers.updatedAt')} currentOrderBy={orderBy} currentDirection={orderDirection} onSort={handleSort} />
+                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('drivers.actions')}</TableCell>
               </TableRow>
-            ) : isFetching && drivers.length > 0 ? (
-              <TableSkeleton />
-            ) : (
-              drivers.map((driver: any) => (
-                <TableRow 
-                  key={`${driver.id}-${driver.uuid}`}
-                  className="transition-all duration-200 hover:bg-gray-50 dark:hover:bg-white/[0.02]"
-                >
-                  <TableCell className="px-1 py-4 sm:px-6 text-start">
-                    <div className="flex items-center gap-3">
-                      <div>
-                        <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
-                          {driver.id}
-                        </span>
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell className="px-5 py-4 sm:px-6 text-start">
-                    <div className="flex items-center gap-3">
-                      <div>
-                        <Link 
-                          to={`/drivers/${driver.id}`}
-                          className="block font-medium text-gray-800 text-theme-sm dark:text-white/90 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          {driver.first_name} {driver.last_name}
-                        </Link>
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                    {driver.phone_number}
-                  </TableCell>
-                  <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                    {driver.company_name}
-                  </TableCell>
-                  <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                    <span className={`transition-colors duration-200 ${
-                      driver.agency_share !== null ? "text-green-600" : "text-gray-400"
-                    }`}>
-                      {formatAgencyShare(driver.agency_share)}
-                    </span>
-                  </TableCell>
-                  <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                    <span className={`transition-colors duration-200 ${
-                      driver.insurance === null || driver.insurance === undefined || driver.insurance === ''
-                        ? "text-gray-400"
-                        : "text-green-600"
-                    }`}>
-                      {driver.insurance === null || driver.insurance === undefined || driver.insurance === ''
-                        ? t('common.notAvailable')
-                        : driver.insurance}
-                    </span>
-                  </TableCell>
-                  <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                    {(() => {
-                      const doc = driver.national_id_doc;
-                      const status = doc?.status as ("valid" | "expired" | undefined);
-                      const { label, cls } = !doc
-                        ? { label: t('drivers.noDocument'), cls: 'text-red-600' }
-                        : status === 'expired'
-                          ? { label: 'Expired', cls: 'text-red-600' }
-                          : { label: 'Valid', cls: 'text-green-600' };
-                      return <span className={`transition-colors duration-200 ${cls}`}>{label}</span>;
-                    })()}
-                  </TableCell>
-                  <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                    {(() => {
-                      const doc = driver.license;
-                      const status = doc?.status as ("valid" | "expired" | undefined);
-                      const { label, cls } = !doc
-                        ? { label: t('drivers.noDocument'), cls: 'text-red-600' }
-                        : status === 'expired'
-                          ? { label: 'Expired', cls: 'text-red-600' }
-                          : { label: 'Valid', cls: 'text-green-600' };
-                      return <span className={`transition-colors duration-200 ${cls}`}>{label}</span>;
-                    })()}
-                  </TableCell>
-                  <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                    {(() => {
-                      const doc = driver.vehicle_license;
-                      const status = doc?.status as ("valid" | "expired" | undefined);
-                      const { label, cls } = !doc
-                        ? { label: t('drivers.noDocument'), cls: 'text-red-600' }
-                        : status === 'expired'
-                          ? { label: 'Expired', cls: 'text-red-600' }
-                          : { label: 'Valid', cls: 'text-green-600' };
-                      return <span className={`transition-colors duration-200 ${cls}`}>{label}</span>;
-                    })()}
-                  </TableCell>
-                  <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                    {(() => {
-                      const contracts = (driver.contracts || []) as Array<{ status?: 'valid' | 'expired' }>;
-                      if (!contracts.length) {
-                        return <span className="transition-colors duration-200 text-red-600">{t('drivers.noDocument')}</span>;
-                      }
-                      const hasExpired = contracts.some(c => c?.status === 'expired');
-                      const label = hasExpired ? 'Expired' : 'Valid';
-                      const cls = hasExpired ? 'text-red-600' : 'text-green-600';
-                      return <span className={`transition-colors duration-200 ${cls}`}>{label}</span>;
-                    })()}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => handleEditClick(driver.id)}
-                        className="text-blue-600 hover:text-blue-800 dark:hover:text-blue-400 transition-colors duration-200 hover:scale-110 transform"
-                        title={t('drivers.editDriver')}
-                      >
-                        ✏️
-                      </button>
-                      <button
-                        onClick={() => handleDeleteClick(driver.id, `${driver.first_name} ${driver.last_name}`)}
-                        disabled={isDeleting}
-                        className="text-red-600 hover:text-red-800 dark:hover:text-red-400 transition-colors duration-200 hover:scale-110 transform disabled:opacity-50 disabled:cursor-not-allowed"
-                        title={t('drivers.deleteDriver')}
-                      >
-                        🗑️
-                      </button>
-                    </div>
+            </TableHeader>
+
+            <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
+              {driversLoading && drivers.length === 0 ? (
+                <TableSkeleton />
+              ) : drivers.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={13} className="px-3 py-5 text-sm text-center">
+                    {debouncedSearchTerm ? t('drivers.noMatchingDrivers') : t('drivers.noDriversFound')}
                   </TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
-      
-      {/* Pagination and Export Section */}
-      <div className="flex items-center justify-between p-4 border-t border-gray-100 dark:border-white/[0.05]">
-        <div className="flex items-center justify-center gap-1 flex-1">
-          <button
-            disabled={currentPage === 1}
-            onClick={() => handlePageChange(currentPage - 1)}
-            className="px-3 py-1 rounded disabled:opacity-30 bg-blue-600 text-white transition-all duration-200 hover:bg-blue-700 disabled:hover:bg-blue-600 hover:scale-105 active:scale-95"
-          >
-            {t('common.previous')}
-          </button>
-
-          {totalPages > 0 && [...Array(totalPages)].map((_, index) => (
-            <button
-              key={index + 1}
-              onClick={() => handlePageChange(index + 1)}
-              className={`px-3 py-1 rounded transition-all duration-200 hover:scale-105 active:scale-95 ${
-                currentPage === index + 1
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
-              }`}
-            >
-              {index + 1}
-            </button>
-          ))}
-
-          <button
-            disabled={currentPage === totalPages || totalPages === 0}
-            onClick={() => handlePageChange(currentPage + 1)}
-            className="px-3 py-1 rounded disabled:opacity-30 bg-blue-600 text-white transition-all duration-200 hover:bg-blue-700 disabled:hover:bg-blue-600 hover:scale-105 active:scale-95"
-          >
-            {t('common.next')}
-          </button>
+              ) : (
+                drivers.map((driver: any) => (
+                  <TableRow 
+                    key={`${driver.id}-${driver.uuid}`}
+                    className="transition-colors hover:bg-gray-50 dark:hover:bg-white/[0.02]"
+                  >
+                    <TableCell className="px-3 py-2 text-sm">{driver.id}</TableCell>
+                    <TableCell className="px-3 py-2 text-sm">
+                      <Link 
+                        to={`/drivers/${driver.id}`}
+                        className="text-black hover:underline"
+                      >
+                        {driver.first_name} {driver.last_name}
+                      </Link>
+                    </TableCell>
+                    <TableCell className="px-3 py-2 text-sm">{driver.phone_number}</TableCell>
+                    <TableCell className="px-3 py-2 text-sm">{driver.email || '-'}</TableCell>
+                    <TableCell className="px-3 py-2 text-sm">{driver.company_name}</TableCell>
+                    <TableCell className="px-3 py-2 text-sm">{driver.reports_to || '-'}</TableCell>
+                    <TableCell className="px-3 py-2 text-sm">
+                      <span className={driver.agency_share !== null ? "text-green-600" : "text-gray-400"}>
+                        {formatAgencyShare(driver.agency_share)}
+                      </span>
+                    </TableCell>
+                    <TableCell className="px-3 py-2 text-sm">
+                      <span className={
+                        driver.insurance === null || driver.insurance === undefined || driver.insurance === ''
+                          ? "text-gray-400"
+                          : "text-green-600"
+                      }>
+                        {driver.insurance === null || driver.insurance === undefined || driver.insurance === ''
+                          ? t('common.notAvailable')
+                          : driver.insurance}
+                      </span>
+                    </TableCell>
+                    <TableCell className="px-3 py-2 text-sm">
+                      {(() => {
+                        const doc = driver.national_id_doc;
+                        const status = doc?.status as ("valid" | "expired" | undefined);
+                        const { label, cls } = !doc
+                          ? { label: t('drivers.noDocument'), cls: 'text-red-600' }
+                          : status === 'expired'
+                            ? { label: 'Expired', cls: 'text-red-600' }
+                            : { label: 'Valid', cls: 'text-green-600' };
+                        const fileUrl = doc?.file;
+                        if (fileUrl) {
+                          return (
+                            <a
+                              href={fileUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={`${cls} hover:underline cursor-pointer`}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              {label}
+                            </a>
+                          );
+                        }
+                        return <span className={cls}>{label}</span>;
+                      })()}
+                    </TableCell>
+                    <TableCell className="px-3 py-2 text-sm">
+                      {(() => {
+                        const doc = driver.license;
+                        const status = doc?.status as ("valid" | "expired" | undefined);
+                        const { label, cls } = !doc
+                          ? { label: t('drivers.noDocument'), cls: 'text-red-600' }
+                          : status === 'expired'
+                            ? { label: 'Expired', cls: 'text-red-600' }
+                            : { label: 'Valid', cls: 'text-green-600' };
+                        const fileUrl = doc?.file;
+                        if (fileUrl) {
+                          return (
+                            <a
+                              href={fileUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={`${cls} hover:underline cursor-pointer`}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              {label}
+                            </a>
+                          );
+                        }
+                        return <span className={cls}>{label}</span>;
+                      })()}
+                    </TableCell>
+                    <TableCell className="px-3 py-2 text-sm">
+                      {(() => {
+                        const doc = driver.vehicle_license;
+                        const status = doc?.status as ("valid" | "expired" | undefined);
+                        const { label, cls } = !doc
+                          ? { label: t('drivers.noDocument'), cls: 'text-red-600' }
+                          : status === 'expired'
+                            ? { label: 'Expired', cls: 'text-red-600' }
+                            : { label: 'Valid', cls: 'text-green-600' };
+                        const fileUrl = doc?.file;
+                        if (fileUrl) {
+                          return (
+                            <a
+                              href={fileUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={`${cls} hover:underline cursor-pointer`}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              {label}
+                            </a>
+                          );
+                        }
+                        return <span className={cls}>{label}</span>;
+                      })()}
+                    </TableCell>
+                    <TableCell className="px-3 py-2 text-sm">
+                      {(() => {
+                        const contracts = (driver.contracts || []) as Array<{ status?: 'valid' | 'expired', file?: string }>;
+                        if (!contracts.length) {
+                          return <span className="text-red-600">{t('drivers.noDocument')}</span>;
+                        }
+                        const hasExpired = contracts.some(c => c?.status === 'expired');
+                        const label = hasExpired ? 'Expired' : 'Valid';
+                        const cls = hasExpired ? 'text-red-600' : 'text-green-600';
+                        // Use the first contract's file if available
+                        const fileUrl = contracts[0]?.file;
+                        if (fileUrl) {
+                          return (
+                            <a
+                              href={fileUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={`${cls} hover:underline cursor-pointer`}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              {label}
+                            </a>
+                          );
+                        }
+                        return <span className={cls}>{label}</span>;
+                      })()}
+                    </TableCell>
+                    <TableCell className="px-3 py-2 text-sm text-gray-600 dark:text-gray-400">
+                      {driver.updated_at ? new Date(driver.updated_at).toLocaleString() : '-'}
+                    </TableCell>
+                    <TableCell className="px-3 py-2 text-sm">
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleEditClick(driver.id)}
+                          className="text-[#ffb433] hover:text-[#cc8c29] dark:hover:text-[#feb273] transition-colors"
+                          title={t('drivers.editDriver')}
+                        >
+                          <AiOutlineEdit size={18} />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteClick(driver.id, `${driver.first_name} ${driver.last_name}`)}
+                          disabled={isDeleting}
+                          className="text-red-600 hover:text-red-800 dark:hover:text-red-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          title={t('drivers.deleteDriver')}
+                        >
+                          <AiOutlineDelete size={18} />
+                        </button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
         </div>
 
-        <div className="flex justify-end">
-          <button
-            onClick={handleExport}
-            disabled={isExporting || drivers.length === 0}
-            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105 active:scale-95 flex items-center gap-2"
-          >
-            {isExporting ? (
-              <>
-                <LoadingSpinner size="small" />
-                {t('drivers.exporting')}
-              </>
-            ) : (
-              t('drivers.export')
-            )}
-          </button>
+        {/* Pagination Section */}
+        <div className="flex items-center justify-between p-4 border-t border-gray-100 dark:border-white/[0.05]">
+          <div className="flex items-center justify-center gap-1 flex-1">
+            <button
+              disabled={currentPage === 1}
+              onClick={() => handlePageChange(currentPage - 1)}
+              className="px-3 py-1 rounded disabled:opacity-30 bg-[#ffb433] text-white transition-all duration-200 hover:bg-[#e6a02e] disabled:hover:bg-[#ffb433] hover:scale-105 active:scale-95"
+            >
+              {t('common.previous')}
+            </button>
+
+            {totalPages > 0 && generatePaginationPages(currentPage, totalPages).map((pageNum, index) => {
+              if (pageNum === 'ellipsis') {
+                return (
+                  <span key={`ellipsis-${index}`} className="px-2 text-gray-500 dark:text-gray-400">
+                    ...
+                  </span>
+                );
+              }
+              return (
+                <button
+                  key={pageNum}
+                  onClick={() => handlePageChange(pageNum)}
+                  className={`px-3 py-1 rounded transition-all duration-200 hover:scale-105 active:scale-95 ${
+                    currentPage === pageNum
+                      ? "bg-[#ffb433] text-white"
+                      : "bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                  }`}
+                >
+                  {pageNum}
+                </button>
+              );
+            })}
+
+            <button
+              disabled={currentPage === totalPages || totalPages === 0}
+              onClick={() => handlePageChange(currentPage + 1)}
+              className="px-3 py-1 rounded disabled:opacity-30 bg-[#ffb433] text-white transition-all duration-200 hover:bg-[#e6a02e] disabled:hover:bg-[#ffb433] hover:scale-105 active:scale-95"
+            >
+              {t('common.next')}
+            </button>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <div className="text-gray-700 dark:text-gray-300 text-sm flex items-center gap-2">
+              {t('drivers.totalDrivers', { count: totalCount })}
+              {debouncedSearchTerm && ` (${t('drivers.filtered')})`}
+              {isFetching && <LoadingSpinner size="small" />}
+            </div>
+            <button
+              onClick={handleExport}
+              disabled={isExporting || drivers.length === 0}
+              className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-2"
+            >
+              {isExporting ? (
+                <>
+                  <LoadingSpinner size="small" />
+                  {t('drivers.exporting')}
+                </>
+              ) : (
+                <>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  {t('drivers.export')}
+                </>
+              )}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -708,7 +705,7 @@ export default function BasicTableOne() {
 
       {deleteError && (
         <div className="fixed top-4 right-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded shadow-lg z-50 animate-in slide-in-from-right duration-300">
-          <strong>{t('common.error')}: </strong> {deleteError.message}
+          <strong>{t('common.error')}: </strong> {String(deleteError)}
           <button 
             onClick={() => {/* reset error */}}
             className="float-right font-bold ml-4 hover:text-red-900 transition-colors"

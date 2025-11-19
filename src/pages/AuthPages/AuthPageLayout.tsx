@@ -21,8 +21,8 @@ export default function AuthLayout({
                 <img
                   width={231}
                   height={48}
-                  src="/images/logo/auth-logo.svg"
-                  alt="Logo"
+                  src="/images/logo/kresh-logo.png"
+                  alt="Kresh GmbH MS"
                 />
               </Link>
             </div>
