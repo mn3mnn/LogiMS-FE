@@ -12,6 +12,8 @@ export interface PaymentRecordItem {
   driver_name: string;
   driver_first_name: string;
   driver_last_name: string;
+  from_date: string;
+  to_date: string;
   total_revenue: string | null;
   tax_deduction: string | null;
   agency_share_deduction: string | null;
@@ -68,18 +70,6 @@ export const usePaymentRecords = (filters: PaymentRecordsFilters) => {
         { headers: buildAuthHeaders(token), params }
       );
 
-      // Client-side date filtering using FileUpload's from/to via created_at fallback
-      const { fromDate, toDate } = filters;
-      if (fromDate || toDate) {
-        const fromTs = fromDate ? Date.parse(fromDate) : Number.NEGATIVE_INFINITY;
-        const toTs = toDate ? Date.parse(toDate) : Number.POSITIVE_INFINITY;
-
-        const filtered = (data.results || []).filter((item) => {
-          const createdTs = Date.parse(item.created_at);
-          return createdTs >= fromTs && createdTs <= toTs;
-        });
-        return { ...data, results: filtered };
-      }
 
       return data;
     },

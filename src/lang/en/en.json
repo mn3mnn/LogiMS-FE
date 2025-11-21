@@ -453,6 +453,7 @@
     "tableHeaders": {
       "id": "ID",
       "upload": "Upload",
+      "period": "Period",
       "company": "Company",
       "driver": "Driver",
       "driverUuid": "Driver UUID",
