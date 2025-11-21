@@ -1,5 +1,5 @@
 // components/BasicTableOne.tsx
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import {
   Table,
   TableBody,
@@ -265,14 +265,14 @@ export default function BasicTableOne() {
     setCurrentPage(1);
   };
 
-  const handleDriverAdded = () => {
+  const handleDriverAdded = useCallback(() => {
     setRefreshKey(prev => prev + 1); 
     setCurrentPage(1); 
-  };
+  }, []);
 
-  const handleDriverUpdated = () => {
+  const handleDriverUpdated = useCallback(() => {
     setRefreshKey(prev => prev + 1);
-  };
+  }, []);
 
   const handlePageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= totalPages) {

@@ -331,15 +331,16 @@ interface EditDriverModalProps {
         }
 
         // Build JSON payload so nulls (e.g., agency_share) are sent explicitly
+        // Convert empty strings to null for optional fields to avoid unique constraint violations
         const payload: any = {
           first_name: driverData.first_name.trim(),
           last_name: driverData.last_name.trim(),
-          nid: driverData.nid.trim(),
+          nid: driverData.nid.trim() || null,
           phone_number: driverData.phone_number.trim(),
-          email: driverData.email.trim(),
-          reports_to: driverData.reports_to?.trim() || '',
+          email: driverData.email.trim() || null,
+          reports_to: driverData.reports_to?.trim() || null,
           company_code: driverData.company_code,
-          uuid: driverData.uuid || '',
+          uuid: driverData.uuid?.trim() || null,
           is_active: driverData.is_active,
           agency_share: driverData.agency_share, // null or number
           insurance: driverData.insurance,       // null or number

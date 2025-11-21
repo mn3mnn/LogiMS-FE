@@ -9,11 +9,11 @@ import config from '../config/env';
 export interface DriverData {
   first_name: string;
   last_name: string;
-  nid: string;
-  uuid: string;
+  nid: string | null;
+  uuid: string | null;
   phone_number: string;
-  email: string;
-  reports_to?: string;
+  email: string | null;
+  reports_to?: string | null;
   is_active: boolean;
   company_code: string;
   agency_share?: number | null;
