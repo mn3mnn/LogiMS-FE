@@ -12,6 +12,8 @@ export interface PaymentRecordItem {
   driver_name: string;
   driver_first_name: string;
   driver_last_name: string;
+  from_date: string;
+  to_date: string;
   total_revenue: string | null;
   tax_deduction: string | null;
   agency_share_deduction: string | null;

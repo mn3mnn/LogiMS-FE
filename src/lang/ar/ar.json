@@ -454,6 +454,7 @@
       "tableHeaders": {
         "id": "المعرف",
         "upload": "الرفع",
+        "period": "الفترة",
         "company": "الشركة",
         "driver": "السائق",
         "driverUuid": "معرف السائق الفريد",
