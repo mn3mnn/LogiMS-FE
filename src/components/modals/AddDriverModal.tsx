@@ -1,5 +1,5 @@
 // components/AddDriverModal.tsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAddDriver, DriverData, LicenseData, NationalIdData, VehicleLicenseData, ContractData } from '../../hooks/useAddDriver';
 import { useCompanies } from '../../hooks/useCompanies';
 import { useTranslation } from 'react-i18next';
@@ -73,17 +73,22 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
   const [vehicleLicenseData, setVehicleLicenseData] = useState<Omit<VehicleLicenseData, 'driver_id'>>(createEmptyVehicleLicense());
   const [contractsData, setContractsData] = useState<Omit<ContractData, 'driver_id'>[]>([createEmptyContract()]);
 
+  // Ref to track if we've already handled success to prevent infinite loops
+  const hasHandledSuccessRef = useRef(false);
+
   // Reset form when modal opens/closes
   useEffect(() => {
     if (isOpen) {
       resetForm();
       reset();
+      hasHandledSuccessRef.current = false; // Reset the flag when modal opens
     }
-  }, [isOpen]);
+  }, [isOpen, reset]);
 
-  // Handle success
+  // Handle success - only run once per success state
   useEffect(() => {
-    if (isSuccess) {
+    if (isSuccess && !hasHandledSuccessRef.current) {
+      hasHandledSuccessRef.current = true; // Mark as handled immediately
       console.log("✅ Driver added successfully, closing modal...");
       
       // Use setTimeout to avoid any timing issues with React's lifecycle
@@ -92,11 +97,12 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
         onSuccess?.();
         onClose();
         resetForm();
+        reset(); // Reset mutation state after handling success
       }, 100);
       
       return () => clearTimeout(timer);
     }
-  }, [isSuccess, onSuccess, onClose]);
+  }, [isSuccess]); // Remove onSuccess and onClose from dependencies to prevent loop
 
   // Cleanup on unmount
   useEffect(() => {
