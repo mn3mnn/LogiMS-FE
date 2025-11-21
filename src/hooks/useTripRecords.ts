@@ -13,6 +13,8 @@ export interface TripRecordItem {
   driver_name: string;
   driver_first_name: string;
   driver_last_name: string;
+  from_date: string;
+  to_date: string;
   service_type?: string | null;
   order_time?: string | null;
   arrival_time?: string | null;
