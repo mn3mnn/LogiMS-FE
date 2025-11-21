@@ -142,8 +142,7 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
     if (
       !driverData.first_name.trim() ||
       !driverData.last_name.trim() ||
-      !driverData.phone_number.trim() ||
-      !driverData.email.trim()
+      !driverData.phone_number.trim()
     ) {
       setValidationError(t('addDriver.validation.requiredFields'));
       return;
