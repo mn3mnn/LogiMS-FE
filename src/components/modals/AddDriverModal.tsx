@@ -151,9 +151,18 @@ export default function AddDriverModal({ isOpen, onClose, onSuccess }: AddDriver
     // No license required at creation (backend allows creating driver without docs)
   
     try {
+      // Convert empty strings to null for optional fields to avoid unique constraint violations
+      const sanitizedDriverData = {
+        ...driverData,
+        nid: driverData.nid?.trim() || null,
+        uuid: driverData.uuid?.trim() || null,
+        email: driverData.email?.trim() || null,
+        reports_to: driverData.reports_to?.trim() || null,
+      };
+
       // ✅ Trigger the API call safely
       await addDriver({
-        driverData,
+        driverData: sanitizedDriverData,
         licenseData,
         nationalIdData,
         vehicleLicenseData,
