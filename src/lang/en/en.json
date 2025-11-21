@@ -495,6 +495,7 @@
       "tableHeaders": {
         "id": "ID",
         "upload": "Upload",
+        "period": "Period",
         "company": "Company",
         "driver": "Driver",
         "tripUuid": "Trip UUID",

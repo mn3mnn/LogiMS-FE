@@ -496,6 +496,7 @@
       "tableHeaders": {
         "id": "المعرف",
         "upload": "الرفع",
+        "period": "الفترة",
         "company": "الشركة",
         "driver": "السائق",
         "tripUuid": "معرف الرحلة الفريد",

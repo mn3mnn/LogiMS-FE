@@ -187,6 +187,7 @@ export default function TripRecordsPage() {
               <TableRow>
                 <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('trips.tableHeaders.id')}</TableCell>
                 <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('trips.tableHeaders.upload')}</TableCell>
+                <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('trips.tableHeaders.period')}</TableCell>
                 <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('trips.tableHeaders.company')}</TableCell>
                 <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('trips.tableHeaders.driver')}</TableCell>
                 <TableCell isHeader className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">{t('trips.tableHeaders.tripUuid')}</TableCell>
@@ -198,19 +199,28 @@ export default function TripRecordsPage() {
             </TableHeader>
             <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
               {error && (
-                <TableRow><TableCell colSpan={9} className="px-3 py-3 text-red-600 text-sm">{String((error as any)?.message || error)}</TableCell></TableRow>
+                <TableRow><TableCell colSpan={10} className="px-3 py-3 text-red-600 text-sm">{String((error as any)?.message || error)}</TableCell></TableRow>
               )}
               {isLoading && (
-                <TableRow><TableCell colSpan={9} className="px-3 py-5 text-sm">{t('trips.loading')}</TableCell></TableRow>
+                <TableRow><TableCell colSpan={10} className="px-3 py-5 text-sm">{t('trips.loading')}</TableCell></TableRow>
               )}
               {!isLoading && results.length === 0 && (
-                <TableRow><TableCell colSpan={9} className="px-3 py-5 text-sm">{t('trips.noRecordsFound')}</TableCell></TableRow>
+                <TableRow><TableCell colSpan={10} className="px-3 py-5 text-sm">{t('trips.noRecordsFound')}</TableCell></TableRow>
               )}
               {results.map((r) => (
                 <TableRow key={r.id} className="transition-colors hover:bg-gray-50 dark:hover:bg-white/[0.02]">
                   <TableCell className="px-3 py-2 text-sm">{r.id}</TableCell>
                   <TableCell className="px-3 py-2 text-sm">
                     <Link to={`/uploads?id=${r.file_upload}`} className="text-[#ffb433] hover:underline">{r.file_upload}</Link>
+                  </TableCell>
+                  <TableCell className="px-3 py-2 text-sm">
+                    {r.from_date && r.to_date ? (
+                      <span className="text-xs text-gray-600 dark:text-gray-400">
+                        {new Date(r.from_date).toLocaleDateString()} - {new Date(r.to_date).toLocaleDateString()}
+                      </span>
+                    ) : (
+                      '-'
+                    )}
                   </TableCell>
                   <TableCell className="px-3 py-2 text-sm">{r.company_name}</TableCell>
                   <TableCell className="px-3 py-2 text-sm">
