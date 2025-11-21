@@ -38,32 +38,10 @@ export const useExportDrivers = () => {
       const link = document.createElement('a');
       link.href = url;
       
-      // Get filename from response headers or use default
-      const contentDisposition = response.headers['content-disposition'] || 
-                                  response.headers['Content-Disposition'] || 
-                                  '';
-      let filename = 'drivers_export.csv';
-      
-      if (contentDisposition) {
-        const match = contentDisposition.match(/filename[^;=\n]*=([^;\n]*)/i);
-        if (match && match[1]) {
-          let extracted = match[1].trim();
-          // Remove surrounding quotes if present
-          extracted = extracted.replace(/^["']|["']$/g, '');
-          // Clean up any trailing underscores, spaces, or other invalid characters
-          extracted = extracted.replace(/[_\s]+$/g, '');
-          // Ensure it ends with .csv
-          if (extracted && extracted.endsWith('.csv')) {
-            filename = extracted;
-          }
-        }
-      }
-      
-      // Fallback: generate filename with current date if extraction failed
-      if (filename === 'drivers_export.csv') {
-        const date = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
-        filename = `drivers_export_${date}.csv`;
-      }
+      // Extract filename from Content-Disposition header
+      const contentDisposition = response.headers['content-disposition'] || '';
+      const filenameMatch = contentDisposition.match(/filename="?([^"]+)"?/i);
+      const filename = filenameMatch?.[1] || `drivers_export_${new Date().toISOString().split('T')[0]}.csv`;
 
       link.setAttribute('download', filename);
       document.body.appendChild(link);
