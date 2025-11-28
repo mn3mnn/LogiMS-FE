@@ -27,6 +27,23 @@ export interface TripRecordItem {
   created_at: string;
 }
 
+export interface TripRecordAggregatedItem {
+  driver_uuid: string;
+  driver_first_name: string;
+  driver_last_name: string;
+  driver_name: string;
+  driver_id?: number | null;
+  company_name: string;
+  company_id: number;
+  file_upload: number;
+  from_date: string;
+  to_date: string;
+  trip_status?: string | null;
+  total_fare: string;
+  total_distance: string;
+  trip_count: number;
+}
+
 export interface PaginatedResponse<T> {
   count: number;
   next: string | null;
@@ -73,6 +90,34 @@ export const useTripRecords = (filters: TripRecordsFilters) => {
 
       const { data } = await axios.get<PaginatedResponse<TripRecordItem>>(
         `${config.API_BASE_URL}/v1/trip-records/`,
+        { headers: buildAuthHeaders(token), params }
+      );
+      return data;
+    },
+  });
+};
+
+export const useTripRecordsAggregated = (filters: TripRecordsFilters) => {
+  const { token } = useAuth();
+
+  return useQuery({
+    queryKey: ['trip-records-aggregated', filters],
+    enabled: !!token,
+    queryFn: async (): Promise<PaginatedResponse<TripRecordAggregatedItem>> => {
+      const params: Record<string, any> = {
+        page: filters.page ?? 1,
+        page_size: filters.pageSize ?? 10,
+      };
+
+      if (filters.companyCode && filters.companyCode !== 'All') params.company_code = filters.companyCode;
+      if (filters.search) params.search = filters.search;
+      if (filters.fromDate) params.from_date = filters.fromDate;
+      if (filters.toDate) params.to_date = filters.toDate;
+      if (filters.uploadId) params.file_upload = filters.uploadId;
+      if (filters.tripStatus) params.trip_status = filters.tripStatus;
+
+      const { data } = await axios.get<PaginatedResponse<TripRecordAggregatedItem>>(
+        `${config.API_BASE_URL}/v1/trip-records/aggregated/`,
         { headers: buildAuthHeaders(token), params }
       );
       return data;
