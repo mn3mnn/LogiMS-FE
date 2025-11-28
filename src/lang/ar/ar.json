@@ -486,6 +486,7 @@
       "loading": "جاري التحميل...",
       "noRecordsFound": "لم يتم العثور على سجلات",
       "noUploadsFound": "لم يتم العثور على رفعات",
+      "viewUpload": "عرض هذه الرفعة",
       "viewDriverProfile": "عرض ملف السائق الشخصي",
       "newTripUpload": "رفع رحلة جديدة",
       "fileUpload": "ملف (.csv, .xlsx)",
@@ -499,6 +500,7 @@
         "period": "الفترة",
         "company": "الشركة",
         "driver": "السائق",
+        "driverUuid": "معرف السائق الفريد",
         "tripUuid": "معرف الرحلة الفريد",
         "status": "الحالة",
         "fare": "الأجرة",
@@ -506,7 +508,10 @@
         "created": "تاريخ الإنشاء",
         "file": "الملف",
         "error": "خطأ",
-        "actions": "الإجراءات"
+        "actions": "الإجراءات",
+        "tripCount": "عدد الرحلات",
+        "totalFare": "إجمالي الأجرة",
+        "totalDistance": "إجمالي المسافة"
       }
     },
     "sidebar": {

@@ -485,6 +485,7 @@
       "loading": "Loading...",
       "noRecordsFound": "No records found",
       "noUploadsFound": "No uploads found",
+      "viewUpload": "View this upload",
       "viewDriverProfile": "View driver profile",
       "newTripUpload": "New Trip Upload",
       "fileUpload": "File (.csv, .xlsx)",
@@ -498,6 +499,7 @@
         "period": "Period",
         "company": "Company",
         "driver": "Driver",
+        "driverUuid": "Driver UUID",
         "tripUuid": "Trip UUID",
         "status": "Status",
         "fare": "Fare",
@@ -505,7 +507,10 @@
         "created": "Created",
         "file": "File",
         "error": "Error",
-        "actions": "Actions"
+        "actions": "Actions",
+        "tripCount": "Trip Count",
+        "totalFare": "Total Fare",
+        "totalDistance": "Total Distance"
       }
     },
     "sidebar": {
